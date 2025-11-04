@@ -106,7 +106,7 @@ class AutomatedPullRequestManager:
 
         self._assign_reviewer(pr["number"])
         self.auto_enhance_pull_request(pr["number"], branch_name)
-        logging.info("Opened draft PR #%s", pr["number"])
+        self._logger.info("Opened draft PR #%s", pr["number"])
         return pr
 
     # ------------------------------------------------------------------
@@ -178,7 +178,8 @@ class AutomatedPullRequestManager:
                 self.log("Patch directive received but no patch context provided; skipping.")
             if command.startswith("ship when green"):
                 if pr_number is not None:
-                    run_once("auto_merge", lambda: self.enable_auto_merge(pr_number))
+                    non_none_pr_number = pr_number  # type: int
+                    run_once("auto_merge", lambda: self.enable_auto_merge(non_none_pr_number))
                 else:
                     self.log("Ship when green requested but PR number missing; skipping auto-merge.")
 
