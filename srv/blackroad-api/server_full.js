@@ -1,6 +1,8 @@
 const http = require('http');
 const { randomUUID } = require('crypto');
 
+const MAX_REQUEST_BODY_SIZE = 1e6; // 1MB
+
 function parseAllowedOrigins(value = '') {
   return value
     .split(',')
@@ -36,7 +38,7 @@ async function readRequestBody(req) {
     let data = '';
     req.on('data', (chunk) => {
       data += chunk;
-      if (data.length > 1e6) {
+      if (data.length > MAX_REQUEST_BODY_SIZE) {
         reject(new Error('payload too large'));
         req.destroy();
       }
@@ -46,24 +48,19 @@ async function readRequestBody(req) {
   });
 }
 
-async function readJsonBody(req, res) {
-  try {
-    const raw = await readRequestBody(req);
-    if (!raw) {
-      return {};
-    }
-    return JSON.parse(raw);
-  } catch (error) {
-    if (!res.headersSent) {
-      sendJson(res, 400, { error: 'invalid json' });
-    }
-    throw error;
+async function readJsonBody(req) {
+  const raw = await readRequestBody(req);
+  if (!raw) {
+    return null;
   }
+  return JSON.parse(raw);
 }
 
 function createServer({
   allowedOrigins = [],
+  sessionSecret = undefined,
 } = {}) {
+  // sessionSecret is accepted for API contract compatibility; not currently used.
   const sessions = new Map();
   const tasks = [];
   const VALID_USER = { username: 'root', password: 'Codex2025' };
@@ -93,7 +90,10 @@ function createServer({
 
     if (req.method === 'POST' && url.pathname === '/api/login') {
       try {
-        const body = await readJsonBody(req, res);
+        const body = await readJsonBody(req);
+        if (!body) {
+          return sendJson(res, 400, { error: 'request body required' });
+        }
         if (body.username === VALID_USER.username && body.password === VALID_USER.password) {
           const sessionId = randomUUID();
           sessions.set(sessionId, { username: VALID_USER.username });
@@ -102,11 +102,8 @@ function createServer({
           });
         }
         return sendJson(res, 401, { error: 'invalid credentials' });
-      } catch {
-        if (!res.writableEnded) {
-          sendJson(res, 400, { error: 'invalid json' });
-        }
-        return undefined;
+      } catch (error) {
+        return sendJson(res, 400, { error: 'invalid json' });
       }
     }
 
@@ -119,18 +116,18 @@ function createServer({
       }
 
       try {
-        const body = await readJsonBody(req, res);
+        const body = await readJsonBody(req);
+        if (!body) {
+          return sendJson(res, 400, { error: 'request body required' });
+        }
         if (typeof body.title !== 'string' || body.title.trim() === '') {
           return sendJson(res, 400, { error: 'invalid task' });
         }
         const task = { id: tasks.length + 1, title: body.title.trim() };
         tasks.push(task);
         return sendJson(res, 201, { ok: true, task });
-      } catch {
-        if (!res.writableEnded) {
-          sendJson(res, 400, { error: 'invalid json' });
-        }
-        return undefined;
+      } catch (error) {
+        return sendJson(res, 400, { error: 'invalid json' });
       }
     }
 
