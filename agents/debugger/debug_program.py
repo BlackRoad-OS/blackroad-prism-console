@@ -192,7 +192,7 @@ def gather_filesystem_checks(fix_paths: bool) -> List[CheckResult]:
         (REPO_ROOT / "agents" / "debugger" / "index.js", False),
     ]
 
-    return [_check_path(path, create=fix_paths and is_dir) for path, is_dir in required_paths]
+    return [_check_path(path, create=fix_paths and should_create) for path, should_create in required_paths]
 
 
 def gather_python_checks() -> List[CheckResult]:
