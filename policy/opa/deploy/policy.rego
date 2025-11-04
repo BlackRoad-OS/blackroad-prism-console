@@ -23,11 +23,11 @@ deny_reason := r {
 } else := r {
   not checks_pass
   r := sprintf(
-    "quality checks failed (tests=%v, cov=%v/%v, lint=%v, sast=%v)",
+    "quality checks failed (tests=%v, cov=%0.1f%%/%0.1f%%, lint=%v, sast=%v)",
     [
       input.checks.tests,
-      input.checks.coverage,
-      input.checks.coverage_min,
+      input.checks.coverage * 100,
+      input.checks.coverage_min * 100,
       input.checks.lint,
       input.checks.sast,
     ],

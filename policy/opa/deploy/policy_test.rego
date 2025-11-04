@@ -38,29 +38,25 @@ test_deny_untrusted_ci {
 }
 
 test_deny_quality_checks {
-  bad := base
-  bad.checks.tests = "fail"
+  bad := base with base.checks.tests as "fail"
   not authz.allow with input as bad
   startswith(authz.deny_reason with input as bad, "quality checks failed")
 }
 
 test_deny_path_whitelist {
-  bad := base
-  bad.change.paths = ["scripts/hack.sh"]
+  bad := base with base.change.paths as ["scripts/hack.sh"]
   not authz.allow with input as bad
   authz.deny_reason with input as bad == "changed files outside allowed_paths"
 }
 
 test_deny_reviews {
-  bad := base
-  bad.review.approvals = 1
+  bad := base with base.review.approvals as 1
   not authz.allow with input as bad
   authz.deny_reason with input as bad == "insufficient/incorrect approvals"
 }
 
 test_role_presence_required {
-  bad := base
-  bad.review.present = ["owner"]
+  bad := base with base.review.present as ["owner"]
   not authz.allow with input as bad
   authz.deny_reason with input as bad == "insufficient/incorrect approvals"
 }
