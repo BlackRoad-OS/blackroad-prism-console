@@ -25,7 +25,7 @@
 
 ## Decoding Methodology
 1. **Symbol Extraction**: Digitize every glyph, confirm the 150-symbol inventory, and catalog frequencies and positions.
-2. **Frequency Mapping**: Align high-frequency symbols with common letters from Hebrew, Latin, and Hungarian corpora (e.g., ה, א, ו, י, E, T, A).
+2. **Frequency Mapping**: Align high-frequency symbols with common letters from Hebrew, Latin, and Hungarian corpora (e.g., ה (he), א (aleph), ו (vav), י (yod), E, T, A).
 3. **Rotational Caesar Application**: Iterate through the text, resetting the key on SLEEP markers, and shift glyph values by the running `θ`-derived offset.
 4. **Validation**: Scan the decoded output for biblical names, core Hebrew vocabulary, grammatical patterns, and known phrase structures.
 
@@ -37,7 +37,7 @@
 - **Biblical content**: Genesis, Psalms, or prophetic material.
 - **Mathematical or alchemical passages**: Hermetic sequences or esoteric calculations.
 - **Hybrid presentation**: Sacred Hebrew text interleaved with Latin commentary and mathematical annotations.
-- **First target phrase**: Seek patterns matching בראשית ברא אלהים (`Bereshit bara Elohim`).
+- **First target phrase**: Seek patterns matching בראשית ברא אלהים (`Bereishit bara Elohim`).
 
 ## Formula Significance
 - `256` (2⁸) anchors computation and binary structure.
@@ -59,7 +59,7 @@
 - Compare against biblical corpora, perform linguistic and historical reviews, and prepare findings for peer feedback.
 
 ## Alternative Hypotheses
-- Explore alternative rotation parameters (φ ≈ 1.618, π, 7, etc.) and alternate partition baselines (e.g., 240, 220, 273, 300) if 256/1.707 fails to produce coherent text.
+- Explore alternative rotation parameters (φ ≈ 1.618, π, 7, etc.) and alternate partition baselines (e.g., 240, 220, 273, 300) if 256/θ (θ ≈ 1.707) fails to produce coherent text.
 
 ## Philosophical Implications
 - Success could imply pre-modern awareness of information theory, a numerically encoded sacred text, and potential evidence for a computational or simulated reality framework.
