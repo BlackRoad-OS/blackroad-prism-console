@@ -624,13 +624,8 @@ app.post(
     }
     const { username, password } = req.body || {};
     // dev defaults: root / Codex2025 (can be replaced with real auth)
-    if (
-      (username === 'root' && password === 'Codex2025') ||
-      BYPASS_LOGIN
-    ) {
     if ((username === 'root' && password === 'Codex2025') || BYPASS_LOGIN) {
       req.session.user = { username, role: 'dev', plan: 'free' };
-      req.session.user = { username, role: 'dev' };
       return res.json({ ok: true, user: req.session.user });
     }
     return res.status(401).json({ error: 'invalid_credentials' });

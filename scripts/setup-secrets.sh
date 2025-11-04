@@ -21,9 +21,9 @@ if [[ -f "${TARGET_FILE}" ]]; then
     value="${value%%$'\r'*}"
     value="${value#"${value%%[![:space:]]*}"}"
     value="${value%"${value##*[![:space:]]}"}"
-    if [[ ${value} == "*" && ${value} == *" ]]; then
-      value="${value%"}"
-      value="${value#"}"
+    if [[ ${value} == \"*\" && ${value} == *\" ]]; then
+      value="${value%\"}"
+      value="${value#\"}"
     fi
     existing_values["${key}"]="${value}"
   done < <(grep -E '^[A-Za-z0-9_]+=\S*' "${TARGET_FILE}" || true)
