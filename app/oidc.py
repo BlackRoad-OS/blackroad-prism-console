@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import time
+from threading import RLock
 from typing import Any, Dict, Optional
 
 import httpx
@@ -14,11 +15,14 @@ from .config import ConfigHolder
 class _SimpleTTLCache:
     """Minimal TTL cache to avoid optional dependencies."""
 
-    def __init__(self, ttl_seconds: int) -> None:
+    def __init__(self, ttl_seconds: int, maxsize: int = 128) -> None:
         self._ttl = ttl_seconds
+        self._maxsize = maxsize
         self._store: Dict[str, tuple[Dict[str, Any], float]] = {}
+        self._lock = RLock()
 
     def _is_valid(self, key: str) -> bool:
+        """Check if key exists and is not expired. Must be called with lock held."""
         item = self._store.get(key)
         if not item:
             return False
@@ -29,22 +33,31 @@ class _SimpleTTLCache:
         return True
 
     def __contains__(self, key: str) -> bool:
-        return self._is_valid(key)
+        with self._lock:
+            return self._is_valid(key)
 
     def __getitem__(self, key: str) -> Dict[str, Any]:
-        if not self._is_valid(key):
-            raise KeyError(key)
-        value, _ = self._store[key]
-        return value
+        with self._lock:
+            if not self._is_valid(key):
+                raise KeyError(key)
+            value, _ = self._store[key]
+            return value
 
     def __setitem__(self, key: str, value: Dict[str, Any]) -> None:
-        self._store[key] = (value, time.time() + self._ttl)
+        with self._lock:
+            # Enforce maximum size by evicting oldest entry if needed
+            if key not in self._store and len(self._store) >= self._maxsize:
+                # Find and remove the oldest entry
+                oldest_key = min(self._store.items(), key=lambda item: item[1][1])[0]
+                self._store.pop(oldest_key, None)
+            self._store[key] = (value, time.time() + self._ttl)
 
     def clear(self) -> None:
-        self._store.clear()
+        with self._lock:
+            self._store.clear()
 
 
-_jwks_cache = _SimpleTTLCache(ttl_seconds=600)
+_jwks_cache = _SimpleTTLCache(ttl_seconds=600, maxsize=1)
 
 
 def _get_jwks(jwks_url: str) -> Dict[str, Any]:
