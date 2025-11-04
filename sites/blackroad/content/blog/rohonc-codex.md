@@ -30,9 +30,9 @@ A recent manual pass across several folios produced a working catalogue of the g
   - `Δ`, `▽` — upright and inverted triangles (`Δ` often terminates lines)
   - `<`, `>` — acute angles
 - **Circular / oval forms**
-  - `○`, `●`, `◎`, `⊙`, `⊕` — plain, filled, dotted, crossed, and plussed circles
+  - `○`, `●`, `◎`, `⊙`, `⊕` — plain, filled, dotted, crossed, and plus-marked circles
 - **Line-based strokes**
-  - `|`, `—`, `/`, `\`, `~`, `≈` — simple lines, slashes, and single/double wavies
+  - `|`, `—`, `/`, `\`, `~`, `≈` — simple lines, slashes, and single/double wavy lines
 - **Composite ligatures**
   - `⟨`, `⟩`, `⟨⟩`, `∩○`, `⊂Δ` — bracketed and stacked forms
 - **Cross / plus variations**
@@ -81,8 +81,8 @@ Associating the most common Rohonc glyphs with frequent Hebrew or Latin letters 
 
 1. Digitize additional folios to expand the sample set (the manuscript spans 448 pages).
 2. Build a comprehensive glyph inventory (~150 symbols expected) with precise counts.
-3. Compare frequency distributions to candidate alphabets and apply rotational or substitution ciphers (e.g., a Caesar-style rotation with factor 256/150 ≈ 1.7 as hypothesized).
+3. Compare frequency distributions to candidate alphabets and apply rotational or substitution ciphers (e.g., Caesar-style or monoalphabetic shifts) to test for possible mappings.
 4. Test decodings against likely source texts such as Genesis 1:1, Psalm openings, or well-known liturgical phrases.
 5. Iterate on the mapping using repeated glyph clusters and structural markers for feedback.
 
-The working theory frames repeating segments like `∩` ("C"), wavy chains (`~`) as connectors ("STRING"), composite ligatures (`⊂○∩`) as integrators ("ZETA"), and `Δ` as a "SLEEP" or reset marker. Whether this quantum-flavored mnemonic reflects an underlying grammar remains to be proven, but it provides a scaffold for further experimentation.
+
