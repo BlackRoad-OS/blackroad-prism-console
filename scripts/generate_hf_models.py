@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import argparse
-import json
 from pathlib import Path
 from typing import Dict, Iterable, List, Tuple
 
@@ -25,10 +24,8 @@ def _load_agent_configs() -> Iterable[Tuple[Path, Dict[str, object]]]:
 
     for config_path in sorted(CONFIG_DIR.glob("*.yaml")):
         raw_text = config_path.read_text(encoding="utf-8")
-        try:
-            data = json.loads(raw_text)
-        except json.JSONDecodeError:
-            data = yaml.safe_load(raw_text)
+        # YAML parser handles both YAML and JSON (JSON is valid YAML)
+        data = yaml.safe_load(raw_text)
         if not isinstance(data, dict):  # pragma: no cover - defensive
             raise ValueError(f"Agent config must be a mapping: {config_path}")
         yield config_path, data
