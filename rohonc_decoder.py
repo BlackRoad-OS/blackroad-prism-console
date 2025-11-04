@@ -21,7 +21,7 @@ def _make_logger(verbose: bool):
     return _log
 
 class RohoncDecoder:
-    def __init__(self, bible_file='bible_full.txt', numbers_file='bible_numbers.txt', *, verbose=True):
+    def __init__(self, bible_file='bible_full.txt', numbers_file='bible_numbers.txt', *, verbose=False):
         """Initialize decoder with Bible text and numbers"""
         self.verbose = verbose
         self._log = _make_logger(verbose)
