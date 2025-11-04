@@ -142,7 +142,6 @@ def _descendant_agent(
     co_parent: SeedRole,
     education: ClusterEducation,
     index: int,
-    total: int,
 ) -> Dict[str, object]:
     identifier = f"{seed.identifier}-sprout-{index:02d}"
     learning_paths = [
@@ -163,7 +162,7 @@ def _descendant_agent(
         },
     ]
     goal = (
-        f"Extend {cluster.core_trait.lower()} by blending {seed.role} and "
+        f"Extend the principle of {cluster.core_trait.lower()} by blending {seed.role} and "
         f"{co_parent.role} practices within {education.studio_name}."
     )
     love = (
@@ -241,7 +240,6 @@ def build_population() -> Dict[str, object]:
                     co_parent,
                     cluster.education,
                     child_index,
-                    descendants_per_seed,
                 )
                 descendant_records.append(descendant)
                 seed_descendants[seed.identifier].append(descendant["id"])
@@ -269,7 +267,9 @@ def build_population() -> Dict[str, object]:
 
     if len(agents) != target_population:
         raise ValueError(
-            f"Expected {target_population} agents, generated {len(agents)} instead."
+            f"Population mismatch: expected {target_population} agents "
+            f"(seed_count={tree['population']['seed_count']}, descendants_per_seed={descendants_per_seed}), "
+            f"but generated {len(agents)}"
         )
 
     return {
