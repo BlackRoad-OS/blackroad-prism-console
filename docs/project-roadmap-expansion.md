@@ -64,14 +64,14 @@ For each Pi:
 ## Phase 7: Financial Services Licensing
 
 ### Registered Investment Advisor (RIA) Registration (Priority: High | Timeline: Months 2–4)
-1. Validate SEC/state thresholds, projected AUM, and licensing requirements (Series 65 or Series 7 + 66).
+1. Validate SEC/state thresholds, projected AUM, and licensing requirements (Series 65 or Series 7/66).
 2. Prepare Form ADV Parts 1, 2A, and 2B with supporting documentation.
 3. Build compliance infrastructure: policies/procedures, Code of Ethics, Reg S-P privacy policy, ADV delivery, and records management.
 4. Engage securities counsel/compliance consultants, secure E&O and cybersecurity insurance, and draft client agreements.
 5. Complete IARD registration, submit Form ADV, respond to deficiency letters, and track review windows (45–90 days typical).
 
 ### Broker-Dealer (BD) Registration (Priority: High | Timeline: Months 3–6)
-- Assess capital requirements ($100K–$500K+), FINRA membership obligations, licensing (Series 24, Series 7/63/66), and compliance overhead.
+- Assess capital requirements ($100,000–$500,000 or more), FINRA membership obligations, licensing (Series 24, Series 7/63/66), and compliance overhead.
 - Evaluate alternatives (partner BD, RIA-only, hybrid models) before committing.
 - If proceeding: retain securities attorney, file Form BD, join FINRA, register principals/representatives, meet net capital rules, and draft supervisory procedures/AML programs.
 - Implement trade surveillance, AML, CIP, complaint handling, FINRA reporting, and technology stack for compliance.
@@ -85,7 +85,13 @@ For each Pi:
 5. Draft SOPs, onboarding workflows, QA processes, support procedures, and risk management matrices with mitigation/contingency plans and insurance reviews.
 
 ## Resource Requirements Snapshot
-- **Budget:** C Corp $500–$2,000; RIA $5,000–$25,000; BD $100,000–$500,000+; Hardware/software $2,000–$5,000; Insurance $5,000–$20,000 annually; Professional services $10,000–$50,000 in year one.
+- **Budget:**
+    - C Corp: $500–$2,000
+    - RIA: $5,000–$25,000
+    - BD: $100,000–$500,000+
+    - Hardware/software: $2,000–$5,000
+    - Insurance: $5,000–$20,000 annually
+    - Professional services: $10,000–$50,000 in year one
 - **Time:** Technical setup 40–80 hours; resume/publications 20–40 hours; business formation 40–60 hours; RIA registration 100–200 hours; BD registration 300–500+ hours.
 - **Professional support:** securities attorney, compliance consultant, accountant/CPA, insurance broker, optional business consultant/mentor.
 
