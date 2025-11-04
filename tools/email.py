@@ -37,7 +37,11 @@ class EmailConfig:
     @classmethod
     def from_env(cls) -> "EmailConfig":
         host = os.getenv("PRISM_EMAIL_SMTP_HOST")
-        port = int(os.getenv("PRISM_EMAIL_SMTP_PORT", "587"))
+        port_str = os.getenv("PRISM_EMAIL_SMTP_PORT", "587")
+        try:
+            port = int(port_str)
+        except (ValueError, TypeError):
+            raise ValueError("PRISM_EMAIL_SMTP_PORT must be a valid integer")
         username = os.getenv("PRISM_EMAIL_SMTP_USERNAME")
         password = os.getenv("PRISM_EMAIL_SMTP_PASSWORD")
         sender = os.getenv("PRISM_EMAIL_FROM")
@@ -47,8 +51,8 @@ class EmailConfig:
 
 
 def _deliver_via_smtp(message: EmailMessage, config: EmailConfig) -> None:
-    server = smtplib.SMTP(config.host, config.port, timeout=10)
     try:
+        server = smtplib.SMTP(config.host, config.port, timeout=10)
         server.ehlo()
         if config.use_tls:
             server.starttls()
@@ -74,7 +78,7 @@ def send(to: str | Iterable[str], subject: str, body: str) -> None:
     config = EmailConfig.from_env()
     if isinstance(to, str):
         recipients = [to]
-    elif isinstance(to, Iterable):
+    elif isinstance(to, (list, tuple, set)):
         seen: set[str] = set()
         recipients = []
         for address in to:

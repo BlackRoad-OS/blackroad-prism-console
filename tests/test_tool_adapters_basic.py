@@ -65,16 +65,15 @@ def test_web_search_fallback(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) ->
 
 def test_web_search_with_index(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     index = tmp_path / "index.json"
+    search_index_data = [
+        {
+            "title": "Prism Overview",
+            "url": "https://example.com/prism",
+            "snippet": "Prism console overview documentation.",
+        }
+    ]
     index.write_text(
-        json.dumps(
-            [
-                {
-                    "title": "Prism Overview",
-                    "url": "https://example.com/prism",
-                    "snippet": "Prism console overview documentation.",
-                }
-            ]
-        ),
+        json.dumps(search_index_data),
         encoding="utf-8",
     )
     monkeypatch.setenv("PRISM_WEB_SEARCH_INDEX", str(index))

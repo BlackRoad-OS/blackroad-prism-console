@@ -52,6 +52,17 @@ def query(
                 "rows": 0,
             }
         ]
+    
+    if not database_path.is_file():
+        return [
+            {
+                "sql": sql,
+                "result": "invalid-database",
+                "database": str(database_path),
+                "error": "Path exists but is not a file",
+                "rows": 0,
+            }
+        ]
 
     params = tuple(params or ())
 

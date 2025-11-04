@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import json
 import os
-import re
 from dataclasses import dataclass
+from functools import lru_cache
 from pathlib import Path
 from typing import Iterable
 
@@ -39,14 +39,18 @@ class SearchIndex:
         return cls([entry for entry in data if isinstance(entry, dict)])
 
     def search(self, query: str, *, limit: int = 5) -> list[SearchResult]:
-        pattern = re.compile(re.escape(query), re.IGNORECASE)
-        matches = [result for result in self._entries if pattern.search(result.snippet or result.title)]
+        q = query.lower()
+        matches = [
+            result
+            for result in self._entries
+            if q in (result.snippet or result.title).lower()
+        ]
         return matches[:limit]
 
 
-def _load_index() -> SearchIndex:
-    configured = os.getenv("PRISM_WEB_SEARCH_INDEX", "")
-    path = Path(configured) if configured else _DEFAULT_INDEX
+@lru_cache(maxsize=1)
+def _load_index(path_str: str) -> SearchIndex:
+    path = Path(path_str)
     return SearchIndex.load(path.expanduser().resolve())
 
 
@@ -56,7 +60,9 @@ def search(query: str, *, limit: int = 5) -> list[SearchResult]:
     if not query.strip():
         raise ValueError("Query must not be empty")
 
-    index = _load_index()
+    configured = os.getenv("PRISM_WEB_SEARCH_INDEX", "")
+    path_str = configured if configured else str(_DEFAULT_INDEX)
+    index = _load_index(path_str)
     results = index.search(query, limit=limit)
     if results:
         return results
