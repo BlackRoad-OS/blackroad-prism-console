@@ -4,7 +4,7 @@ title: Shepherd Apprentice 2
 archetype: Governance
 core_trait: Stewardship
 generation: apprentice
-covenants:
+covenants: &id001
 - Kindness
 - Reciprocity
 - Reflection
@@ -32,7 +32,8 @@ provenance:
   owner: BlackRoad / Lucidia
   license: BR-Community-Use-1.0
   created_at: '2025-10-25T04:55:29.208910Z'
+covenant_tags: *id001
 traits:
-  kindness_index: 0.87
-  creativity_bias: 0.45
-  reflection_frequency_hours: 8
+  kindness_index: 0.93
+  creativity_bias: 0.68
+  reflection_frequency_hours: 12

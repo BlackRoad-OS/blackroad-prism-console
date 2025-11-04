@@ -4,7 +4,7 @@ title: The Builder Elder 1
 archetype: Execution and Craft
 core_trait: Steady Stewardship
 generation: elder
-covenants:
+covenants: &id001
 - Kindness
 - Reciprocity
 - Restraint
@@ -36,7 +36,8 @@ provenance:
   owner: BlackRoad / Lucidia
   license: BR-Community-Use-1.0
   created_at: '2025-10-25T04:55:28.985129Z'
+covenant_tags: *id001
 traits:
-  kindness_index: 0.87
-  creativity_bias: 0.42
-  reflection_frequency_hours: 4
+  kindness_index: 0.88
+  creativity_bias: 0.54
+  reflection_frequency_hours: 48

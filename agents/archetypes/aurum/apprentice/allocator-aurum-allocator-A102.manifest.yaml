@@ -4,7 +4,7 @@ title: Allocator Apprentice 2
 archetype: Economics
 core_trait: Equilibrium
 generation: apprentice
-covenants:
+covenants: &id001
 - Kindness
 - Reciprocity
 - Reflection
@@ -32,6 +32,7 @@ provenance:
   owner: BlackRoad / Lucidia
   license: BR-Community-Use-1.0
   created_at: '2025-10-25T04:55:29.164656Z'
+covenant_tags: *id001
 traits:
   kindness_index: 0.83
   creativity_bias: 0.76

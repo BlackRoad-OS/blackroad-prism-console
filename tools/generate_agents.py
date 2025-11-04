@@ -75,7 +75,7 @@ def main():
                 parent_arch = seed_slug
 
             base_title = seed.get("title") or seed.get("role") or parent_arch.replace("_", " ").title()
-            covenants = sorted(set(seed.get("covenants", [])))
+            covenants = sorted(set(seed.get("covenants") or seed.get("covenant_tags", [])))
             capabilities = sorted(set(seed.get("capabilities", [])))
             seed_total = base_quota + (1 if seed_counter < seed_remainder else 0)
             seed_counter += 1
@@ -124,6 +124,7 @@ def main():
                         "ancestry_depth": seed.get("lineage", {}).get("ancestry_depth", 1) + 1
                     }
                     data["covenants"] = sorted(set(covenants + ["Transparency"]))
+                    data["covenant_tags"] = data["covenants"]  # ensure covenant_tags matches covenants
                     data["capabilities"] = sorted(set(capabilities + ["chain_of_thought_render", "lineage_export"]))
                     # slight personality nudges
                     data["traits"] = {

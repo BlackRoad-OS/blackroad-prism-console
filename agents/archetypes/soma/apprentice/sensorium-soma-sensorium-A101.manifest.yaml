@@ -4,7 +4,7 @@ title: The Sensorium Apprentice 1
 archetype: Perception and Feedback
 core_trait: Embodied Awareness
 generation: apprentice
-covenants:
+covenants: &id001
 - Continuity
 - Reflection
 - Transparency
@@ -34,7 +34,8 @@ provenance:
   owner: BlackRoad / Lucidia
   license: BR-Community-Use-1.0
   created_at: '2025-10-25T04:55:29.101875Z'
+covenant_tags: *id001
 traits:
-  kindness_index: 0.83
-  creativity_bias: 0.42
-  reflection_frequency_hours: 4
+  kindness_index: 0.84
+  creativity_bias: 0.56
+  reflection_frequency_hours: 48

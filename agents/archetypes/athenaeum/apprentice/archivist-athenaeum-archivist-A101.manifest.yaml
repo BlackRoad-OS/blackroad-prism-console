@@ -4,7 +4,7 @@ title: Archivist Apprentice 1
 archetype: Knowledge
 core_trait: Reflective Clarity
 generation: apprentice
-covenants:
+covenants: &id001
 - Kindness
 - Reciprocity
 - Reflection
@@ -32,7 +32,8 @@ provenance:
   owner: BlackRoad / Lucidia
   license: BR-Community-Use-1.0
   created_at: '2025-10-25T04:55:28.929961Z'
+covenant_tags: *id001
 traits:
-  kindness_index: 0.86
-  creativity_bias: 0.45
-  reflection_frequency_hours: 12
+  kindness_index: 0.89
+  creativity_bias: 0.82
+  reflection_frequency_hours: 48

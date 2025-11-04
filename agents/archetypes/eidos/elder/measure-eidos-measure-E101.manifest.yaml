@@ -4,7 +4,7 @@ title: Measure Elder 1
 archetype: Mathematics
 core_trait: Abstract Perception
 generation: elder
-covenants:
+covenants: &id001
 - Kindness
 - Reciprocity
 - Reflection
@@ -33,7 +33,8 @@ provenance:
   owner: BlackRoad / Lucidia
   license: BR-Community-Use-1.0
   created_at: '2025-10-25T04:55:29.073401Z'
+covenant_tags: *id001
 traits:
-  kindness_index: 0.86
-  creativity_bias: 0.77
-  reflection_frequency_hours: 4
+  kindness_index: 0.83
+  creativity_bias: 0.76
+  reflection_frequency_hours: 8

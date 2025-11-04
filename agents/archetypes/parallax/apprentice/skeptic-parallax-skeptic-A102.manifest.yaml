@@ -4,7 +4,7 @@ title: Skeptic Apprentice 2
 archetype: Exploration
 core_trait: Divergent Insight
 generation: apprentice
-covenants:
+covenants: &id001
 - Kindness
 - Reciprocity
 - Reflection
@@ -32,6 +32,7 @@ provenance:
   owner: BlackRoad / Lucidia
   license: BR-Community-Use-1.0
   created_at: '2025-10-25T04:55:29.202058Z'
+covenant_tags: *id001
 traits:
   kindness_index: 0.93
   creativity_bias: 0.55
