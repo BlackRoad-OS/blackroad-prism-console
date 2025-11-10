@@ -1,5 +1,14 @@
 import { useEffect, useState } from "react";
 
+/**
+ * A reflection component that displays prompts with text areas for answers.
+ * Answers are persisted in localStorage for later retrieval.
+ * @param {Object} props - Component props
+ * @param {string} props.title - Title for the reflection section
+ * @param {string} props.storageKey - localStorage key for persisting answers
+ * @param {Array<string>} props.prompts - Array of prompt questions to display
+ * @returns {JSX.Element} The active reflection component
+ */
 export default function ActiveReflection({ title, storageKey, prompts }) {
   const [answers, setAnswers] = useState(() => {
     if (typeof window !== "undefined") {
