@@ -119,6 +119,12 @@ module.exports = function attachJobs({ app }){
 
   async function runSingle(job_id, child){
     let lastPct = 0;
+    child.on('error', async err=>{
+      await appendEvent(job_id, 'log', `\n[error] spawn failed: ${String(err)}\n`);
+      await updateJob(job_id, { status:'error', finished_at: now() });
+      PROCS.delete(job_id);
+      await led({type:'led.emotion', emotion:'error', ttl_s:20});
+    });
     child.stdout.on('data', async (buf)=>{
       const s = buf.toString();
       await appendEvent(job_id, 'log', s);
@@ -246,9 +252,27 @@ module.exports = function attachJobs({ app }){
       cmd = '/bin/bash'; args = ['-lc', body.script];
     }
 
-    await run(d, `INSERT INTO jobs (job_id,project_id,kind,cmd,args_json,env_json,status,progress,started_at,pid)
-                  VALUES (?,?,?,?,?,?,?, ?,?, NULL)`,
-              [id, project, kind, (cmd||''), JSON.stringify(args), JSON.stringify(env), 'running', 0, now()]);
+    if (kind!=='pipeline' && !cmd){
+      throw new Error('missing command for job');
+    }
+
+    let child = null;
+    try {
+      if (kind !== 'pipeline'){
+        child = spawnTracked(id, cmd, args, { cwd, env: { ...process.env, ...env }, shell:false });
+      }
+
+      await run(d, `INSERT INTO jobs (job_id,project_id,kind,cmd,args_json,env_json,status,progress,started_at,pid)
+                    VALUES (?,?,?,?,?,?,?,?,?,?)`,
+                [id, project, kind, (cmd||''), JSON.stringify(args), JSON.stringify(env), 'running', 0, now(), child ? child.pid : null]);
+    } catch (err){
+      const proc = PROCS.get(id);
+      if (proc && proc.pgid){
+        try { process.kill(-proc.pgid, 'SIGTERM'); } catch {}
+        PROCS.delete(id);
+      }
+      throw err;
+    }
 
     await appendEvent(id, 'state', {status:'running', project, kind});
     await led({type:'led.progress', pct:5, ttl_s:180});
@@ -260,8 +284,6 @@ module.exports = function attachJobs({ app }){
         await led({type:'led.emotion', emotion:'error', ttl_s:20});
       });
     } else {
-      const child = spawnTracked(id, cmd, args, { cwd, env: { ...process.env, ...env }, shell:false });
-      await run(d, `UPDATE jobs SET pid=? WHERE job_id=?`, [child.pid, id]);
       runSingle(id, child); // handles close & LEDs
     }
     return id;
