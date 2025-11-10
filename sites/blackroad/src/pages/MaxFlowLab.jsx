@@ -1,6 +1,13 @@
 import { useEffect, useMemo, useRef, useState, forwardRef } from "react";
 import ActiveReflection from "./ActiveReflection.jsx";
 
+/**
+ * Breadth-first search to find an augmenting path in the residual graph.
+ * @param {Array<Array<number>>} res - Residual capacity matrix
+ * @param {number} s - Source node index
+ * @param {number} t - Sink node index
+ * @returns {{par: Array<number>, flow: number}} Parent array for path reconstruction and bottleneck flow
+ */
 function bfs(res, s, t){
   const n=res.length, q=[s], par=Array(n).fill(-1); par[s]=-2;
   const cap=Array(n).fill(0); cap[s]=Infinity;
@@ -16,6 +23,14 @@ function bfs(res, s, t){
   }
   return {par, flow:0};
 }
+/**
+ * Computes maximum flow using the Edmonds-Karp algorithm.
+ * Also identifies the minimum cut by finding reachable nodes in the residual graph.
+ * @param {Array<Array<number>>} C - Capacity matrix
+ * @param {number} s - Source node index
+ * @param {number} t - Sink node index
+ * @returns {{flow: number, cutLeft: Array<boolean>, cutRight: Array<boolean>, paths: Array<Object>}} Max flow value, cut partitions, and augmenting paths
+ */
 function edmondsKarp(C, s, t){
   const n=C.length, R=C.map(r=>r.slice());
   let flow=0, paths=[];
@@ -32,6 +47,11 @@ function edmondsKarp(C, s, t){
   return {flow, cutLeft, cutRight, paths};
 }
 
+/**
+ * Interactive lab for visualizing max-flow/min-cut with Edmonds-Karp algorithm.
+ * Supports node dragging, edge capacity editing, and step-by-step augmenting path visualization.
+ * @returns {JSX.Element} The max-flow lab component
+ */
 export default function MaxFlowLab(){
   const [nodes,setNodes]=useState([
     {x:100,y:200,label:"s"},
@@ -133,6 +153,18 @@ export default function MaxFlowLab(){
   );
 }
 
+/**
+ * Renders the flow network graph with nodes, directed edges, and min-cut visualization.
+ * @param {Object} props - Component props
+ * @param {Array<Object>} props.nodes - Array of node objects with x, y, label
+ * @param {Array<[number, number, number]>} props.edges - Array of edges [source, target, capacity]
+ * @param {Array<Array<number>>} props.C - Capacity matrix
+ * @param {Object} [props.result] - Max-flow computation result
+ * @param {number} [props.lastAug] - Index of currently highlighted augmenting path
+ * @param {function(number, number): void} props.onEdgeClick - Callback when edge label is clicked
+ * @param {React.Ref} ref - Forwarded ref to the SVG element
+ * @returns {JSX.Element} The graph visualization component
+ */
 const Graph = forwardRef(function Graph({nodes, edges, C, result, lastAug, onEdgeClick}, ref){
   const W=800,H=400, pad=20;
   const augEdges = useMemo(()=>{
@@ -180,6 +212,12 @@ const Graph = forwardRef(function Graph({nodes, edges, C, result, lastAug, onEdg
   );
 });
 
+/**
+ * Converts client mouse coordinates to SVG coordinate space.
+ * @param {MouseEvent} e - Mouse event
+ * @param {SVGElement} svg - SVG element
+ * @returns {{x: number, y: number}} Coordinates in SVG space
+ */
 function clientToSvg(e, svg){
   const pt = svg.createSVGPoint(); pt.x=e.clientX; pt.y=e.clientY;
   const screenCTM = svg.getScreenCTM(); const inv=screenCTM.inverse();

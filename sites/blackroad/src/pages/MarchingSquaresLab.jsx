@@ -1,6 +1,13 @@
 import { useMemo, useRef, useEffect, useState } from "react";
 import ActiveReflection from "./ActiveReflection.jsx";
 
+/**
+ * Implicit function definitions for various 2D curves.
+ * @param {string} kind - Curve type: "circle", "heart", "lemni", or "rose"
+ * @param {number} x - X coordinate
+ * @param {number} y - Y coordinate
+ * @returns {number} Function value (negative inside, positive outside)
+ */
 function F(kind, x, y){
   if(kind==="circle") return x*x + y*y - 1;
   if(kind==="heart")  return (x*x + y*y - 1)**3 - x*x*y*y*y;
@@ -9,6 +16,14 @@ function F(kind, x, y){
   return x*x + y*y - 1;
 }
 
+/**
+ * Marching squares algorithm for extracting iso-contours from implicit functions.
+ * Tessellates the domain into a grid and computes line segments approximating the level set.
+ * @param {string} kind - Curve type to evaluate
+ * @param {number} N - Grid resolution (N×N cells)
+ * @param {number} [iso=0] - Iso-value to extract
+ * @returns {Array<Array<[number, number]>>} Array of line segments (each segment is [pointA, pointB])
+ */
 function marching(kind, N, iso=0){
   // grid in [-1.5,1.5]^2
   const L=1.5; const h=2*L/N;
@@ -46,6 +61,11 @@ function marching(kind, N, iso=0){
   return lines;
 }
 
+/**
+ * Interactive lab demonstrating the marching squares algorithm for implicit curves.
+ * Users can select different curve types and adjust grid resolution.
+ * @returns {JSX.Element} The marching squares lab component
+ */
 export default function MarchingSquaresLab(){
   const [kind,setKind]=useState("heart");
   const [N,setN]=useState(64);
@@ -83,12 +103,32 @@ export default function MarchingSquaresLab(){
     </div>
   );
 }
+/**
+ * Renders a labeled range slider control.
+ * @param {Object} props - Component props
+ * @param {string} props.label - Label text for the slider
+ * @param {number} props.v - Current value
+ * @param {function(number): void} props.set - Callback to update value
+ * @param {number} props.min - Minimum value
+ * @param {number} props.max - Maximum value
+ * @param {number} props.step - Step increment
+ * @returns {JSX.Element} The slider component
+ */
 function Slider({label,v,set,min,max,step}){
   const show=(typeof v==='number'&&v.toFixed)?v.toFixed(0):v;
   return (<div className="mb-2"><label className="text-sm opacity-80">{label}: <b>{show}</b></label>
   <input className="w-full" type="range" min={min} max={max} step={step}
     value={v} onChange={e=>set(parseFloat(e.target.value))}/></div>);
 }
+/**
+ * Renders a radio button group for selecting options.
+ * @param {Object} props - Component props
+ * @param {string} props.name - Name attribute for radio group
+ * @param {string} props.value - Currently selected value
+ * @param {function(string): void} props.set - Callback to update selection
+ * @param {Array<[string, string]>} props.opts - Array of [value, label] pairs
+ * @returns {JSX.Element} The radio group component
+ */
 function Radio({name,value,set,opts}){
   return (<div className="flex gap-3 text-sm">
     {opts.map(([val,lab])=><label key={val} className="flex items-center gap-1">

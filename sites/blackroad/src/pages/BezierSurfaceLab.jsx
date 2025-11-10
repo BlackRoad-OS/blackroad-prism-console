@@ -1,6 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import ActiveReflection from "./ActiveReflection.jsx";
 
+/**
+ * Evaluates the i-th cubic Bernstein basis polynomial at parameter t.
+ * @param {number} i - Basis function index (0-3)
+ * @param {number} t - Parameter value in [0,1]
+ * @returns {number} Basis function value
+ */
 function B(i,t){ // cubic Bernstein
   if(i===0) return (1-t)**3;
   if(i===1) return 3*t*(1-t)**2;
@@ -8,10 +14,22 @@ function B(i,t){ // cubic Bernstein
   if(i===3) return t**3;
   return 0;
 }
+/**
+ * Evaluates a bicubic Bézier surface at parameters (u, v).
+ * @param {Array<Array<number>>} P - 4x4 control net (height values)
+ * @param {number} u - First parameter in [0,1]
+ * @param {number} v - Second parameter in [0,1]
+ * @returns {number} Surface height at (u, v)
+ */
 function evalSurface(P, u, v){
   let z=0; for(let i=0;i<4;i++) for(let j=0;j<4;j++) z += P[i][j]*B(i,u)*B(j,v); return z;
 }
 
+/**
+ * Interactive lab for exploring bicubic Bézier surfaces.
+ * Users can drag control points to modify the surface shape in real-time.
+ * @returns {JSX.Element} The Bézier surface lab component
+ */
 export default function BezierSurfaceLab(){
   const [P,setP]=useState(()=>{
     const base=[ [0,0,0,0],[0,0.4,0.4,0],[0,0.4,0.4,0],[0,0,0,0] ];
@@ -86,5 +104,11 @@ export default function BezierSurfaceLab(){
     </div>
   );
 }
+/**
+ * Converts client mouse coordinates to SVG coordinate space.
+ * @param {MouseEvent} e - Mouse event
+ * @param {SVGElement} svg - SVG element
+ * @returns {{x: number, y: number}} Coordinates in SVG space
+ */
 function clientToSvg(e,svg){ const pt=svg.createSVGPoint(); pt.x=e.clientX; pt.y=e.clientY; const inv=svg.getScreenCTM().inverse(); const p=pt.matrixTransform(inv); return {x:p.x,y:p.y}; }
 

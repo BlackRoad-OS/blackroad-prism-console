@@ -1,9 +1,28 @@
 import { useMemo, useState } from "react";
 import ActiveReflection from "./ActiveReflection.jsx";
 
+/**
+ * Creates a linear congruential generator for pseudo-random numbers.
+ * @param {number} seed - Initial seed value for the random number generator
+ * @returns {function(): number} Function that returns pseudo-random number in [0,1)
+ */
 function rng(seed){ let s=seed|0||2025; return ()=> (s=(1664525*s+1013904223)>>>0)/2**32; }
+
+/**
+ * Generates a standard normal (Gaussian) random variable using Box-Muller transform.
+ * @param {function(): number} r - Random number generator function
+ * @returns {number} Random value from standard normal distribution
+ */
 function randn(r){ const u=Math.max(r(),1e-12), v=Math.max(r(),1e-12); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
 
+/**
+ * Generates synthetic clustering data with k groups of normally distributed points.
+ * @param {number} n - Total number of points to generate
+ * @param {number} k - Number of clusters
+ * @param {number} sep - Separation scale between cluster centers
+ * @param {number} seed - Random seed for reproducibility
+ * @returns {Array<[number, number]>} Array of 2D points
+ */
 function makeData(n, k, sep, seed){
   const r=rng(seed);
   const centers = Array.from({length:k},()=>[sep*(r()-0.5), sep*(r()-0.5)]);
@@ -14,6 +33,13 @@ function makeData(n, k, sep, seed){
   }
   return pts;
 }
+/**
+ * Performs k-means clustering on 2D points.
+ * @param {Array<[number, number]>} X - Array of 2D points
+ * @param {number} k - Number of clusters
+ * @param {number} [iters=50] - Maximum number of iterations
+ * @returns {{labels: Array<number>, centers: Array<[number, number]>}} Cluster assignments and centroids
+ */
 function kmeans(X, k, iters=50){
   const n=X.length; const idx=Array(n).fill(0);
   let C=X.slice(0,k).map(p=>p.slice());
@@ -30,6 +56,14 @@ function kmeans(X, k, iters=50){
   }
   return {labels:idx, centers:C};
 }
+/**
+ * Performs spectral clustering using normalized graph Laplacian.
+ * Constructs an affinity graph via RBF kernel, then embeds points in eigenspace and clusters.
+ * @param {Array<[number, number]>} X - Array of 2D points
+ * @param {number} k - Number of clusters
+ * @param {number} [sigma=0.8] - Bandwidth parameter for RBF kernel
+ * @returns {Array<number>} Cluster labels for each point
+ */
 function spectral(X, k, sigma=0.8){
   const n=X.length;
   const W=Array.from({length:n},()=>Array(n).fill(0));
@@ -60,6 +94,11 @@ function spectral(X, k, sigma=0.8){
   return kmeans(F, k, 50).labels;
 }
 
+/**
+ * Interactive lab comparing K-Means and Spectral clustering algorithms.
+ * Allows users to adjust parameters and observe clustering behavior on synthetic data.
+ * @returns {JSX.Element} The clustering comparison lab component
+ */
 export default function ClusteringCompareLab(){
   const [n,setN]=useState(300);
   const [k,setK]=useState(3);
@@ -101,6 +140,15 @@ export default function ClusteringCompareLab(){
   );
 }
 
+/**
+ * Renders a scatter plot visualization of clustered points.
+ * @param {Object} props - Component props
+ * @param {string} props.title - Title for the scatter plot
+ * @param {Array<[number, number]>} props.pts - Array of 2D points
+ * @param {Array<number>} [props.labels] - Cluster labels for each point
+ * @param {Array<[number, number]>} [props.centers] - Cluster centroids to display
+ * @returns {JSX.Element} The scatter plot component
+ */
 function Scatter({title, pts, labels, centers}){
   const W=640,H=360,pad=20;
   const xs=pts.map(p=>p[0]), ys=pts.map(p=>p[1]);
@@ -163,6 +211,17 @@ function Scatter({title, pts, labels, centers}){
     </section>
   );
 }
+/**
+ * Renders a labeled range slider control.
+ * @param {Object} props - Component props
+ * @param {string} props.label - Label text for the slider
+ * @param {number} props.v - Current value
+ * @param {function(number): void} props.set - Callback to update value
+ * @param {number} props.min - Minimum value
+ * @param {number} props.max - Maximum value
+ * @param {number} props.step - Step increment
+ * @returns {JSX.Element} The slider component
+ */
 function Slider({label,v,set,min,max,step}){
   let digits=2;
   if(typeof step==='number'){
