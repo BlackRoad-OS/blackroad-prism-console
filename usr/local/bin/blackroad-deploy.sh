@@ -16,7 +16,9 @@ set -Eeuo pipefail
 ### ──────────────────────────────
 ### Tunables (override via env)
 ### ──────────────────────────────
-# Path to repo on the working-copy host (or local path if WORKING_COPY_SSH=local)
+# Path to repo on the working-copy host (or local path if WORKING_COPY_SSH=local).
+# When running locally, bash does not expand the leading tilde inside the
+# parameter expansion above, so we do it explicitly to honor ~/ paths.
 WORKING_COPY_PATH="${WORKING_COPY_PATH:-~/blackroad-api}"
 if [[ "$WORKING_COPY_SSH" == "local" ]]; then
   WORKING_COPY_PATH="${WORKING_COPY_PATH/#\~/$HOME}"
