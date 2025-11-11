@@ -11,7 +11,7 @@
     "seed": "node scripts/seed_admin.js",
     "prepare": "husky",
     "lint": "npm run lint:repo",
-    "lint:api": "eslint tests/api_health.test.js tests/git_api.test.js",
+    "lint:api": "eslint srv/blackroad-api tests/api_health.test.js tests/git_api.test.js",
     "lint:repo": "eslint . --ext .js,.jsx,.mjs,.cjs || true",
     "format": "prettier -w .",
     "format:check": "prettier package.json tests/api_health.test.js srv/lucidia-llm/test_app.py var/www/blackroad/.prettierrc.json .prettierrc.json RUNME.sh Makefile .github/workflows/ci.yml CLEANUP_PLAN.md CLEANUP_DECISIONS.md CLEANUP_RESULTS.md ROLLBACK.md CHANGELOG.md --check --ignore-unknown",
