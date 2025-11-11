@@ -1,8 +1,9 @@
 import os
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routes import router
+from services.lucidia_api.app.routes import router
 
 
 def create_app() -> FastAPI:

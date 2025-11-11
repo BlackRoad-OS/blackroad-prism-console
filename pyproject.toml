@@ -7,9 +7,11 @@ profile = "black"
 
 [tool.ruff]
 line-length = 100
+
+[tool.ruff.lint]
 extend-select = ["I"]
 
 [tool.pytest.ini_options]
-pythonpath = ["."]
-extend-select = ["I"]  # import sort
+pythonpath = [".", "packages/lucidia_reason"]
+addopts = "--ignore=srv/blackroad/examples --import-mode=importlib"
 

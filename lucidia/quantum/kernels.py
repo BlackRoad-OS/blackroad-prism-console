@@ -6,7 +6,11 @@ from typing import Any, Optional
 
 import numpy as np
 from qiskit_machine_learning.algorithms import PegasosQSVC
-from qiskit_machine_learning.kernels import QuantumKernel
+
+try:  # qiskit-machine-learning < 0.7
+    from qiskit_machine_learning.kernels import QuantumKernel
+except ImportError:  # pragma: no cover - compatibility path
+    from qiskit_machine_learning.kernels import FidelityQuantumKernel as QuantumKernel
 
 from .backends import AerCPUBackend, QuantumBackend
 

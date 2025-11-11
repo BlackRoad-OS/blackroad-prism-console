@@ -7,7 +7,11 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 
 from .deps import get_redis
-from redis.asyncio import Redis
+
+try:  # Optional dependency for embeddings
+    from redis.asyncio import Redis
+except ImportError:  # pragma: no cover - optional dependency
+    from typing import Any as Redis  # type: ignore[assignment]
 
 router = APIRouter()
 

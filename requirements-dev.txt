@@ -4,3 +4,5 @@ libcst
 pre-commit
 pytest
 ruff==0.12.11
+httpx<0.28
+pytest-asyncio
