@@ -3,7 +3,7 @@ module github.com/blackroad-prism-console/harness
 go 1.21
 
 require (
-	github.com/google/cel-go v0.17.6
+	github.com/google/cel-go v0.17.7
 	google.golang.org/genproto/googleapis/api v0.0.0-20230525234035-dd9d682886f9
 	gopkg.in/yaml.v3 v3.0.1
 )
