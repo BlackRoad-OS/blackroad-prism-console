@@ -3,7 +3,7 @@ from unittest.mock import patch
 
 import pytest
 
-from tools.llm import _openai_chat
+from tools.llm import _openai_chat, _openai_chat_messages
 
 
 class DummyResponse:
@@ -20,6 +20,21 @@ def test_valid_base(mock_post):
     if "OPENAI_BASE" in os.environ:
         del os.environ["OPENAI_BASE"]
     assert _openai_chat("hi") == "ok"
+
+
+@patch("requests.post", return_value=DummyResponse())
+def test_valid_messages(mock_post):
+    os.environ["OPENAI_API_KEY"] = "test-key"
+    if "OPENAI_BASE" in os.environ:
+        del os.environ["OPENAI_BASE"]
+    assert _openai_chat_messages([{"role": "user", "content": "hi"}]) == "ok"
+
+
+@patch("requests.post", return_value=DummyResponse())
+def test_invalid_messages(mock_post):
+    os.environ["OPENAI_API_KEY"] = "test-key"
+    with pytest.raises(ValueError):
+        _openai_chat_messages([])
 
 
 @patch("requests.post", return_value=DummyResponse())

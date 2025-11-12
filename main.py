@@ -8,18 +8,17 @@ import matplotlib.pyplot as plt
 import numpy as np
 import streamlit as st
 import whisper
-from openai import OpenAI
 from streamlit.runtime.uploaded_file_manager import UploadedFile
 
 from prism_utils import parse_numeric_prefix
+from tools.llm import _openai_chat_messages
 
 st.set_page_config(layout="wide")
 st.title("BlackRoad Prism Generator with GPT + Voice Console")
 
-# Configure OpenAI client
+# Configure OpenAI
 _api_key = os.getenv("OPENAI_API_KEY")
-client = OpenAI(api_key=_api_key) if _api_key else None
-if client is None:
+if not _api_key:
     st.warning("OpenAI API key not set. Set OPENAI_API_KEY to enable responses.")
 
 
@@ -69,17 +68,20 @@ else:
     user_input = st.text_input("Or type here")
 
 if user_input:
-    if not client:
+    if not _api_key:
         st.error("OpenAI API key not set.")
     else:
         st.session_state.chat_history.append({"role": "user", "content": user_input})
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=st.session_state.chat_history,
-        )
-        assistant_reply = response.choices[0].message.content
-        st.session_state.chat_history.append({"role": "assistant", "content": assistant_reply})
-        st.markdown(f"**Venture Console AI:** {assistant_reply}")
+        try:
+            assistant_reply = _openai_chat_messages(
+                st.session_state.chat_history,
+                model="gpt-4o-mini",
+            )
+        except Exception as exc:  # pragma: no cover - UI feedback path
+            st.error(f"Failed to contact OpenAI: {exc}")
+        else:
+            st.session_state.chat_history.append({"role": "assistant", "content": assistant_reply})
+            st.markdown(f"**Venture Console AI:** {assistant_reply}")
 
         magnitude = parse_numeric_prefix(user_input)
         fig = plt.figure(figsize=(6, 4))
