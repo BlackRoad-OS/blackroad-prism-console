@@ -25,6 +25,7 @@ def test_chat_stub():
         [{"generated_text": "hello world"}],
         [{"text": "hello world"}],
         ["hello world"],
+        [type("Obj", (), {"generated_text": "hello world"})()],
     ),
 )
 def test_chat_with_pipe(monkeypatch: pytest.MonkeyPatch, payload):

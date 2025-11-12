@@ -64,6 +64,8 @@ def chat(req: ChatReq):
         first = result[0]
         if isinstance(first, dict):
             content = first.get("generated_text") or first.get("text") or ""
+        elif hasattr(first, "generated_text") or hasattr(first, "text"):
+            content = getattr(first, "generated_text", None) or getattr(first, "text", "")
         else:  # pragma: no cover - transformers may change return type in future
             content = str(first)
         if not content:
