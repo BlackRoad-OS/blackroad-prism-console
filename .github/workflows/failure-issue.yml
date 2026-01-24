@@ -2,7 +2,7 @@ name: CI Failure Tracker
 
 on:
   workflow_run:
-    workflows: ["CORE CI"]
+    workflows: ["CORE CI", ".github/workflows/core-ci.yml"]
     types: [completed]
 
 jobs:
