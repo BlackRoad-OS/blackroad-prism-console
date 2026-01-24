@@ -1,0 +1,17 @@
+{
+  "name": "@prism/superposition",
+  "version": "0.1.0",
+  "description": "BlackRoad / Amundson superposition framework for quantum-inspired agent beliefs",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "keywords": [
+    "quantum",
+    "superposition",
+    "agent",
+    "beliefs",
+    "blackroad",
+    "amundson"
+  ],
+  "author": "BlackBox Programming",
+  "license": "MIT"
+}
