@@ -78,12 +78,8 @@ export default function Page() {
         {items.length === 0 && (
           <div className="text-neutral-500">
             Try: <code>files.search RoadCoin</code> or say{' '}
-<<<            <em>chit chat lucidia</em>.
->>>>>>>+main
-====
-               <em>chit chat asteria</em>.
->>>>>>>+origin/codex/fl
-       </div>
+            <em>chit chat lucidia</em>.
+          </div>
         )}
       </div>
       <div className="flex gap-2">

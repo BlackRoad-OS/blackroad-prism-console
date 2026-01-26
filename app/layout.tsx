@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
-import DebugConsole from '@/components/debug/DebugConsole';
+import { SpeedInsights } from '@vercel/speed-insights/next';
+import DebugConsole from './components/debug/DebugConsole';
 
 export const metadata = {
   title: 'BlackRoad Console',
@@ -12,6 +13,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body>
         {children}
         <DebugConsole />
+        <SpeedInsights />
       </body>
     </html>
   );
