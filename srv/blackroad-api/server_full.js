@@ -70,25 +70,7 @@ function loadEnvFile() {
 
 loadEnvFile();
 
-// --- Configuration
-
-const PORT = parseInt(process.env.PORT || '4000', 10);
-const SESSION_SECRET = process.env.SESSION_SECRET || 'dev-secret-change-me';
-const DEFAULT_DB_PATH =
-  process.env.NODE_ENV === 'test'
-    ? ':memory:'
-    : '/srv/blackroad-api/blackroad.db';
-const DB_PATH = process.env.DB_PATH || DEFAULT_DB_PATH;
-const LLM_URL = process.env.LLM_URL || 'http://127.0.0.1:8000/chat';
-const ALLOW_SHELL =
-  String(process.env.ALLOW_SHELL || 'false').toLowerCase() === 'true';
-const WEB_ROOT = process.env.WEB_ROOT || '/var/www/blackroad';
-const BILLING_DISABLE =
-  String(process.env.BILLING_DISABLE || 'false').toLowerCase() === 'true';
-// const INTERNAL_TOKEN = process.env.INTERNAL_TOKEN || 'change-me';  // unused
-const STRIPE_SECRET = process.env.STRIPE_SECRET || '';
-const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || '';
-const stripeClient = STRIPE_SECRET ? new Stripe(STRIPE_SECRET) : null;
+// --- Configuration (loaded via resolvedEnv below)
 
 const disableDbFlag = String(
   process.env.BR_TEST_DISABLE_DB || process.env.BRC_DISABLE_NATIVE_DB || ''
@@ -125,10 +107,6 @@ function createMockDb() {
 }
 
 const usingMockDb = !Database;
-const TABLES = ['projects', 'agents', 'datasets', 'models', 'integrations'];
-const ALLOW_ORIGINS = process.env.ALLOW_ORIGINS
-  ? process.env.ALLOW_ORIGINS.split(',').map((s) => s.trim())
-  : [];
 
 // Validate required environment variables
 const REQUIRED_ENV = ['SESSION_SECRET', 'INTERNAL_TOKEN'];
@@ -144,8 +122,6 @@ if (missingEnv.length) {
 }
 
 const verify = require('./lib/verify');
-const notify = require('./lib/notify');
-const logger = require('./lib/log');
 const git = require('./lib/git');
 const deploy = require('./lib/deploy');
 const { fetchWithProbe } = require('./lib/fetch_probe');
@@ -153,9 +129,6 @@ const { db, DB_PATH: libraryDbPath } = require('./lib/db');
 const { TernaryError } = require('./lib/ternaryError');
 const attachDebugProbes = require('./modules/debug_probes');
 const maintenanceGuard = require('./modules/maintenanceGuard');
-const attachLlmRoutes = require('./routes/admin_llm');
-const gitRouter = require('./routes/git');
-const providersRouter = require('./routes/providers');
 const attachSlackExceptions = require('./modules/slack_exceptions');
 const contradictionRoutes = require('./routes/contradictions');
 const { contradictionLogger } = require('./middleware/contradictionLogger');
@@ -301,8 +274,8 @@ const GITHUB_WEBHOOK_SECRET = resolvedEnv.GITHUB_WEBHOOK_SECRET;
 const STRIPE_SECRET = resolvedEnv.STRIPE_SECRET;
 const STRIPE_WEBHOOK_SECRET = resolvedEnv.STRIPE_WEBHOOK_SECRET;
 const STRIPE_PUBLIC_KEY = resolvedEnv.STRIPE_PUBLIC_KEY;
-const stripeClient = STRIPE_SECRET ? new Stripe(STRIPE_SECRET) : null;
 
+// Security defaults enforcement
 let securityDefaults;
 try {
   securityDefaults = enforceSecurityDefaults({ env: process.env, logger });
@@ -310,13 +283,6 @@ try {
   if (error && error.code === 'SECURITY_DEFAULTS') process.exit(1);
   throw error;
 }
-
-const {
-  sessionSecret: SESSION_SECRET,
-  internalToken: INTERNAL_TOKEN,
-  allowOrigins: ALLOW_ORIGINS,
-  allowShellEnabled: ALLOW_SHELL,
-} = securityDefaults;
 
 const PRISM_PLACEHOLDER = {
   github: [
@@ -428,14 +394,6 @@ const PLANS = [
   },
 ];
 
-const PORT = Number.parseInt(process.env.PORT || '4000', 10);
-const SESSION_SECRET = process.env.SESSION_SECRET;
-const INTERNAL_TOKEN = process.env.INTERNAL_TOKEN;
-const ALLOW_ORIGINS = process.env.ALLOW_ORIGINS.split(',')
-  .map((origin) => origin.trim())
-  .filter(Boolean);
-const WEB_ROOT = process.env.WEB_ROOT || path.join(__dirname, '../../var/www/blackroad');
-const NODE_ENV = process.env.NODE_ENV || 'development';
 const safeAttach = (label, attachFn) => {
   try {
     attachFn();
@@ -444,7 +402,6 @@ const safeAttach = (label, attachFn) => {
   }
 };
 const rateLimit = require('express-rate-limit');
-const Stripe = require('stripe');
 
 const execFileAsync = promisify(execFile);
 
@@ -546,8 +503,8 @@ function addJob(type, payload, runner) {
       emitter.emit(id, null);
     }
   });
-  next();
-});
+  return id;
+}
 
 require('./modules/love_math')({ app });
 safeAttach('jobs', () => require('./modules/jobs')({ app }));
@@ -886,16 +843,6 @@ app.post(
 
     if (!validDevLogin && !bypass) {
       return res.status(401).json({ error: 'invalid_credentials' });
-    const { username, password } = req.body || {};
-    // dev defaults: root / Codex2025 (can be replaced with real auth)
-    if (
-      (username === 'root' && password === 'Codex2025') ||
-      BYPASS_LOGIN
-    ) {
-    if ((username === 'root' && password === 'Codex2025') || BYPASS_LOGIN) {
-      req.session.user = { username, role: 'dev', plan: 'free' };
-      req.session.user = { username, role: 'dev' };
-      return res.json({ ok: true, user: req.session.user });
     }
 
     req.session.user = { username, role: 'dev', plan: 'free' };
