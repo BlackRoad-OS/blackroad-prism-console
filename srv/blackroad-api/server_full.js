@@ -1,68 +1,76 @@
 'use strict';
-/* BlackRoad API — Express + SQLite + Socket.IO + LLM bridge
-   Runs behind Nginx on port 4000 with cookie-session auth.
-   Env (optional):
-     PORT=4000
-     SESSION_SECRET=change_me
-     DB_PATH=/srv/blackroad-api/blackroad.db
-     LLM_URL=http://127.0.0.1:8000/chat
-     ALLOW_SHELL=false
-*/
-
-
 /**
  * BlackRoad API — Express + SQLite + Socket.IO + LLM bridge
  * Runs behind Nginx on port 4000 with cookie-session auth.
+ * 
+ * Environment Variables (optional):
+ *   PORT=4000
+ *   SESSION_SECRET=change_me
+ *   DB_PATH=/srv/blackroad-api/blackroad.db
+ *   LLM_URL=http://127.0.0.1:8000/chat
+ *   ALLOW_SHELL=false
  */
 
 require('dotenv').config();
 
-const http = require('http');
-const path = require('path');
-const fs = require('fs');
-
-const express = require('express');
-const compression = require('compression');
-
+// Core Node.js modules
 const fs = require('node:fs');
 const path = require('node:path');
 const http = require('node:http');
 const { promisify } = require('node:util');
-const { execFile } = require('node:child_process');
+const { execFile, exec } = require('node:child_process');
+const { randomUUID } = require('crypto');
+const EventEmitter = require('events');
 
+// Third-party modules
 const express = require('express');
+const compression = require('compression');
 const helmet = require('helmet');
 const cors = require('cors');
 const cookieSession = require('cookie-session');
-const { randomUUID } = require('crypto');
-const { body, validationResult } = require('express-validator');
-
 const morgan = require('morgan');
 const { body, validationResult } = require('express-validator');
-const { createDatabase } = require('./lib/sqlite');
 const { Server: SocketIOServer } = require('socket.io');
-const { exec } = require('child_process');
-const { randomUUID } = require('crypto');
-const EventEmitter = require('events');
 const Stripe = require('stripe');
+
+// Internal modules
+const { createDatabase } = require('./lib/sqlite');
 const { verifyToken } = require('./lib/verify');
-// const verify = require('./lib/verify');  // unused
 const notify = require('./lib/notify');
 const logger = require('./lib/log');
 const attachLlmRoutes = require('./routes/admin_llm');
 const gitRouter = require('./routes/git');
 const providersRouter = require('./routes/providers');
 
-// Custom environment variable loader replaces the standard 'dotenv' package.
-// Rationale: We use a custom loader to reduce external dependencies, avoid issues with dotenv's parsing logic,
-// and to allow for more controlled loading (e.g., skipping variables already set in process.env).
-// See coding guidelines: dependency changes must be documented.
+// Security defaults
+const { enforceSecurityDefaults } = require('./lib/securityDefaults.cjs');
+
+// Custom environment variable loader
+// Rationale: Provides controlled loading, skips variables already set in process.env
 function loadEnvFile() {
   const envPath = process.env.DOTENV_PATH || path.join(process.cwd(), '.env');
   if (!fs.existsSync(envPath)) {
     return;
-// --- Config
-const { enforceSecurityDefaults } = require('./lib/securityDefaults.cjs');
+  }
+  try {
+    const content = fs.readFileSync(envPath, 'utf8');
+    for (const line of content.split(/\r?\n/)) {
+      if (!line || line.trim().startsWith('#')) continue;
+      const idx = line.indexOf('=');
+      if (idx === -1) continue;
+      const key = line.slice(0, idx).trim();
+      if (!key || Object.prototype.hasOwnProperty.call(process.env, key)) continue;
+      const value = line.slice(idx + 1).trim();
+      process.env[key] = value;
+    }
+  } catch (error) {
+    console.error(`Failed to load ${envPath}: ${error.message}`);
+  }
+}
+
+loadEnvFile();
+
+// --- Configuration
 
 const PORT = parseInt(process.env.PORT || '4000', 10);
 const SESSION_SECRET = process.env.SESSION_SECRET || 'dev-secret-change-me';
@@ -122,32 +130,14 @@ const ALLOW_ORIGINS = process.env.ALLOW_ORIGINS
   ? process.env.ALLOW_ORIGINS.split(',').map((s) => s.trim())
   : [];
 
-['SESSION_SECRET', 'INTERNAL_TOKEN'].forEach((name) => {
+// Validate required environment variables
+const REQUIRED_ENV = ['SESSION_SECRET', 'INTERNAL_TOKEN'];
+REQUIRED_ENV.forEach((name) => {
   if (!process.env[name]) {
-    console.error(`Missing required env ${name}`);
+    console.error(`Missing required environment variable: ${name}`);
     process.exit(1);
   }
-  try {
-    const content = fs.readFileSync(envPath, 'utf8');
-    for (const line of content.split(/\r?\n/)) {
-      if (!line || line.trim().startsWith('#')) continue;
-      const idx = line.indexOf('=');
-      if (idx === -1) continue;
-      const key = line.slice(0, idx).trim();
-      if (!key || Object.prototype.hasOwnProperty.call(process.env, key)) continue;
-      const value = line.slice(idx + 1).trim();
-      process.env[key] = value;
-    }
-  } catch (error) {
-    if (process.env.LOG_LEVEL !== 'silent') {
-      console.warn(`Failed to load ${envPath}: ${error.message}`);
-    }
-  }
-}
-
-loadEnvFile();
-
-const REQUIRED_ENV = ['SESSION_SECRET', 'INTERNAL_TOKEN', 'ALLOW_ORIGINS'];
+});
 const missingEnv = REQUIRED_ENV.filter((name) => !process.env[name]);
 if (missingEnv.length) {
   throw new Error(`Missing required environment variables: ${missingEnv.join(', ')}`);
