@@ -301,21 +301,7 @@ const GITHUB_WEBHOOK_SECRET = resolvedEnv.GITHUB_WEBHOOK_SECRET;
 const STRIPE_SECRET = resolvedEnv.STRIPE_SECRET;
 const STRIPE_WEBHOOK_SECRET = resolvedEnv.STRIPE_WEBHOOK_SECRET;
 const STRIPE_PUBLIC_KEY = resolvedEnv.STRIPE_PUBLIC_KEY;
-const WEB_ROOT = process.env.WEB_ROOT || '/var/www/blackroad';
-const BILLING_DISABLE =
-  String(process.env.BILLING_DISABLE || 'false').toLowerCase() === 'true';
-const GITHUB_WEBHOOK_SECRET = process.env.GITHUB_WEBHOOK_SECRET || '';
-const BRANCH_MAIN = process.env.BRANCH_MAIN || 'main';
-const BRANCH_STAGING = process.env.BRANCH_STAGING || 'staging';
-const STRIPE_SECRET = process.env.STRIPE_SECRET || '';
-const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || '';
 const stripeClient = STRIPE_SECRET ? new Stripe(STRIPE_SECRET) : null;
-const MATH_ENGINE_URL = process.env.MATH_ENGINE_URL || '';
-const DEBUG_MODE =
-  String(process.env.DEBUG_MODE || process.env.DEBUG_PROBES || 'false').toLowerCase() ===
-  'true';
-const FLAGS_PARAM = process.env.FLAGS_PARAM || '/blackroad/dev/flags';
-const FLAGS_MAX_AGE_MS = Number(process.env.FLAGS_MAX_AGE_MS || '30000');
 
 let securityDefaults;
 try {
@@ -500,9 +486,7 @@ const io = new SocketIOServer(server, {
   cors: { origin: false }, // same-origin via Nginx
 });
 
-const app = express();
-app.set('trust proxy', 1);
-
+// Request ID middleware
 app.use((req, res, next) => {
   const provided = typeof req.headers['x-request-id'] === 'string' ? req.headers['x-request-id'] : null;
   const id = provided || randomUUID();
@@ -521,6 +505,10 @@ app.use((req, res, next) => {
     });
     if (process.env.LOG_LEVEL !== 'silent') {
       console.info(logLine);
+    }
+  });
+  next();
+});
 // Partner relay for mTLS-authenticated teammates
 require('./modules/partner_relay_mtls')({ app });
 require('./modules/projects')({ app });
@@ -1889,6 +1877,74 @@ app.get('/api/git/status', requireAuth, async (_req, res) => {
   }
 });
 
+// --- Error Handling Middleware (must be after all routes)
+
+// Async route error handler wrapper (use this to wrap async route handlers)
+function asyncHandler(fn) {
+  return (req, res, next) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+  };
+}
+
+// Validation error handler
+app.use((err, req, res, next) => {
+  if (err && err.array && typeof err.array === 'function') {
+    // Express-validator error
+    const errors = err.array();
+    logger.warn({
+      event: 'validation_error',
+      requestId: req.requestId,
+      path: req.path,
+      errors,
+    });
+    return res.status(400).json({
+      error: 'validation_failed',
+      details: errors,
+    });
+  }
+  next(err);
+});
+
+// Global error handler
+app.use((err, req, res, next) => {
+  const statusCode = err.statusCode || err.status || 500;
+  const message = err.message || 'Internal Server Error';
+  
+  // Log error
+  const errorLog = {
+    event: 'error',
+    requestId: req.requestId,
+    method: req.method,
+    path: req.originalUrl,
+    statusCode,
+    message,
+    stack: err.stack,
+  };
+  
+  if (statusCode >= 500) {
+    logger.error(errorLog);
+  } else {
+    logger.warn(errorLog);
+  }
+  
+  // Send error response (don't leak stack traces in production)
+  const response = {
+    error: err.code || 'error',
+    message,
+  };
+  
+  if (NODE_ENV !== 'production' && err.stack) {
+    response.stack = err.stack;
+  }
+  
+  if (err.details) {
+    response.details = err.details;
+  }
+  
+  res.status(statusCode).json(response);
+});
+
+// 404 handler (must be after all routes and error handlers)
 app.use((req, res) => {
   res.status(404).json({ error: 'not_found', path: req.path });
 });
@@ -1955,8 +2011,7 @@ server.listen(PORT, () => {
   process.on('uncaughtException', (e) => console.error('UNCAUGHT', e));
 })();
 
-module.exports = { app, server, start, INTERNAL_TOKEN, ALLOW_ORIGINS };
-module.exports = { app, server, loginLimiter };
+module.exports = { app, server, start, INTERNAL_TOKEN, ALLOW_ORIGINS, asyncHandler };
 function shutdown(done) {
   clearInterval(metricsTimer);
   server.close(done);
