@@ -1,39 +1,41 @@
 orgs:
+  - name: BlackRoad-OS
+    repos: ['blackroad-prism-console']
   - name: BlackRoad-AI
-    repos: [ "BlackRoad.io" ]
+    repos: ['BlackRoad.io']
   - name: blackboxprogramming
-    repos: [ "blackroad-api", "blackroad-prism-console" ]
+    repos: ['blackroad-api', 'blackroad-prism-console']
 
 branch_patterns:
-  - "bot/*"
-  - "bots/*"
-  - "agent/*"
-  - "agents/*"
-  - "autogen/*"
-  - "automation/*"
-  - "claude/*"
-  - "codex/*"
-  - "copilot/*"
-  - "dependabot/*"
+  - 'bot/*'
+  - 'bots/*'
+  - 'agent/*'
+  - 'agents/*'
+  - 'autogen/*'
+  - 'automation/*'
+  - 'claude/*'
+  - 'codex/*'
+  - 'copilot/*'
+  - 'dependabot/*'
 
 exclude_patterns:
-  - "release/*"
-  - "hotfix/*"
-  - "main"
-  - "master"
-  - "develop"
+  - 'release/*'
+  - 'hotfix/*'
+  - 'main'
+  - 'master'
+  - 'develop'
 
 safety:
   create_backup_tag: true
-  backup_tag_prefix: "cleanup-backup"
+  backup_tag_prefix: 'cleanup-backup'
   backup_ttl_days: 30
-  minimum_age_days: 7   # only delete branches merged ≥7 days ago
+  minimum_age_days: 7 # only delete branches merged ≥7 days ago
 
 rate_limits:
   max_concurrency: 10
   per_repo_delay_ms: 250
 
 reporting:
-  out_dir: "ops/reports/branch-cleanup"
+  out_dir: 'ops/reports/branch-cleanup'
   write_json: true
   write_csv: true
