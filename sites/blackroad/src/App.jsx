@@ -134,12 +134,7 @@ const legacyRoutes = [
   { path: "kf-2d", label: "Kalman 2D Tracker Lab", element: <Kalman2DTrackerLab /> },
   { path: "vorticity", label: "Vorticity Stream Lab", element: <VorticityStreamLab /> },
 ];
-import StableFluidsLab from "./pages/StableFluidsLab.jsx";
-import Subscribe from "./pages/Subscribe.jsx";
 import CreatorLightpath from "./pages/CreatorLightpath.jsx";
-import Terminal from "./pages/Terminal.jsx";
-import VorticityStreamLab from "./pages/VorticityStreamLab.jsx";
-import WaveletLab from "./pages/WaveletLab.jsx";
 
 const PRIMARY_ROUTES = [
   { to: "/chat", label: "Chat", element: Chat },
@@ -271,22 +266,14 @@ function useApiHealth() {
       cancelled = true;
     };
   }, []);
-import AutoDiffLab from "./pages/AutoDiffLab.jsx";
-import ConformalGridLab from "./pages/ConformalGridLab.jsx";
 import MaxFlowLab from "./pages/MaxFlowLab.jsx";
 import BezierSurfaceLab from "./pages/BezierSurfaceLab.jsx";
 import ClusteringCompareLab from "./pages/ClusteringCompareLab.jsx";
 import MarchingSquaresLab from "./pages/MarchingSquaresLab.jsx";
-import EikonalLab from "./pages/EikonalLab.jsx";
-import PoissonDiskLab from "./pages/PoissonDiskLab.jsx";
-import LSystemLab from "./pages/LSystemLab.jsx";
-import MinimalSurfaceLab from "./pages/MinimalSurfaceLab.jsx";
 import RRTStarLab from "./pages/RRTStarLab.jsx";
 import FourierPainterLab from "./pages/FourierPainterLab.jsx";
 import HilbertMortonLab from "./pages/HilbertMortonLab.jsx";
 import IsingMaxCutLab from "./pages/IsingMaxCutLab.jsx";
-import BifurcationLab from "./pages/BifurcationLab.jsx";
-import ContinuedFractionsLab from "./pages/ContinuedFractionsLab.jsx";
 import DrumWaveLab from "./pages/DrumWaveLab.jsx";
 import PendulumLab from "./pages/PendulumLab.jsx";
 import PowerJuliaLab from "./pages/PowerJuliaLab.jsx";
@@ -304,16 +291,7 @@ import FastMarchTreeLab from "./pages/FastMarchTreeLab.jsx";
 import HungarianLab from "./pages/HungarianLab.jsx";
 import QuaternionRotLab from "./pages/QuaternionRotLab.jsx";
 import ComplexBarycentricLab from "./pages/ComplexBarycentricLab.jsx";
-import Lucidia from "./pages/Lucidia.jsx";
 <<<<<<< main
-import InfinityMath from "./pages/InfinityMath.jsx";
-import Agents from "./pages/Agents.jsx";
-import Desktop from "./pages/Desktop.jsx";
-import QuantumConsciousness from "./pages/QuantumConsciousness.jsx";
-import EigenmapsLab from "./pages/EigenmapsLab.jsx";
-import PoissonBlendLab from "./pages/PoissonBlendLab.jsx";
-import NBodyLab from "./pages/NBodyLab.jsx";
-import WaveletLab from "./pages/WaveletLab.jsx";
 import AStarLab from "./pages/AStarLab.jsx";
 import TSPLab from "./pages/TSPLab.jsx";
 import GrayScottGalleryLab from "./pages/GrayScottGalleryLab.jsx";
@@ -321,9 +299,6 @@ import RansacPlane3DLab from "./pages/RansacPlane3DLab.jsx";
 import PrimeGapsLab from "./pages/PrimeGapsLab.jsx";
 import FareyTreeLab from "./pages/FareyTreeLab.jsx";
 import FourierLab from "./pages/FourierLab.jsx";
-import OptimalTransportLab from "./pages/OptimalTransportLab.jsx";
-import BifurcationLab from "./pages/BifurcationLab.jsx";
-import ContinuedFractionsLab from "./pages/ContinuedFractionsLab.jsx";
 import RiemannMappingToy from "./pages/RiemannMappingToy.jsx";
 import OULab from "./pages/OULab.jsx";
 import VoronoiLloydLab from "./pages/VoronoiLloydLab.jsx";
@@ -332,18 +307,10 @@ import RRTSmoothLab from "./pages/RRTSmoothLab.jsx";
 import DiffusionMapsLab from "./pages/DiffusionMapsLab.jsx";
 import PerlinTerrainLab from "./pages/PerlinTerrainLab.jsx";
 import PDELiveLab from "./pages/PDELiveLab.jsx";
-import QuatJuliaLab from "./pages/QuatJuliaLab.jsx";
-import StableFluidsLab from "./pages/StableFluidsLab.jsx";
-import AutoDiffLab from "./pages/AutoDiffLab.jsx";
-import ConformalGridLab from "./pages/ConformalGridLab.jsx";
 import EikonalPathLab from "./pages/EikonalPathLab.jsx";
 import PowerDiagramLab from "./pages/PowerDiagramLab.jsx";
 import FourierOpticsLab from "./pages/FourierOpticsLab.jsx";
 import CircleInversionLab from "./pages/CircleInversionLab.jsx";
-import EikonalLab from "./pages/EikonalLab.jsx";
-import PoissonDiskLab from "./pages/PoissonDiskLab.jsx";
-import LSystemLab from "./pages/LSystemLab.jsx";
-import MinimalSurfaceLab from "./pages/MinimalSurfaceLab.jsx";
 <<<<<<< main
 import LaplaceConductorsLab from "./pages/LaplaceConductorsLab.jsx";
 import PoincarePendulumLab from "./pages/PoincarePendulumLab.jsx";
@@ -358,7 +325,6 @@ import CahnHilliardLab from "./pages/CahnHilliardLab.jsx";
 >>>>>>> origin/codex/add-react-pages-and-routes-zm01mq
 =======
 import Monitoring from "./pages/Monitoring.jsx";
-import { useEffect, useState } from "react";
 >>>>>>> origin/codex/add-real-time-monitoring-dashboard-to-prism-ui
 
 function useApiHealth(){

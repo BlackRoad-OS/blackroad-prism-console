@@ -88,3 +88,9 @@ def create_app(cfg: Optional[ConfigHolder] = None) -> FastAPI:
 
 
 app = create_app()
+
+from fastapi.responses import HTMLResponse
+
+@app.get("/", response_class=HTMLResponse)
+def home():
+    return "<h1>Blackroad API Online ✅</h1><p>Welcome to blackroad.io</p>"
