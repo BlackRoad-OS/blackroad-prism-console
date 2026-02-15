@@ -224,12 +224,16 @@ app.post('/api/rollback/:id', (req, res) => {
 
 app.get('/api/rollback/logs', (req, res) => {
   try {
-    const limit = parseInt(req.query.limit) || 100;
+    // Validate and sanitize limit parameter
+    let limit = parseInt(req.query.limit) || 100;
+    limit = Math.max(1, Math.min(limit, 1000)); // Clamp between 1 and 1000
+    
     const filteredLogs = rollbackLogs.slice(-limit);
     res.json({ 
       logs: filteredLogs,
       count: filteredLogs.length,
-      total: rollbackLogs.length
+      total: rollbackLogs.length,
+      limit: limit
     });
   } catch (error) {
     console.error('[ERROR] Failed to retrieve rollback logs:', error.message);
@@ -239,12 +243,16 @@ app.get('/api/rollback/logs', (req, res) => {
 
 app.get('/api/snapshots/logs', (req, res) => {
   try {
-    const limit = parseInt(req.query.limit) || 100;
+    // Validate and sanitize limit parameter
+    let limit = parseInt(req.query.limit) || 100;
+    limit = Math.max(1, Math.min(limit, 1000)); // Clamp between 1 and 1000
+    
     const filteredLogs = snapshotLogs.slice(-limit);
     res.json({ 
       logs: filteredLogs,
       count: filteredLogs.length,
-      total: snapshotLogs.length
+      total: snapshotLogs.length,
+      limit: limit
     });
   } catch (error) {
     console.error('[ERROR] Failed to retrieve snapshot logs:', error.message);
