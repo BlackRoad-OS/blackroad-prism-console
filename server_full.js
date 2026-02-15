@@ -111,13 +111,29 @@ const snapshots = [];
 const snapshotLogs = [];
 const rollbackLogs = [];
 
+/**
+ * Validates and clamps the limit parameter for pagination
+ * @param {string|number} rawLimit - The raw limit value from query params
+ * @returns {number} - A validated limit between 1 and 1000
+ */
+function validateLimit(rawLimit) {
+  let limit = parseInt(rawLimit) || 100;
+  return Math.max(1, Math.min(limit, 1000));
+}
+
 // Snapshot management endpoints with enhanced error handling
 app.get('/api/snapshots', (req, res) => {
   try {
+    // Calculate total size properly by extracting numeric values
+    const totalSize = snapshots.reduce((sum, s) => {
+      const sizeMatch = s.size.match(/(\d+)/);
+      return sum + (sizeMatch ? parseInt(sizeMatch[1]) : 0);
+    }, 0);
+    
     res.json({ 
       snapshots,
       count: snapshots.length,
-      total_size: snapshots.reduce((sum, s) => sum + parseInt(s.size), 0)
+      total_size_mb: totalSize
     });
   } catch (error) {
     console.error('[ERROR] Failed to retrieve snapshots:', error.message);
@@ -224,10 +240,7 @@ app.post('/api/rollback/:id', (req, res) => {
 
 app.get('/api/rollback/logs', (req, res) => {
   try {
-    // Validate and sanitize limit parameter
-    let limit = parseInt(req.query.limit) || 100;
-    limit = Math.max(1, Math.min(limit, 1000)); // Clamp between 1 and 1000
-    
+    const limit = validateLimit(req.query.limit);
     const filteredLogs = rollbackLogs.slice(-limit);
     res.json({ 
       logs: filteredLogs,
@@ -243,10 +256,7 @@ app.get('/api/rollback/logs', (req, res) => {
 
 app.get('/api/snapshots/logs', (req, res) => {
   try {
-    // Validate and sanitize limit parameter
-    let limit = parseInt(req.query.limit) || 100;
-    limit = Math.max(1, Math.min(limit, 1000)); // Clamp between 1 and 1000
-    
+    const limit = validateLimit(req.query.limit);
     const filteredLogs = snapshotLogs.slice(-limit);
     res.json({ 
       logs: filteredLogs,
@@ -1089,9 +1099,9 @@ const gracefulShutdown = (signal) => {
   server.close(() => {
     console.log('[INFO] ✓ HTTP server closed');
     
+    // Close database connection (better-sqlite3)
     try {
-      // Close database connection
-      if (db && db.close) {
+      if (db && typeof db.close === 'function') {
         db.close();
         console.log('[INFO] ✓ Database connection closed');
       }
