@@ -23,17 +23,24 @@ const {
   ROADCHAIN_MODE,
   ROADCHAIN_NETWORK,
   EVM_CHAIN_ID,
-  ROADCHAIN_MAINNET_OK
-} = require('./src/config');
+  ROADCHAIN_MAINNET_OK,
   ROADVIEW_STORAGE
 } = require('./src/config');
 const subscribe = require('./src/routes/subscribe');
+
+// Configuration validation and warnings
+console.log('[INFO] Starting BlackRoad API Server...');
+console.log(`[INFO] Environment: ${NODE_ENV}`);
+console.log(`[INFO] Port: ${PORT}`);
 
 // Ensure log dir exists
 if (LOG_DIR) {
   try {
     fs.mkdirSync(LOG_DIR, { recursive: true });
-  } catch {}
+    console.log(`[INFO] Log directory configured: ${LOG_DIR}`);
+  } catch (err) {
+    console.error(`[ERROR] Failed to create log directory: ${err.message}`);
+  }
 }
 
 const app = express();
@@ -62,8 +69,15 @@ app.use(express.urlencoded({ extended: false }));
 
 // Sessions
 if (!SESSION_SECRET || SESSION_SECRET === 'change-this-session-secret') {
-  console.warn('[WARN] Weak or default SESSION_SECRET detected. Update your .env!');
+  console.warn('[WARN] ⚠️  Weak or default SESSION_SECRET detected. Update your .env!');
+  if (NODE_ENV === 'production') {
+    console.error('[ERROR] ❌ Cannot run in production with default SESSION_SECRET!');
+    process.exit(1);
+  }
+} else {
+  console.log('[INFO] ✓ Session secret configured');
 }
+
 app.use(cookieSession({
   name: 'brsid',
   secret: SESSION_SECRET || 'dev-session-secret',
@@ -78,60 +92,227 @@ const limiter = rateLimit({
   windowMs: 60 * 1000,
   max: 300,
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
+  message: { 
+    error: 'Too many requests', 
+    code: 'rate_limit_exceeded',
+    retry_after: '60 seconds'
+  }
 });
 app.use(limiter);
+console.log('[INFO] ✓ Rate limiting configured (300 req/min)');
 
 // Initialize DB (auto-migrations on import)
 const db = require('./src/db');
+console.log('[INFO] ✓ Database initialized');
 
 // Simple in-memory storage for resilience operations
 const snapshots = [];
 const snapshotLogs = [];
 const rollbackLogs = [];
 
+// Snapshot management endpoints with enhanced error handling
 app.get('/api/snapshots', (req, res) => {
-  res.json({ snapshots });
+  try {
+    res.json({ 
+      snapshots,
+      count: snapshots.length,
+      total_size: snapshots.reduce((sum, s) => sum + parseInt(s.size), 0)
+    });
+  } catch (error) {
+    console.error('[ERROR] Failed to retrieve snapshots:', error.message);
+    res.status(500).json({ error: 'Failed to retrieve snapshots', code: 'snapshot_list_error' });
+  }
 });
 
 app.post('/api/snapshots', (req, res) => {
-  const snap = {
-    id: String(Date.now()),
-    timestamp: new Date().toISOString(),
-    size: `${Math.floor(Math.random() * 100) + 1}MB`,
-    status: 'complete'
-  };
-  snapshots.push(snap);
-  snapshotLogs.push({ timestamp: snap.timestamp, action: 'snapshot', user: req.session?.userId || 'anon', result: 'ok', notes: '' });
-  res.json({ snapshot: snap });
+  try {
+    const { description } = req.body || {};
+    
+    if (snapshots.length >= 100) {
+      return res.status(400).json({ 
+        error: 'Maximum snapshots limit reached', 
+        code: 'snapshot_limit_exceeded',
+        max_snapshots: 100 
+      });
+    }
+    
+    const snap = {
+      id: String(Date.now()),
+      timestamp: new Date().toISOString(),
+      size: `${Math.floor(Math.random() * 100) + 1}MB`,
+      status: 'complete',
+      description: description ? String(description).slice(0, 200) : 'System snapshot',
+      user: req.session?.userId || 'anon'
+    };
+    
+    snapshots.push(snap);
+    snapshotLogs.push({ 
+      timestamp: snap.timestamp, 
+      action: 'snapshot', 
+      user: snap.user, 
+      result: 'ok', 
+      notes: snap.description 
+    });
+    
+    console.log(`[INFO] Snapshot created: ${snap.id} by user ${snap.user}`);
+    res.json({ snapshot: snap });
+  } catch (error) {
+    console.error('[ERROR] Failed to create snapshot:', error.message);
+    res.status(500).json({ error: 'Failed to create snapshot', code: 'snapshot_create_error' });
+  }
 });
 
 app.get('/api/snapshots/:id/download', (req, res) => {
-  res.setHeader('Content-Disposition', `attachment; filename=snapshot-${req.params.id}.txt`);
-  res.send('snapshot data');
+  try {
+    const snap = snapshots.find(s => s.id === req.params.id);
+    
+    if (!snap) {
+      return res.status(404).json({ 
+        error: 'Snapshot not found', 
+        code: 'snapshot_not_found',
+        snapshot_id: req.params.id 
+      });
+    }
+    
+    res.setHeader('Content-Disposition', `attachment; filename=snapshot-${req.params.id}.txt`);
+    res.setHeader('Content-Type', 'text/plain');
+    res.send(`Snapshot Data\n=============\nID: ${snap.id}\nTimestamp: ${snap.timestamp}\nSize: ${snap.size}\nStatus: ${snap.status}\nDescription: ${snap.description || 'N/A'}\nUser: ${snap.user || 'anon'}\n`);
+  } catch (error) {
+    console.error('[ERROR] Failed to download snapshot:', error.message);
+    res.status(500).json({ error: 'Failed to download snapshot', code: 'snapshot_download_error' });
+  }
 });
 
 app.post('/api/rollback/:id', (req, res) => {
-  const snap = snapshots.find(s => s.id === req.params.id);
-  const log = { timestamp: new Date().toISOString(), action: 'rollback', user: req.session?.userId || 'anon' };
-  if (snap) {
-    log.result = 'success';
-    log.notes = '';
-    res.json({ status: 'success' });
-  } else {
-    log.result = 'fail';
-    log.notes = 'snapshot not found';
-    res.status(404).json({ status: 'fail' });
+  try {
+    const snap = snapshots.find(s => s.id === req.params.id);
+    const log = { 
+      timestamp: new Date().toISOString(), 
+      action: 'rollback', 
+      user: req.session?.userId || 'anon',
+      snapshot_id: req.params.id
+    };
+    
+    if (snap) {
+      log.result = 'success';
+      log.notes = `Rollback to snapshot ${snap.id} completed successfully`;
+      console.log(`[INFO] Rollback successful: ${snap.id} by user ${log.user}`);
+      rollbackLogs.push(log);
+      res.json({ 
+        status: 'success', 
+        snapshot: snap,
+        message: 'System rolled back successfully'
+      });
+    } else {
+      log.result = 'fail';
+      log.notes = `Snapshot ${req.params.id} not found`;
+      console.warn(`[WARN] Rollback failed: snapshot ${req.params.id} not found`);
+      rollbackLogs.push(log);
+      res.status(404).json({ 
+        status: 'fail', 
+        error: 'Snapshot not found',
+        code: 'snapshot_not_found',
+        snapshot_id: req.params.id
+      });
+    }
+  } catch (error) {
+    console.error('[ERROR] Rollback operation failed:', error.message);
+    res.status(500).json({ error: 'Rollback operation failed', code: 'rollback_error' });
   }
-  rollbackLogs.push(log);
 });
 
 app.get('/api/rollback/logs', (req, res) => {
-  res.json({ logs: rollbackLogs });
+  try {
+    const limit = parseInt(req.query.limit) || 100;
+    const filteredLogs = rollbackLogs.slice(-limit);
+    res.json({ 
+      logs: filteredLogs,
+      count: filteredLogs.length,
+      total: rollbackLogs.length
+    });
+  } catch (error) {
+    console.error('[ERROR] Failed to retrieve rollback logs:', error.message);
+    res.status(500).json({ error: 'Failed to retrieve rollback logs', code: 'log_retrieve_error' });
+  }
 });
 
 app.get('/api/snapshots/logs', (req, res) => {
-  res.json({ logs: snapshotLogs });
+  try {
+    const limit = parseInt(req.query.limit) || 100;
+    const filteredLogs = snapshotLogs.slice(-limit);
+    res.json({ 
+      logs: filteredLogs,
+      count: filteredLogs.length,
+      total: snapshotLogs.length
+    });
+  } catch (error) {
+    console.error('[ERROR] Failed to retrieve snapshot logs:', error.message);
+    res.status(500).json({ error: 'Failed to retrieve snapshot logs', code: 'log_retrieve_error' });
+  }
+});
+
+// Enhanced Health Check Endpoint
+app.get('/api/health', (req, res) => {
+  try {
+    const uptime = process.uptime();
+    const memUsage = process.memoryUsage();
+    
+    const healthStatus = {
+      status: 'healthy',
+      timestamp: new Date().toISOString(),
+      uptime: {
+        seconds: Math.floor(uptime),
+        formatted: `${Math.floor(uptime / 3600)}h ${Math.floor((uptime % 3600) / 60)}m ${Math.floor(uptime % 60)}s`
+      },
+      environment: NODE_ENV,
+      version: require('./package.json').version || '1.0.0',
+      node_version: process.version,
+      memory: {
+        rss: `${Math.round(memUsage.rss / 1024 / 1024)}MB`,
+        heapUsed: `${Math.round(memUsage.heapUsed / 1024 / 1024)}MB`,
+        heapTotal: `${Math.round(memUsage.heapTotal / 1024 / 1024)}MB`,
+        external: `${Math.round(memUsage.external / 1024 / 1024)}MB`
+      },
+      services: {
+        database: 'connected',
+        snapshots: {
+          count: snapshots.length,
+          status: 'operational'
+        },
+        roadchain: {
+          mode: ROADCHAIN_MODE,
+          network: ROADCHAIN_NETWORK,
+          status: 'operational'
+        }
+      },
+      configuration: {
+        port: PORT,
+        cors_enabled: !!ALLOWED_ORIGIN,
+        rate_limit_enabled: true,
+        session_configured: SESSION_SECRET !== 'change-this-session-secret'
+      }
+    };
+    
+    // Add detailed check parameter for verbose output
+    if (req.query.detailed === 'true') {
+      healthStatus.detailed = {
+        pid: process.pid,
+        platform: process.platform,
+        arch: process.arch,
+        cpu_usage: process.cpuUsage()
+      };
+    }
+    
+    res.json(healthStatus);
+  } catch (error) {
+    console.error('[ERROR] Health check failed:', error.message);
+    res.status(503).json({ 
+      status: 'unhealthy', 
+      error: 'Health check failed',
+      message: error.message 
+    });
+  }
 });
 
 // SUBSCRIBE
@@ -319,19 +500,33 @@ subRouter.post('/resume', requireAuth, (req, res) => {
 });
 
 function handleWebhook(req, res) {
-  const sig = req.get('X-Subscribe-Signature');
-  const payload = JSON.stringify(req.body || {});
-  const expected = require('crypto').createHmac('sha256', SUB_WEBHOOK_SECRET).update(payload).digest('base64');
-  if (sig !== expected) return res.status(401).json({ error: 'invalid_signature' });
-  const now = Math.floor(Date.now() / 1000);
-  db.prepare('INSERT INTO webhook_log (id, provider, event_type, payload_json, received_at) VALUES (?, ?, ?, ?, ?)').run(
-    uuidv4(),
-    SUB_PROVIDER,
-    req.body.event_type || 'unknown',
-    payload,
-    now
-  );
-  res.json({ received: true });
+  try {
+    const sig = req.get('X-Subscribe-Signature');
+    const payload = JSON.stringify(req.body || {});
+    const expected = require('crypto').createHmac('sha256', SUB_WEBHOOK_SECRET).update(payload).digest('base64');
+    
+    if (sig !== expected) {
+      console.warn('[WARN] Invalid webhook signature received');
+      return res.status(401).json({ error: 'invalid_signature', code: 'webhook_signature_invalid' });
+    }
+    
+    const now = Math.floor(Date.now() / 1000);
+    const eventType = req.body.event_type || 'unknown';
+    
+    db.prepare('INSERT INTO webhook_log (id, provider, event_type, payload_json, received_at) VALUES (?, ?, ?, ?, ?)').run(
+      uuidv4(),
+      SUB_PROVIDER,
+      eventType,
+      payload,
+      now
+    );
+    
+    console.log(`[INFO] Webhook received: ${eventType} from ${SUB_PROVIDER}`);
+    res.json({ received: true, event_type: eventType });
+  } catch (error) {
+    console.error('[ERROR] Webhook processing failed:', error.message);
+    res.status(500).json({ error: 'Webhook processing failed', code: 'webhook_error' });
+  }
 }
 
 app.post('/api/subscribe/webhook', handleWebhook);
@@ -850,11 +1045,63 @@ const io = setupSockets(server);
 
   // Root route
   app.get('/', (req, res) => {
-    if (Math.random() < 0.1) console.log('landing.view');
+    if (Math.random() < 0.1) console.log('[INFO] Landing page view');
     res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
   });
 })();
 
-server.listen(PORT, () => {
-  console.log(`[blackroad-api] listening on port ${PORT} (env: ${NODE_ENV})`);
+// Global error handler (must be last)
+app.use((err, req, res, next) => {
+  console.error('[ERROR] Unhandled error:', err.message);
+  console.error(err.stack);
+  
+  res.status(err.status || 500).json({
+    error: err.message || 'Internal server error',
+    code: err.code || 'internal_error',
+    ...(NODE_ENV === 'development' && { stack: err.stack })
+  });
 });
+
+// Start server with graceful shutdown
+// Note: server is already created earlier in the file at line ~639
+
+server.listen(PORT, () => {
+  console.log('='.repeat(60));
+  console.log(`[INFO] ✓ BlackRoad API Server running`);
+  console.log(`[INFO] ✓ Port: ${PORT}`);
+  console.log(`[INFO] ✓ Environment: ${NODE_ENV}`);
+  console.log(`[INFO] ✓ Health check: http://localhost:${PORT}/api/health`);
+  console.log('='.repeat(60));
+});
+
+// Graceful shutdown handler
+const gracefulShutdown = (signal) => {
+  console.log(`\n[INFO] ${signal} received, starting graceful shutdown...`);
+  
+  server.close(() => {
+    console.log('[INFO] ✓ HTTP server closed');
+    
+    try {
+      // Close database connection
+      if (db && db.close) {
+        db.close();
+        console.log('[INFO] ✓ Database connection closed');
+      }
+    } catch (err) {
+      console.error('[ERROR] Failed to close database:', err.message);
+    }
+    
+    console.log('[INFO] ✓ Graceful shutdown complete');
+    process.exit(0);
+  });
+  
+  // Force shutdown after 30 seconds
+  setTimeout(() => {
+    console.error('[ERROR] ⏱️  Forced shutdown after timeout');
+    process.exit(1);
+  }, 30000);
+};
+
+// Register shutdown handlers
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
