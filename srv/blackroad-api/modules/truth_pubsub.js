@@ -56,6 +56,10 @@ function verifyMsg(o){
 }
 
 async function initTruthPubSub(app) {
+  if (!create) {
+    console.warn('[truth] ipfs-http-client unavailable; pubsub disabled');
+    return;
+  }
   try {
     const ipfs = create({ url: IPFS_API });
     ensureFeed();
