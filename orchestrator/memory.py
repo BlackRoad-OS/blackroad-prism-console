@@ -50,6 +50,33 @@ def _iter_memory(path: Path) -> Iterator[dict[str, object]]:
             yield json.loads(line)
 
 
+def _last_entry(path: Path) -> dict[str, object] | None:
+    """Return the last JSONL entry without reading the entire file."""
+    if not path.exists():
+        return None
+    with path.open("rb") as fh:
+        fh.seek(0, 2)
+        size = fh.tell()
+        if size == 0:
+            return None
+        pos = size - 1
+        # Skip any trailing newlines/whitespace
+        while pos > 0:
+            fh.seek(pos)
+            if fh.read(1) not in (b"\n", b"\r", b" "):
+                break
+            pos -= 1
+        # Walk back to the start of the last line
+        while pos > 0:
+            fh.seek(pos - 1)
+            if fh.read(1) == b"\n":
+                break
+            pos -= 1
+        fh.seek(pos)
+        line = fh.read().decode("utf-8").strip()
+    return json.loads(line) if line else None
+
+
 class MemoryLog:
     """Append-only log that stores orchestrator activity."""
 
@@ -68,9 +95,7 @@ class MemoryLog:
                 consent_type="data_access",
                 scope=(f"task:{task.id}", "memory"),
             )
-            previous_entry = None
-            for previous_entry in _iter_memory(self.path):
-                pass
+            previous_entry = _last_entry(self.path)
             previous_hash = previous_entry.get("hash") if previous_entry else None
 
             payload = {

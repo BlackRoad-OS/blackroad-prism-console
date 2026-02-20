@@ -23,8 +23,7 @@ const {
   ROADCHAIN_MODE,
   ROADCHAIN_NETWORK,
   EVM_CHAIN_ID,
-  ROADCHAIN_MAINNET_OK
-} = require('./src/config');
+  ROADCHAIN_MAINNET_OK,
   ROADVIEW_STORAGE
 } = require('./src/config');
 const subscribe = require('./src/routes/subscribe');

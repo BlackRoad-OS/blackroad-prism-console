@@ -17,10 +17,6 @@ from tools import storage
 
 from .base import BaseBot, assert_guardrails
 from .protocols import BotResponse, Task
-from .protocols import Task, BotResponse
-from .base import BaseBot, assert_guardrails
-from tools import storage
-from bots import available_bots
 from .slo import SLO_CATALOG
 
 logger = logging.getLogger(__name__)
@@ -64,7 +60,6 @@ def route(task: Task, bot_name: str) -> BotResponse:
     global _current_doc
     _current_doc = inspect.getdoc(bot) or ""
 
-    response = bot.run(task)
     slo = SLO_CATALOG.get(bot_name)
     try:
         with perf_timer("bot_run") as perf:
