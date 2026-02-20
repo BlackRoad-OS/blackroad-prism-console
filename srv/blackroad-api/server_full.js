@@ -1151,10 +1151,11 @@ function start(port = PORT) {
         'Interference in quantum-symbolic AI could amplify useful symbol chains while damping noise.',
     },
   ];
+  const qSeedStmt = db.prepare(
+    'INSERT OR IGNORE INTO quantum_ai (topic, summary) VALUES (?, ?)'
+  );
   for (const row of qSeed) {
-    db.prepare(
-      'INSERT OR IGNORE INTO quantum_ai (topic, summary) VALUES (?, ?)'
-    ).run(row.topic, row.summary);
+    qSeedStmt.run(row.topic, row.summary);
   }
   return server;
 }
@@ -1278,10 +1279,14 @@ const QUANTUM_TOPICS = [
       'Hybrid symbolic/quantum theorem provers unlock interpretable planning.',
   },
 ];
-for (const row of qSeed) {
-  db.prepare(
-    'INSERT OR IGNORE INTO quantum_ai (topic, summary) VALUES (?, ?)'
-  ).run(row.topic, row.summary);
+const QUANTUM_TOPICS_MAP = new Map(
+  QUANTUM_TOPICS.map((entry) => [entry.topic, entry])
+);
+const qTopicInsert = db.prepare(
+  'INSERT OR IGNORE INTO quantum_ai (topic, summary) VALUES (?, ?)'
+);
+for (const row of QUANTUM_TOPICS) {
+  qTopicInsert.run(row.topic, row.summary);
 }
 attachSlackExceptions({ app, db });
 
@@ -1294,9 +1299,7 @@ app.get('/api/quantum', (_req, res) => {
 });
 
 app.get('/api/quantum/:topic', (req, res) => {
-  const detail = QUANTUM_TOPICS.find(
-    (entry) => entry.topic === req.params.topic
-  );
+  const detail = QUANTUM_TOPICS_MAP.get(req.params.topic);
   if (!detail) {
     return res.status(404).json({ error: 'unknown_topic' });
   }
