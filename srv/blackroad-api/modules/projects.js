@@ -13,8 +13,8 @@ module.exports = function attachProjects({ app }) {
   const originKeyPath = process.env.ORIGIN_KEY_PATH || '/srv/secrets/origin.key';
   let ORIGIN_KEY = ''; try { ORIGIN_KEY = fs.readFileSync(originKeyPath, 'utf8').trim(); } catch {}
 
-  fs.mkdirSync(BASE, { recursive: true });
-  fs.mkdirSync(DEPLOY_ROOT, { recursive: true });
+  try { fs.mkdirSync(BASE, { recursive: true }); } catch (_) {}
+  try { fs.mkdirSync(DEPLOY_ROOT, { recursive: true }); } catch (_) {}
 
   function guard(req, res, next) {
     const ip = req.socket.remoteAddress || '';

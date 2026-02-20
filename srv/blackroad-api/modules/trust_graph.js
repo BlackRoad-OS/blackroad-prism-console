@@ -54,6 +54,7 @@ module.exports = function attachTrustGraph({ app }) {
   });
 
   console.log('[trust_graph] mounted');
+};
 // Trust graph + lenses + ranked feed (Love ⨂ Trust).
 // Uses signed TrustRank: t = (1-α)·s + α·(P+^T t - β P-^T t), clip to [0,1].
 // Caches Truth objects from IPFS locally for fast ranking.

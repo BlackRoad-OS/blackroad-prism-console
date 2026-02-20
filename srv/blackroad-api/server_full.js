@@ -17,11 +17,6 @@
 
 require('dotenv').config();
 
-const http = require('http');
-const path = require('path');
-const fs = require('fs');
-
-const express = require('express');
 const compression = require('compression');
 
 const fs = require('node:fs');
@@ -38,11 +33,9 @@ const { randomUUID } = require('crypto');
 const { body, validationResult } = require('express-validator');
 
 const morgan = require('morgan');
-const { body, validationResult } = require('express-validator');
 const { createDatabase } = require('./lib/sqlite');
 const { Server: SocketIOServer } = require('socket.io');
 const { exec } = require('child_process');
-const { randomUUID } = require('crypto');
 const EventEmitter = require('events');
 const Stripe = require('stripe');
 const { verifyToken } = require('./lib/verify');
@@ -61,26 +54,27 @@ function loadEnvFile() {
   const envPath = process.env.DOTENV_PATH || path.join(process.cwd(), '.env');
   if (!fs.existsSync(envPath)) {
     return;
+  }
+  try {
+    const content = fs.readFileSync(envPath, 'utf8');
+    for (const line of content.split(/\r?\n/)) {
+      if (!line || line.trim().startsWith('#')) continue;
+      const idx = line.indexOf('=');
+      if (idx === -1) continue;
+      const key = line.slice(0, idx).trim();
+      if (!key || Object.prototype.hasOwnProperty.call(process.env, key)) continue;
+      const value = line.slice(idx + 1).trim();
+      process.env[key] = value;
+    }
+  } catch (error) {
+    if (process.env.LOG_LEVEL !== 'silent') {
+      console.warn(`Failed to load env file: ${error.message}`);
+    }
+  }
+}
+
 // --- Config
 const { enforceSecurityDefaults } = require('./lib/securityDefaults.cjs');
-
-const PORT = parseInt(process.env.PORT || '4000', 10);
-const SESSION_SECRET = process.env.SESSION_SECRET || 'dev-secret-change-me';
-const DEFAULT_DB_PATH =
-  process.env.NODE_ENV === 'test'
-    ? ':memory:'
-    : '/srv/blackroad-api/blackroad.db';
-const DB_PATH = process.env.DB_PATH || DEFAULT_DB_PATH;
-const LLM_URL = process.env.LLM_URL || 'http://127.0.0.1:8000/chat';
-const ALLOW_SHELL =
-  String(process.env.ALLOW_SHELL || 'false').toLowerCase() === 'true';
-const WEB_ROOT = process.env.WEB_ROOT || '/var/www/blackroad';
-const BILLING_DISABLE =
-  String(process.env.BILLING_DISABLE || 'false').toLowerCase() === 'true';
-// const INTERNAL_TOKEN = process.env.INTERNAL_TOKEN || 'change-me';  // unused
-const STRIPE_SECRET = process.env.STRIPE_SECRET || '';
-const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || '';
-const stripeClient = STRIPE_SECRET ? new Stripe(STRIPE_SECRET) : null;
 
 const disableDbFlag = String(
   process.env.BR_TEST_DISABLE_DB || process.env.BRC_DISABLE_NATIVE_DB || ''
@@ -118,32 +112,13 @@ function createMockDb() {
 
 const usingMockDb = !Database;
 const TABLES = ['projects', 'agents', 'datasets', 'models', 'integrations'];
-const ALLOW_ORIGINS = process.env.ALLOW_ORIGINS
-  ? process.env.ALLOW_ORIGINS.split(',').map((s) => s.trim())
-  : [];
 
 ['SESSION_SECRET', 'INTERNAL_TOKEN'].forEach((name) => {
   if (!process.env[name]) {
     console.error(`Missing required env ${name}`);
     process.exit(1);
   }
-  try {
-    const content = fs.readFileSync(envPath, 'utf8');
-    for (const line of content.split(/\r?\n/)) {
-      if (!line || line.trim().startsWith('#')) continue;
-      const idx = line.indexOf('=');
-      if (idx === -1) continue;
-      const key = line.slice(0, idx).trim();
-      if (!key || Object.prototype.hasOwnProperty.call(process.env, key)) continue;
-      const value = line.slice(idx + 1).trim();
-      process.env[key] = value;
-    }
-  } catch (error) {
-    if (process.env.LOG_LEVEL !== 'silent') {
-      console.warn(`Failed to load ${envPath}: ${error.message}`);
-    }
-  }
-}
+});
 
 loadEnvFile();
 
@@ -154,18 +129,13 @@ if (missingEnv.length) {
 }
 
 const verify = require('./lib/verify');
-const notify = require('./lib/notify');
-const logger = require('./lib/log');
 const git = require('./lib/git');
 const deploy = require('./lib/deploy');
 const { fetchWithProbe } = require('./lib/fetch_probe');
-const { db, DB_PATH: libraryDbPath } = require('./lib/db');
+const { DB_PATH: libraryDbPath } = require('./lib/db');
 const { TernaryError } = require('./lib/ternaryError');
 const attachDebugProbes = require('./modules/debug_probes');
 const maintenanceGuard = require('./modules/maintenanceGuard');
-const attachLlmRoutes = require('./routes/admin_llm');
-const gitRouter = require('./routes/git');
-const providersRouter = require('./routes/providers');
 const attachSlackExceptions = require('./modules/slack_exceptions');
 const contradictionRoutes = require('./routes/contradictions');
 const { contradictionLogger } = require('./middleware/contradictionLogger');
@@ -311,21 +281,6 @@ const GITHUB_WEBHOOK_SECRET = resolvedEnv.GITHUB_WEBHOOK_SECRET;
 const STRIPE_SECRET = resolvedEnv.STRIPE_SECRET;
 const STRIPE_WEBHOOK_SECRET = resolvedEnv.STRIPE_WEBHOOK_SECRET;
 const STRIPE_PUBLIC_KEY = resolvedEnv.STRIPE_PUBLIC_KEY;
-const WEB_ROOT = process.env.WEB_ROOT || '/var/www/blackroad';
-const BILLING_DISABLE =
-  String(process.env.BILLING_DISABLE || 'false').toLowerCase() === 'true';
-const GITHUB_WEBHOOK_SECRET = process.env.GITHUB_WEBHOOK_SECRET || '';
-const BRANCH_MAIN = process.env.BRANCH_MAIN || 'main';
-const BRANCH_STAGING = process.env.BRANCH_STAGING || 'staging';
-const STRIPE_SECRET = process.env.STRIPE_SECRET || '';
-const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || '';
-const stripeClient = STRIPE_SECRET ? new Stripe(STRIPE_SECRET) : null;
-const MATH_ENGINE_URL = process.env.MATH_ENGINE_URL || '';
-const DEBUG_MODE =
-  String(process.env.DEBUG_MODE || process.env.DEBUG_PROBES || 'false').toLowerCase() ===
-  'true';
-const FLAGS_PARAM = process.env.FLAGS_PARAM || '/blackroad/dev/flags';
-const FLAGS_MAX_AGE_MS = Number(process.env.FLAGS_MAX_AGE_MS || '30000');
 
 let securityDefaults;
 try {
@@ -334,13 +289,6 @@ try {
   if (error && error.code === 'SECURITY_DEFAULTS') process.exit(1);
   throw error;
 }
-
-const {
-  sessionSecret: SESSION_SECRET,
-  internalToken: INTERNAL_TOKEN,
-  allowOrigins: ALLOW_ORIGINS,
-  allowShellEnabled: ALLOW_SHELL,
-} = securityDefaults;
 
 const PRISM_PLACEHOLDER = {
   github: [
@@ -452,14 +400,6 @@ const PLANS = [
   },
 ];
 
-const PORT = Number.parseInt(process.env.PORT || '4000', 10);
-const SESSION_SECRET = process.env.SESSION_SECRET;
-const INTERNAL_TOKEN = process.env.INTERNAL_TOKEN;
-const ALLOW_ORIGINS = process.env.ALLOW_ORIGINS.split(',')
-  .map((origin) => origin.trim())
-  .filter(Boolean);
-const WEB_ROOT = process.env.WEB_ROOT || path.join(__dirname, '../../var/www/blackroad');
-const NODE_ENV = process.env.NODE_ENV || 'development';
 const safeAttach = (label, attachFn) => {
   try {
     attachFn();
@@ -468,7 +408,6 @@ const safeAttach = (label, attachFn) => {
   }
 };
 const rateLimit = require('express-rate-limit');
-const Stripe = require('stripe');
 
 const execFileAsync = promisify(execFile);
 
@@ -510,7 +449,6 @@ const io = new SocketIOServer(server, {
   cors: { origin: false }, // same-origin via Nginx
 });
 
-const app = express();
 app.set('trust proxy', 1);
 
 app.use((req, res, next) => {
@@ -531,13 +469,18 @@ app.use((req, res, next) => {
     });
     if (process.env.LOG_LEVEL !== 'silent') {
       console.info(logLine);
+    }
+  });
+  next();
+});
+
 // Partner relay for mTLS-authenticated teammates
 require('./modules/partner_relay_mtls')({ app });
 require('./modules/projects')({ app });
 require('./modules/pr_proxy')({ app });
 require('./modules/patentnet')({ app });
-require('./modules/truth_pubsub')({ app });
-require('./modules/trust_graph')({ app });
+safeAttach('truth_pubsub', () => require('./modules/truth_pubsub')({ app }));
+safeAttach('trust_graph', () => require('./modules/trust_graph')({ app }));
 
 // Truth quorum subscriber
 ;(async () => {
@@ -568,14 +511,14 @@ function addJob(type, payload, runner) {
       emitter.emit(id, null);
     }
   });
-  next();
-});
+  return id;
+}
 
 require('./modules/love_math')({ app });
 safeAttach('jobs', () => require('./modules/jobs')({ app }));
 safeAttach('memory', () => require('./modules/memory')({ app }));
 require('./modules/brain_chat')({ app });
-require('./modules/jobs_locked')({ app });
+safeAttach('jobs_locked', () => require('./modules/jobs_locked')({ app }));
 // --- Middleware
 app.disable('x-powered-by');
 app.use(helmet());
@@ -767,8 +710,6 @@ app.get('/health', sendHealth);
 app.head('/healthz', (_req, res) => res.status(200).end());
 app.get('/healthz', sendHealth);
 
-app.get('/api/health', (_req, res) => {
-  res.json({ ok: true, service: 'blackroad-api', ts: new Date().toISOString() });
 // --- Health
 app.head('/api/health', (_, res) => res.status(200).end());
 app.get('/api/health', async (_req, res) => {
@@ -852,8 +793,6 @@ function nowIso() {
   return new Date().toISOString();
 }
 
-function requireAuth(req, res, next) {
-  if (req.session && req.session.user) {
 // --- Auth (cookie-session)
 function extractInternalToken(req) {
   const headerToken = req.get('x-internal-token');
@@ -895,7 +834,6 @@ app.post(
   '/api/login',
   [body('username').isString().trim().notEmpty(), body('password').isString()],
   loginLimiter,
-  [body('username').isString(), body('password').isString()],
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -908,16 +846,6 @@ app.post(
 
     if (!validDevLogin && !bypass) {
       return res.status(401).json({ error: 'invalid_credentials' });
-    const { username, password } = req.body || {};
-    // dev defaults: root / Codex2025 (can be replaced with real auth)
-    if (
-      (username === 'root' && password === 'Codex2025') ||
-      BYPASS_LOGIN
-    ) {
-    if ((username === 'root' && password === 'Codex2025') || BYPASS_LOGIN) {
-      req.session.user = { username, role: 'dev', plan: 'free' };
-      req.session.user = { username, role: 'dev' };
-      return res.json({ ok: true, user: req.session.user });
     }
 
     req.session.user = { username, role: 'dev', plan: 'free' };
@@ -947,18 +875,11 @@ app.use((err, req, res, _next) => {
   res.status(status).json(payload);
 });
 
-const server = http.createServer(app);
-  logger.info({
-    event: 'stripe_webhook_received',
-    type: event?.type || 'unknown',
-  });
 app.post('/api/billing/webhook', (req, res) => {
   if (!stripeClient || !STRIPE_WEBHOOK_SECRET) {
     return res.status(501).json({ error: 'stripe_unconfigured' });
   }
   const sig = req.headers['stripe-signature'];
-  try {
-    stripeClient.webhooks.constructEvent(
   let _event;
   try {
     _event = stripeClient.webhooks.constructEvent(
@@ -971,19 +892,13 @@ app.post('/api/billing/webhook', (req, res) => {
     return res.status(400).json({ error: 'invalid_signature' });
   }
   logger.info('stripe_webhook_received', {
-    id: event.id,
-    type: event.type,
+    id: _event.id,
+    type: _event.type,
   });
   res.json({ received: true });
 });
 
 // --- SQLite bootstrap
-const db = createDatabase(DB_PATH);
-db.pragma('journal_mode = WAL');
-db.pragma('synchronous = NORMAL');
-
-const TABLES = ['projects', 'agents', 'datasets', 'models', 'integrations'];
-for (const t of TABLES) {
 if (!usingMockDb) {
   try {
     fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
@@ -1027,6 +942,7 @@ if (!usingMockDb) {
 function start(port = PORT) {
   if (!server.listening) {
     server.listen(port);
+  }
   db.prepare(
     `
     CREATE TABLE IF NOT EXISTS subscriptions (
@@ -1163,16 +1079,7 @@ if (process.env.JEST_WORKER_ID) {
   start(0);
 } else if (require.main === module) {
   start();
-// Quantum AI table seed
-db.prepare(
-  `
-  CREATE TABLE IF NOT EXISTS quantum_ai (
-    topic TEXT PRIMARY KEY,
-    summary TEXT NOT NULL
-  )
-`
-).run();
-const qSeed = [
+}
 
 app.get('/health', (_req, res) => {
   res.json({ ok: true, ts: nowIso() });
@@ -1278,7 +1185,7 @@ const QUANTUM_TOPICS = [
       'Hybrid symbolic/quantum theorem provers unlock interpretable planning.',
   },
 ];
-for (const row of qSeed) {
+for (const row of QUANTUM_TOPICS) {
   db.prepare(
     'INSERT OR IGNORE INTO quantum_ai (topic, summary) VALUES (?, ?)'
   ).run(row.topic, row.summary);
@@ -1375,6 +1282,10 @@ app.post('/api/subscribe/checkout', (req, res) => {
   }
   if (!STRIPE_SECRET) {
     return res.status(409).json({ mode: 'invoice' });
+  }
+  res.status(501).json({ error: 'not_implemented' });
+});
+
 app.get('/api/math/health', (_req, res) => {
   const hasEngine = Boolean(process.env.MATH_ENGINE_URL);
   if (!hasEngine) {
@@ -1438,6 +1349,8 @@ app.get('/api/subscribe/health', (_req, res) => {
   else if (mode === 'gumroad') providerReady = !!GUMROAD_TOKEN;
   else providerReady = true;
   res.json({ ok: true, mode, providerReady });
+});
+
 const PROVIDERS = [
   {
     id: 'openai',
@@ -1516,8 +1429,14 @@ app.get('/api/subscribe/plans', requireAuth, (_req, res) => {
           error: String(err),
         });
         r.features = [];
-const http = require('http');
-const { randomUUID } = require('crypto');
+      }
+    }
+    res.json({ plans: rows });
+  } catch (err) {
+    logger.warn('subscribe_plans_failed', { error: String(err) });
+    res.status(500).json({ error: 'server_error' });
+  }
+});
 
 const MAX_REQUEST_BODY_SIZE = 1 * 1024 * 1024; // 1MB
 
@@ -1655,75 +1574,7 @@ function createServer({
       if (!body || typeof body !== 'object') {
         return sendJson(res, 400, { error: 'invalid json payload' });
       }
-  return res.json({ id: provider.id, ok: true, latencyMs: 42 });
-});
 
-const gitRepoPath = process.env.GIT_REPO_PATH
-  ? path.resolve(process.env.GIT_REPO_PATH)
-  : process.cwd();
-
-async function runGit(args) {
-  const { stdout } = await execFileAsync('git', args, {
-    cwd: gitRepoPath,
-    maxBuffer: 4 * 1024 * 1024,
-  });
-  return stdout.toString();
-}
-
-function computeCounts(statusOutput) {
-  const counts = { staged: 0, unstaged: 0, untracked: 0 };
-  if (!statusOutput) return counts;
-  const lines = statusOutput.split('\n').filter(Boolean);
-  for (const line of lines) {
-    const state = line.slice(0, 2);
-    if (state === '??') {
-      counts.untracked += 1;
-      continue;
-    }
-    if (state[0] && state[0] !== ' ') counts.staged += 1;
-    if (state[1] && state[1] !== ' ') counts.unstaged += 1;
-  }
-  return counts;
-}
-
-app.get('/api/git/health', requireAuth, async (_req, res) => {
-// --- LLM bridge (/api/llm/chat)
-// Forwards body to FastAPI (LLM_URL) and streams raw text back to the client.
-app.get('/api/llm/ready', async (_req, res) => {
-  try {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 1000);
-    const r = await fetch(LLM_URL, { method: 'HEAD', signal: controller.signal }).catch(() => null);
-    clearTimeout(timer);
-    if (r && (r.ok || r.status === 405)) {
-      return res.json({ ok: true });
-    }
-    return res.status(503).json({ ok: false, upstream: r ? r.status : 0 });
-  } catch (e) {
-    return res.status(503).json({ ok: false, error: String(e) });
-  }
-});
-
-app.post('/api/llm/chat', requireAuth, async (req, res) => {
-  try {
-    const upstream = await fetch(LLM_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(req.body || {}),
-    });
-
-    // Stream if possible
-    if (upstream.ok && upstream.body) {
-      res.status(200);
-      res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-      res.setHeader('Transfer-Encoding', 'chunked');
-
-      const reader = upstream.body.getReader();
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        // passthrough raw bytes (FastAPI may send plain text or SSE-like chunks)
-        res.write(Buffer.from(value));
       if (body.username === VALID_USER.username && body.password === VALID_USER.password) {
         const sessionId = randomUUID();
         sessions.set(sessionId, { username: VALID_USER.username });
@@ -1734,110 +1585,6 @@ app.post('/api/llm/chat', requireAuth, async (req, res) => {
       return sendJson(res, 401, { error: 'invalid credentials' });
     }
 
-    // Non-stream fallback
-    const txt = await upstream.text().catch(() => '');
-    // try to unwrap {text: "..."}
-    let out = txt;
-    try {
-      const j = JSON.parse(txt);
-      if (j && typeof j.text === 'string') out = j.text;
-    } catch (err) {
-      logger.debug({ event: 'llm_fallback_parse_failed', error: err.message });
-      logger.warn('llm_chat_parse_failed', { error: String(err) });
-    }
-    res
-      .status(upstream.ok ? 200 : upstream.status)
-      .type('text/plain')
-      .send(out || '(no content)');
-  } catch (err) {
-    logger.error({ event: 'llm_stream_proxy_failed', error: err.message });
-    logger.error('llm_proxy_error', err);
-  } catch (e) {
-    logger.error('llm_chat_proxy_failed', e);
-  } catch {
-    res.status(502).type('text/plain').send('(llm upstream error)');
-  }
-});
-
-attachLlmRoutes(app);
-
-// --- Optional shell exec (disabled by default)
-app.post('/api/exec', requireAuth, (req, res) => {
-  if (!ALLOW_SHELL) return res.status(403).json({ error: 'exec_disabled' });
-  const cmd = ((req.body && req.body.cmd) || '').trim();
-  if (!cmd) return res.status(400).json({ error: 'cmd_required' });
-  exec(cmd, { timeout: 20000 }, (err, stdout, stderr) => {
-    if (err)
-      return res
-        .status(500)
-        .json({ error: 'exec_failed', detail: String(err), stderr });
-    res.json({ out: stdout, stderr });
-  });
-});
-
-const logConnectorStatusError = (connector, err) => {
-  logger.warn({
-    event: 'connector_status_check_failed',
-    connector,
-    error: err.message,
-  });
-};
-
-app.get('/api/connectors/status', async (_req, res) => {
-  const status = {
-    slack: false,
-    airtable: false,
-    linear: false,
-    salesforce: false,
-  };
-  try {
-    if (SLACK_WEBHOOK_URL) {
-      await notify.slack('status check');
-      status.slack = true;
-    }
-  } catch (err) {
-    logConnectorStatusError('slack', err);
-    logger.warn('connector_slack_check_failed', { error: String(err) });
-  }
-  try {
-    if (process.env.AIRTABLE_API_KEY) status.airtable = true;
-  } catch (err) {
-    logConnectorStatusError('airtable', err);
-    logger.warn('connector_airtable_check_failed', { error: String(err) });
-  }
-  try {
-    if (process.env.LINEAR_API_KEY) status.linear = true;
-  } catch (err) {
-    logConnectorStatusError('linear', err);
-    logger.warn('connector_linear_check_failed', { error: String(err) });
-  }
-  try {
-    if (process.env.SF_USERNAME) status.salesforce = true;
-  } catch (err) {
-    logConnectorStatusError('salesforce', err);
-  }
-    if (AIRTABLE_API_KEY) status.airtable = true;
-  } catch {}
-  try {
-    if (LINEAR_API_KEY) status.linear = true;
-  } catch {}
-  try {
-    if (SF_USERNAME) status.salesforce = true;
-  } catch {}
-    logger.warn('connector_salesforce_check_failed', { error: String(err) });
-  }
-  res.json(status);
-});
-
-// --- Quantum AI summaries
-app.get('/api/quantum/:topic', (req, res) => {
-  const { topic } = req.params;
-  const row = db
-    .prepare('SELECT summary FROM quantum_ai WHERE topic = ?')
-    .get(topic);
-  if (!row) return res.status(404).json({ error: 'not_found' });
-  res.json({ topic, summary: row.summary });
-});
     const cookies = parseCookies(req.headers.cookie);
     const session = cookies.session ? sessions.get(cookies.session) : undefined;
 
@@ -1872,17 +1619,9 @@ app.get('/api/quantum/:topic', (req, res) => {
 
     return sendJson(res, 404, { error: 'not found' });
   });
-    const inside = await runGit(['rev-parse', '--is-inside-work-tree']);
-    res.json({
-      ok: true,
-      insideWorkTree: inside.trim() === 'true',
-      repoPath: gitRepoPath,
-      readOnly: true,
-    });
-  } catch (err) {
-    res.status(500).json({ ok: false, error: err.message });
-  }
-});
+
+  return { server };
+}
 
 app.get('/api/git/status', requireAuth, async (_req, res) => {
   try {
@@ -1903,8 +1642,6 @@ app.use((req, res) => {
   res.status(404).json({ error: 'not_found', path: req.path });
 });
 
-const server = http.createServer(app);
-
 // --- Socket.IO presence (metrics)
 io.on('connection', (socket) => {
   socket.emit('hello', { ok: true, t: Date.now() });
@@ -1923,11 +1660,13 @@ const metricsTimer = setInterval(() => {
 }, 2000);
 
 // --- Start
-server.listen(PORT, () => {
-  console.log(
-    `[blackroad-api] listening on ${PORT} (db: ${DB_PATH}, llm: ${LLM_URL}, shell: ${ALLOW_SHELL})`
-  );
-});
+if (require.main === module) {
+  server.listen(PORT, () => {
+    console.log(
+      `[blackroad-api] listening on ${PORT} (db: ${DB_PATH}, llm: ${LLM_URL}, shell: ${ALLOW_SHELL})`
+    );
+  });
+}
 (async () => {
   try {
     await require('./modules/truth_pubsub')({ app });
@@ -1954,58 +1693,22 @@ server.listen(PORT, () => {
   }, 2000);
 
   // --- Start
-  server.listen(PORT, () => {
-    console.log(
-      `[blackroad-api] listening on ${PORT} (db: ${DB_PATH}, llm: ${LLM_URL}, shell: ${ALLOW_SHELL})`
-    );
-  });
+  if (require.main === module) {
+    server.listen(PORT, () => {
+      console.log(
+        `[blackroad-api] listening on ${PORT} (db: ${DB_PATH}, llm: ${LLM_URL}, shell: ${ALLOW_SHELL})`
+      );
+    });
+  }
 
   // --- Safety
   process.on('unhandledRejection', (e) => console.error('UNHANDLED', e));
   process.on('uncaughtException', (e) => console.error('UNCAUGHT', e));
 })();
 
-module.exports = { app, server, start, INTERNAL_TOKEN, ALLOW_ORIGINS };
-module.exports = { app, server, loginLimiter };
 function shutdown(done) {
   clearInterval(metricsTimer);
   server.close(done);
 }
 
-module.exports = { app, server, shutdown };
-
-  return { server };
-}
-
-if (require.main === module) {
-  const port = Number.parseInt(process.env.PORT || '4000', 10);
-  const allowedOrigins = parseAllowedOrigins(process.env.ALLOW_ORIGINS || '');
-  const { server } = createServer({ allowedOrigins });
-  server.listen(port, () => {
-    // eslint-disable-next-line no-console
-    console.log(`BlackRoad API listening on ${port}`);
-  });
-}
-
-module.exports = {
-  createServer,
-  parseAllowedOrigins,
-};
-const desiredPort = (() => {
-  if (require.main === module) {
-    return Number.parseInt(process.env.PORT || '4000', 10);
-  }
-  return 0;
-})();
-
-server.listen(desiredPort);
-
-module.exports = { app, server };
-
-if (require.main === module) {
-  const address = server.address();
-  const boundPort =
-    typeof address === 'object' && address ? address.port : desiredPort;
-
-  console.log(`[blackroad-api] listening on port ${boundPort}`);
-}
+module.exports = { app, server, start, shutdown, loginLimiter, INTERNAL_TOKEN, ALLOW_ORIGINS };

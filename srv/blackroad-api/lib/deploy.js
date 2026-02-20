@@ -9,7 +9,11 @@ const archiveDir = path.join(releasesDir, 'archive');
 const lockFile = '/var/lock/blackroad.deploy.lock';
 const spaSymlink = '/var/www/blackroad';
 
-fs.mkdirSync(archiveDir, { recursive: true });
+try {
+  fs.mkdirSync(archiveDir, { recursive: true });
+} catch (_) {
+  // ignore permission errors in non-production environments
+}
 
 function sh(cmd, input) {
   return new Promise((resolve, reject) => {
