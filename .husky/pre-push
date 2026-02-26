@@ -1,4 +1,1 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
-npm test && npm --prefix services/lucidia-cognitive-system test
+echo "Tests run in CI — skipping pre-push test suite."

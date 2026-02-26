@@ -11,6 +11,7 @@ concurrency:
 
 permissions:
   contents: read
+
 jobs:
   test:
     if: |
@@ -21,15 +22,17 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
-      - uses: actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8 # v4
       - uses: actions/setup-node@v4
-        with: { node-version: 22, cache: 'npm' }
+        with:
+          node-version: 22
+          cache: 'npm'
       - name: Ensure default test script
         run: |
           if [ ! -f package.json ]; then npm init -y; fi
           node -e "const fs=require('fs');const p='package.json';const j=JSON.parse(fs.readFileSync(p,'utf8'));j.scripts=j.scripts||{};j.scripts.test=j.scripts.test||'echo \"No tests specified\" && exit 0';fs.writeFileSync(p, JSON.stringify(j,null,2));"
       - run: npm ci --omit=optional || npm i --package-lock-only
       - run: npm test
+
   site-playwright:
     if: |
       (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
@@ -42,7 +45,6 @@ jobs:
         working-directory: sites/blackroad
     steps:
       - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
-      - uses: actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8 # v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -55,4 +57,4 @@ jobs:
       - name: Run Playwright tests
         run: npm test
         env:
-          CI: "true"
+          CI: 'true'

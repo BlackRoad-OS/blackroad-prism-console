@@ -2,8 +2,8 @@
 module.exports = {
   testEnvironment: 'node',
   verbose: true,
-  setupFiles: ['<rootDir>/tests/jest.setup.js'],
   roots: ['<rootDir>/tests'],
+  setupFiles: ['<rootDir>/tests/jest.setup.js'],
   testMatch: ['**/?(*.)+(spec|test).[jt]s?(x)', '**/?(*.)+(spec|test).mjs'],
   transform: {
     '^.+\\.tsx?$': '<rootDir>/jest.transformer.cjs',
@@ -19,7 +19,6 @@ module.exports = {
       '<rootDir>/packages/diffusion-gateway/src/$1',
   },
   extensionsToTreatAsEsm: ['.ts'],
-  setupFiles: ['<rootDir>/tests/jest.setup.js'],
   reporters: [
     'default',
     [
@@ -30,6 +29,7 @@ module.exports = {
       },
     ],
   ],
-  testMatch: ['**/*.test.js'],
+  coverageDirectory: 'reports/coverage-jest',
+  coverageReporters: ['text', 'json-summary', 'html'],
   forceExit: true,
 };
