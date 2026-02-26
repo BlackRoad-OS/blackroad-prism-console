@@ -1,3 +1,4 @@
+![Build](https://github.com/BlackRoad-OS/blackroad-prism-console/actions/workflows/monorepo-matrix.yml/badge.svg) ![E2E](https://github.com/BlackRoad-OS/blackroad-prism-console/actions/workflows/playwright.yml/badge.svg) ![Deploy](https://github.com/BlackRoad-OS/blackroad-prism-console/actions/workflows/deploy-blackroad.yml/badge.svg)
 # ⚠️ DEPRECATED - This repository has been archived
 
 > **This repository is deprecated and read-only.**
