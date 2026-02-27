@@ -148,7 +148,7 @@ export default function PrismShell() {
     >
       <div className="flex-1 overflow-y-auto whitespace-pre-wrap break-words text-sm leading-relaxed">
         {lines.map((line, i) => (
-          <div key={i}>{line || '\u00A0'}</div>
+          <div key={`${i}-${line}`}>{line || '\u00A0'}</div>
         ))}
         <form onSubmit={handleSubmit} className="flex">
           <span className="text-green-400 shrink-0">prism@blackroad:~$&nbsp;</span>
