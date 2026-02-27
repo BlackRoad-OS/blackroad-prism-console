@@ -32,6 +32,20 @@ __all__ = [
     "phase_derivative",
     "amundson_energy_balance",
     "amundson_learning_update",
+    # amundson_foundations (Alexa Louise Amundson's notes)
+    "HaltingProblemDemo",
+    "schrodinger_energy_levels",
+    "schrodinger_wavefunction",
+    "gaussian_uncertainties",
+    "verify_uncertainty",
+    "mobius",
+    "mertens",
+    "fine_structure_constant",
+    "hydrogen_energy",
+    "ALPHA",
+    "gaussian",
+    "gaussian_ft_analytic",
+    "demonstrate_fourier_gaussian",
 ]
 
 _MODULE_MAP: Dict[str, Tuple[str, str]] = {
@@ -63,6 +77,20 @@ _MODULE_MAP: Dict[str, Tuple[str, str]] = {
     "phase_derivative": ("amundson_equations", "phase_derivative"),
     "amundson_energy_balance": ("amundson_equations", "amundson_energy_balance"),
     "amundson_learning_update": ("amundson_equations", "amundson_learning_update"),
+    # amundson_foundations
+    "HaltingProblemDemo": ("amundson_foundations", "HaltingProblemDemo"),
+    "schrodinger_energy_levels": ("amundson_foundations", "schrodinger_energy_levels"),
+    "schrodinger_wavefunction": ("amundson_foundations", "schrodinger_wavefunction"),
+    "gaussian_uncertainties": ("amundson_foundations", "gaussian_uncertainties"),
+    "verify_uncertainty": ("amundson_foundations", "verify_uncertainty"),
+    "mobius": ("amundson_foundations", "mobius"),
+    "mertens": ("amundson_foundations", "mertens"),
+    "fine_structure_constant": ("amundson_foundations", "fine_structure_constant"),
+    "hydrogen_energy": ("amundson_foundations", "hydrogen_energy"),
+    "ALPHA": ("amundson_foundations", "ALPHA"),
+    "gaussian": ("amundson_foundations", "gaussian"),
+    "gaussian_ft_analytic": ("amundson_foundations", "gaussian_ft_analytic"),
+    "demonstrate_fourier_gaussian": ("amundson_foundations", "demonstrate_fourier_gaussian"),
 }
 
 
