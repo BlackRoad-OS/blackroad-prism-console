@@ -1,11 +1,14 @@
 'use strict';
 
-const { addTask, getTask, getTasks, getAllTasks, updateTask, deleteTask } = require('../data');
+const { addTask, getTask, getTasks, updateTask, deleteTask } = require('../data');
 
 module.exports = function tasksRoute(router) {
   router.get('/api/tasks', (req, res) => {
     const { project_id } = req.query;
-    const tasks = project_id ? getTasks(project_id) : getAllTasks();
+    if (!project_id) {
+      return res.status(400).json({ error: 'project_id is required' });
+    }
+    const tasks = getTasks(project_id);
     res.json({ tasks });
   });
 
