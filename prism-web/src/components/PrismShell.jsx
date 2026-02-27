@@ -151,21 +151,21 @@ export default function PrismShell() {
           <div key={`${i}-${line}`}>{line || '\u00A0'}</div>
         ))}
         <form onSubmit={handleSubmit} className="flex">
-          <span className="text-green-400 shrink-0">prism@blackroad:~$&nbsp;</span>
-          <input
-            ref={inputRef}
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            className="flex-1 bg-transparent text-green-400 outline-none caret-green-400 border-none p-0 m-0"
-            spellCheck={false}
-            autoComplete="off"
-            aria-label="Terminal command input"
-          />
-        </form>
         <div ref={bottomRef} />
       </div>
+      <form onSubmit={handleSubmit} className="flex mt-1">
+        <span className="text-green-400 shrink-0">prism@blackroad:~$&nbsp;</span>
+        <input
+          ref={inputRef}
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+          className="flex-1 bg-transparent text-green-400 outline-none caret-green-400 border-none p-0 m-0"
+          spellCheck={false}
+          autoComplete="off"
+        />
+      </form>
     </div>
   );
 }
