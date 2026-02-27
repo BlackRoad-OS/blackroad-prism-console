@@ -1,8 +1,11 @@
 package harness
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"os"
 	"time"
 )
 
@@ -109,7 +112,37 @@ func EmitComplianceNotification(dec RuleDecision) error {
 	return PostSlackMessage("#secops", payload)
 }
 
+// slackHTTPClient is the HTTP client used for Slack webhook requests.
+// Exported as a variable to allow tests to inject a custom transport.
+var slackHTTPClient = &http.Client{Timeout: 10 * time.Second}
+
 func PostSlackMessage(channel string, payload map[string]any) error {
-	// TODO: wire into Slack API client or webhook
+	webhookURL := os.Getenv("SLACK_WEBHOOK_URL")
+	if webhookURL == "" {
+		return nil
+	}
+
+	msg := map[string]any{
+		"channel": channel,
+	}
+	for k, v := range payload {
+		msg[k] = v
+	}
+
+	body, err := json.Marshal(msg)
+	if err != nil {
+		return fmt.Errorf("slack: marshal payload: %w", err)
+	}
+
+	resp, err := slackHTTPClient.Post(webhookURL, "application/json", bytes.NewReader(body))
+	if err != nil {
+		return fmt.Errorf("slack: post webhook: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return fmt.Errorf("slack: webhook returned status %d", resp.StatusCode)
+	}
+
 	return nil
 }
