@@ -161,6 +161,7 @@ export default function PrismShell() {
             className="flex-1 bg-transparent text-green-400 outline-none caret-green-400 border-none p-0 m-0"
             spellCheck={false}
             autoComplete="off"
+            aria-label="Terminal command input"
           />
         </form>
         <div ref={bottomRef} />
