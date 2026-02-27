@@ -1,8 +1,11 @@
 package harness
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"os"
 	"time"
 )
 
@@ -110,6 +113,32 @@ func EmitComplianceNotification(dec RuleDecision) error {
 }
 
 func PostSlackMessage(channel string, payload map[string]any) error {
-	// TODO: wire into Slack API client or webhook
+	webhookURL := os.Getenv("SLACK_WEBHOOK_URL")
+	if webhookURL == "" {
+		return nil
+	}
+
+	body := map[string]any{
+		"channel": channel,
+		"text":    payload["text"],
+	}
+	if meta, ok := payload["metadata"]; ok {
+		body["metadata"] = meta
+	}
+
+	data, err := json.Marshal(body)
+	if err != nil {
+		return fmt.Errorf("slack: marshal payload: %w", err)
+	}
+
+	resp, err := http.Post(webhookURL, "application/json", bytes.NewReader(data))
+	if err != nil {
+		return fmt.Errorf("slack: post webhook: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode >= 300 {
+		return fmt.Errorf("slack: webhook returned %s", resp.Status)
+	}
 	return nil
 }
