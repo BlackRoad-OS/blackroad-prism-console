@@ -13,11 +13,14 @@ module.exports = function tasksRoute(router) {
   });
 
   router.post('/api/tasks', (req, res) => {
-    const { project_id, title, status } = req.body || {};
-    if (!project_id || !title) {
-      return res.status(400).json({ error: 'project_id and title are required' });
+    const { title, status } = req.body || {};
+    if (typeof title !== 'string' || !title.trim()) {
+      return res.status(400).json({ error: 'title is required' });
     }
-    const task = addTask(project_id, title, status);
+    if (status !== undefined && typeof status !== 'string') {
+      return res.status(400).json({ error: 'status must be a string if provided' });
+    }
+    const task = addTask(undefined, title, status);
     res.status(201).json({ task });
   });
 
