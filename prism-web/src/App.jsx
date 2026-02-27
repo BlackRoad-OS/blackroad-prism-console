@@ -28,7 +28,7 @@ export default function App(){
           <button key={t} onClick={()=>setTab(t)}>{t}</button>
         ))}
       </nav>
-      <main className="flex-1 p-4">
+      <main className="flex-1 p-4 overflow-hidden">
         {render()}
       </main>
     </div>
