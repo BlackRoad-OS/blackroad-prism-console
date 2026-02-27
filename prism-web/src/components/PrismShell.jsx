@@ -58,7 +58,6 @@ export default function PrismShell() {
     (raw) => {
       const trimmed = raw.trim();
       if (!trimmed) {
-        setLines((prev) => [...prev, { type: 'input', text: trimmed }]);
         return;
       }
 
