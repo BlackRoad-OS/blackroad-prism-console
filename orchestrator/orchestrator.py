@@ -107,3 +107,13 @@ class Orchestrator:
 
         self.state_path.parent.mkdir(parents=True, exist_ok=True)
         self.state_path.write_text(json.dumps(state, indent=2, sort_keys=True, default=str))
+
+
+def route(task, bot_name: str):
+    """Module-level route function for backwards compatibility."""
+    from bots import BOT_REGISTRY
+    bot_cls = BOT_REGISTRY.get(bot_name)
+    if not bot_cls:
+        raise ValueError(f"Unknown bot: {bot_name}")
+    bot = bot_cls() if callable(bot_cls) else bot_cls
+    return bot.run(task)

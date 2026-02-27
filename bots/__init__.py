@@ -75,4 +75,8 @@ def list_bots() -> Sequence[str]:
     return tuple(sorted(BOT_REGISTRY))
 
 
-__all__ = ["BOT_REGISTRY", "build_registry", "list_bots"]
+__all__ = ["BOT_REGISTRY", "build_registry", "list_bots", "available_bots"]
+
+def available_bots():
+    """Return a dict of bot name -> bot class."""
+    return {name: type(bot) for name, bot in BOT_REGISTRY.items()}

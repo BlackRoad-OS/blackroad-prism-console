@@ -1,4 +1,3 @@
-"""Codex-30 Registrar package."""
 """Python package shim exposing the Codex-30 Registrar assets."""
 from __future__ import annotations
 

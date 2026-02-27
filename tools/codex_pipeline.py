@@ -165,28 +165,3 @@ def _run_command(command: str, *, dry_run: bool) -> None:
     else:  # pragma: no cover - parser enforces valid choices
         raise ValueError(f"Unknown command: {command}")
 
-        "--dry-run", action="store_true", help="Simulate actions without executing commands"
-    )
-    parser.add_argument(
-        "--skip-validate", action="store_true", help="Skip service health validation"
-    )
-
-def main(argv: list[str] | None = None) -> int:
-    """CLI entry point used by tests and manual runs."""
-
-    parser = _build_parser()
-    args = parser.parse_args(argv)
-
-    _run_command(args.command, dry_run=args.dry_run)
-
-    if args.dry_run or args.skip_validate:
-        return 0
-
-    summary = validate_services()
-    failed = [name for name, status in summary.items() if name != "timestamp" and status != "OK"]
-    return 1 if failed else 0
-
-
-if __name__ == "__main__":  # pragma: no cover - manual invocation
-if __name__ == "__main__":
-    raise SystemExit(main())

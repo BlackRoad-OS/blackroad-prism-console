@@ -37,3 +37,26 @@ def write(table: str, record: Dict[str, Any]) -> None:
     dest.parent.mkdir(parents=True, exist_ok=True)
     with open(dest, "a", encoding="utf-8") as f:
         f.write(json.dumps(record) + "\n")
+
+
+def scan_table(name: str):
+    """Scan all rows from a table by name."""
+    import json
+    from pathlib import Path
+    path = Path("artifacts") / "lake" / f"{name}.jsonl"
+    if not path.exists():
+        return
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if line.strip():
+            yield json.loads(line)
+
+
+def write_table(name: str, rows) -> None:
+    """Write rows to a table by name."""
+    import json
+    from pathlib import Path
+    path = Path("artifacts") / "lake" / f"{name}.jsonl"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8") as fh:
+        for row in rows:
+            fh.write(json.dumps(row) + "\n")
