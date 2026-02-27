@@ -1,8 +1,11 @@
 package harness
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"os"
 	"time"
 )
 
@@ -110,6 +113,27 @@ func EmitComplianceNotification(dec RuleDecision) error {
 }
 
 func PostSlackMessage(channel string, payload map[string]any) error {
-	// TODO: wire into Slack API client or webhook
+	webhookURL := os.Getenv("SLACK_WEBHOOK_URL")
+	if webhookURL == "" {
+		return fmt.Errorf("SLACK_WEBHOOK_URL environment variable is not set")
+	}
+
+	payload["channel"] = channel
+
+	body, err := json.Marshal(payload)
+	if err != nil {
+		return fmt.Errorf("failed to marshal slack payload: %w", err)
+	}
+
+	resp, err := http.Post(webhookURL, "application/json", bytes.NewReader(body))
+	if err != nil {
+		return fmt.Errorf("failed to post slack message: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return fmt.Errorf("slack webhook returned status %d", resp.StatusCode)
+	}
+
 	return nil
 }
