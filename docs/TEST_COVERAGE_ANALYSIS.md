@@ -15,18 +15,55 @@ The BlackRoad Prism Console monorepo contains **~5,500 source files** across Typ
 
 | Area | Source Files | Test Files | Effective Coverage | Risk Level |
 |------|-------------|------------|-------------------|------------|
-| **apps/api** (routes, middleware) | 50+ route files | 6 test files | ~15% | CRITICAL |
+| **apps/api/src/routes/** | **267** route files | 6 test files | **2.2%** (261 routes untested) | CRITICAL |
 | **Authentication** (JWT, SAML, SCIM) | 8+ files | 0 dedicated tests | **0%** | CRITICAL |
-| **agents/** (100+ AI agents) | 100+ agents | ~3 test files | **~2%** | HIGH |
-| **services/** (36+ microservices) | 50+ services | Minimal tests | **<5%** | HIGH |
-| **packages/** (57+ packages) | 57 packages | ~29 have jest configs, many empty | **~20%** | HIGH |
-| **Event mesh / message bus** | 3+ core files | 0 tests | **0%** | HIGH |
+| **agents/** (root-level) | **67** agent files | 3 test files | **4.5%** (64 agents untested) | HIGH |
+| **agents/codex/** (sub-agents) | 7+ agent dirs | 26 test files | ~39% | MEDIUM |
+| **services/** | **63** service dirs | 13 with tests | **20.6%** (50 services untested) | HIGH |
+| **packages/** | **67** packages | 36 with tests | **53.7%** (31 packages untested) | HIGH |
+| **apps/** | **37** app dirs | 11 with tests | **29.7%** (26 apps untested) | HIGH |
+| **Event mesh / message bus** | 3+ core files | 1 minimal test | **~10%** | HIGH |
 | **Database CRUD** | Multiple models | 1 integration test file | **<5%** | CRITICAL |
-| **apps/backroad** | Full app | 6 test files | ~30% | MEDIUM |
-| **apps/prism/server** | Full service | 8 test files | ~40% | MEDIUM |
-| **Core math** (hilbert, depth_solver) | 5+ files | 0 tests | **0%** | MEDIUM |
+| **Core math** (hilbert, depth_solver) | 4 files (452 lines) | 2 partial tests | **~5–10%** functional | MEDIUM |
 | **CLI tools** | 3+ apps | 0 tests | **0%** | LOW |
 | **Frontend components** | 33 web apps | Sporadic | **<5%** | LOW |
+
+### Detailed Breakdown: API Routes (Worst Coverage)
+
+The `apps/api/src/routes/` directory contains **267 TypeScript route files** organized across dozens of domains. Only **6 test files** exist, leaving **98% of routes completely untested**. Major untested domains include:
+
+| Domain | Route Files | Tests |
+|--------|------------|-------|
+| CRM (accounts, contacts, forecast, leads, opps, etc.) | 10 | 0 |
+| AR (cashapp, credit, dispute, dunning, invoice, etc.) | 7 | 0 |
+| AI (assistants, evals, experiments, prompts, rag, etc.) | 7 | 0 |
+| HR (compensation, employee, onboarding, payroll, etc.) | 6+ | 0 |
+| Treasury (cash, credit, hedges, market) | 4 | 0 |
+| Tax (einvoice, fatca, jurisdictions) | 3 | 0 |
+| SOX (deficiency, rcm, tests) | 3 | 0 |
+| Auth (auth, saml/*, scim/*) | 6 | 0 |
+| Billing, pricing, procurement, supply, etc. | 20+ | 0 |
+
+### Detailed Breakdown: Root-Level Agents (64 Untested)
+
+Of 67 Python agent files at the root `agents/` directory, only 3 have any test coverage (`auto_novel_agent.py`, `cleanup_bot.py`, `cusum_monitor_agent.py`). Notable untested agents:
+
+- `athena_orchestrator.py` — Core orchestration logic
+- `agent_wellness_system.py` — Health monitoring
+- `blackroad_agent_framework.py` — Agent framework (both versions)
+- `security_shepherd.py` — Security agent
+- `multi_platform_orchestrator.py` — Multi-platform coordination
+- `quantum_agent.py` — Quantum computing agent
+- 57 more agents with zero tests
+
+### Detailed Breakdown: Core Math Modules
+
+| File | Lines | Tests | Functional Coverage |
+|------|-------|-------|-------------------|
+| `hilbert_core.py` | 186 | 1 test (only `ks_distance()`) | ~5% — 10+ functions untested including `normalize()`, `orthonormalize()`, `projector_from_basis()`, `truth_degree()`, `luders_update()`, full `SymbolicState` class |
+| `depth_solver.py` | 105 | 0 | 0% — `depth_from_scalars()`, `solve()`, all helpers untested |
+| `event_mesh.py` | 52 | 1 test (3 assertions) | ~30% |
+| `prism_event_bridge.py` | 109 | 0 | 0% — `publish_event()`, `fetch_events()`, `wait_for_event()` all untested |
 
 ---
 
@@ -58,19 +95,22 @@ The BlackRoad Prism Console monorepo contains **~5,500 source files** across Typ
 
 ---
 
-### 2.2 Core API Endpoints — ~15% Coverage, Mostly Shallow
+### 2.2 Core API Endpoints — 2.2% Coverage (261 of 267 Routes Untested)
 
 **Why this matters:** API failures and data corruption affect all consumers.
 
-**What exists:** `apps/api/tests/unit/health.test.ts` checks only HTTP status codes, not response bodies. `apps/api/tests/integration/reco.test.ts` validates a single field.
+**What exists:** Only 6 test files for 267 route files. `apps/api/tests/unit/health.test.ts` checks only HTTP status codes (9 lines, 2 assertions). `apps/api/tests/integration/reco.test.ts` validates a single field (12 lines, 2 assertions). Both are effectively stubs.
 
-**What's missing:**
+**What's missing (261 untested routes including):**
 - `apps/api/src/routes/billing.ts` — Stripe payment integration (0 tests)
 - `apps/api/src/routes/treasury/*.ts` — Cash, credit, hedges, market (0 tests)
 - `apps/api/src/routes/tax/*.ts` — E-invoicing, FATCA, jurisdictions (0 tests)
 - `apps/api/src/routes/sox/*.ts` — Deficiency, RCM, compliance tests (0 tests)
-- `apps/api/src/routes/sup/*.ts` — Support ticketing (0 tests)
-- 50+ other route files with no tests at all
+- `apps/api/src/routes/crm/*.ts` — 10 CRM routes (0 tests)
+- `apps/api/src/routes/ar/*.ts` — 7 accounts receivable routes (0 tests)
+- `apps/api/src/routes/ai/*.ts` — 7 AI routes including rag, evals, safety (0 tests)
+- `apps/api/src/routes/hr/*.ts` — Compensation, onboarding, payroll (0 tests)
+- 200+ more route files with no tests at all
 
 **Recommended tests:**
 - Request validation (malformed input, missing fields, wrong types)
@@ -117,14 +157,22 @@ The BlackRoad Prism Console monorepo contains **~5,500 source files** across Typ
 
 ---
 
-### 2.5 Event Mesh & Message Bus — 0% Coverage
+### 2.5 Services Layer — 79% of Services Untested
+
+**Why this matters:** 50 of 63 microservices have zero test files.
+
+**Services with tests (13):** api-gateway, auth, llm, lucidia-cognitive-system, lucidia_api, origin-gateway, origin-qlm-bridge, policy-engine, prism, prism-console-api, quantum_copilot, roadglitch, roadview-search
+
+**Notable untested services (50):** ai-content-generator, autopal, compliance_engine, discord-bot, finance-accounting-automation, hr-talent-automation, legal-compliance-automation, llm-gateway, llm-healthwatch, marketing-sales-automation, message-bus, metaverse-campus, model-health, operations-supply-chain, quantum_lab, reality-engine, roadchain, roadcoin, and 32 more.
+
+### 2.6 Event Mesh & Message Bus — Minimal Coverage
 
 **Why this matters:** Event loss, incorrect routing, silent failures in async processing.
 
 **Untested files:**
-- `event_mesh.py`
-- `prism_event_bridge.py`
-- `agent/mac/mqtt.py`
+- `prism_event_bridge.py` — 109 lines, 4 functions (`publish_event`, `fetch_events`, `wait_for_event`), 0 tests
+- `agent/mac/mqtt.py` — MQTT pub/sub, 0 tests
+- `event_mesh.py` — Has 1 minimal test (3 assertions for `github_webhook_to_event` only)
 
 **Recommended tests:**
 - Event routing logic (topic → handler mapping)
