@@ -77,7 +77,7 @@ export default function PrismShell() {
 
       const ctx = {
         startTime: startTime.current,
-        commandHistory: [...commandHistory, trimmed],
+        commandHistory,
       };
 
       if (BUILT_IN_COMMANDS[cmd]) {
