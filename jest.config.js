@@ -1,4 +1,3 @@
-// FILE: jest.config.js
 module.exports = {
   testEnvironment: 'node',
   verbose: true,
@@ -19,7 +18,6 @@ module.exports = {
       '<rootDir>/packages/diffusion-gateway/src/$1',
   },
   extensionsToTreatAsEsm: ['.ts'],
-  setupFiles: ['<rootDir>/tests/jest.setup.js'],
   reporters: [
     'default',
     [
@@ -30,6 +28,5 @@ module.exports = {
       },
     ],
   ],
-  testMatch: ['**/*.test.js'],
   forceExit: true,
 };

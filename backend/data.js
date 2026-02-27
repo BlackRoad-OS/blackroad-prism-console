@@ -3,6 +3,8 @@
 const fs = require('fs');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
+const { randomUUID } = require('crypto');
+
 const shouldMockSqlite =
   process.env.NODE_ENV === 'test' ||
   String(process.env.USE_SQLITE_MOCK || '').toLowerCase() === 'true' ||
@@ -59,6 +61,8 @@ function nowISO() {
 function isoAfterMinutes(minutes) {
   const mins = Number.isFinite(minutes) ? Math.max(0, minutes) : 0;
   return new Date(Date.now() + mins * 60 * 1000).toISOString();
+}
+
 function toInt(value, fallback) {
   const n = parseInt(value, 10);
   if (Number.isFinite(n)) return n;
@@ -67,6 +71,21 @@ function toInt(value, fallback) {
 
 function clampInt(value, min, max) {
   return Math.min(Math.max(value, min), max);
+}
+
+// ---- Ephemeral in-memory store (backward compat) ----
+const store = {
+  timeline: [],
+  lucidiaHistory: [],
+  claudeHistory: [],
+  codexRuns: [],
+  auditLogs: [],
+};
+
+function addTimeline(evt) {
+  const item = { id: randomUUID(), time: new Date().toISOString(), ...evt };
+  store.timeline.unshift(item);
+  return item;
 }
 
 // ---- Users ----
@@ -98,164 +117,6 @@ function getProject(id) {
 function getProjects(userId) {
   return getDb().prepare('SELECT * FROM projects WHERE user_id = ?').all(userId);
 }
-const bcrypt = require('bcrypt');
-
-const demoProjectId = uuidv4();
-// Ephemeral in-memory store. Replace with DB in prod.
-const { randomUUID } = require('crypto');
-
-// eslint-disable-next-line no-unused-vars
-const store = {
-  users: [
-    {
-      id: 'u-admin',
-      username: 'admin',
-      passwordHash: bcrypt.hashSync('adminpass', 10),
-      role: 'admin',
-      created_at: new Date().toISOString(),
-      projectId: demoProjectId,
-    },
-  ],
-  sessions: [],
-  wallet: { rc: 1.2 },
-  agents: [
-    { id: 'phi', name: 'Phi', status: 'idle', cpu: 0, memory: 0, location: 'local' },
-    { id: 'gpt', name: 'GPT', status: 'idle', cpu: 0, memory: 0, location: 'cloud' },
-    { id: 'mistral', name: 'Mistral', status: 'idle', cpu: 0, memory: 0, location: 'cloud' },
-  ],
-  contradictions: { issues: 2 },
-  sessionNotes: '',
-  guardian: {
-    status: { secure: true, mfa: true, encryption: true, lastScan: '2025-08-20' },
-    alerts: [
-      {
-        id: randomUUID(),
-        type: 'Unauthorized login',
-        severity: 'high',
-        time: new Date().toISOString(),
-        status: 'active',
-      },
-    ],
-  },
-  posts: [
-    {
-      id: randomUUID(),
-      author: 'Root',
-      time: new Date().toISOString(),
-      content: 'Welcome to BackRoad!\n\nShare updates with your fellow travelers.',
-      likes: 0,
-    },
-  ],
-  tasks: [
-    {
-      id: randomUUID(),
-      projectId: demoProjectId,
-      title: 'Calculus HW 3',
-      course: 'Math 201',
-      status: 'todo',
-      due: '2025-08-25',
-      reward: 12,
-      progress: 0.2,
-    },
-    {
-      id: randomUUID(),
-      projectId: demoProjectId,
-      title: 'Lab: Sorting',
-      course: 'CS 101',
-      status: 'inprogress',
-      due: '2025-08-23',
-      reward: 20,
-      progress: 0.55,
-    },
-    {
-      id: randomUUID(),
-      projectId: demoProjectId,
-      title: 'Essay Draft',
-      course: 'ENG 210',
-      status: 'review',
-      due: '2025-08-24',
-      reward: 15,
-      progress: 0.8,
-    },
-    {
-      id: randomUUID(),
-      projectId: demoProjectId,
-      title: 'Fix auth bug',
-      course: 'CS 101',
-      status: 'done',
-      due: '2025-08-21',
-      reward: 5,
-      progress: 1.0,
-    },
-  ],
-  commits: [
-    { id: 'c1', hash: 'd1f6e52', author: 'Mistral agent', message: 'Revert last commit', time: new Date(Date.now()-3600e3).toISOString() },
-    { id: 'c2', hash: 'a9c1b02', author: 'User', message: 'Add print("Hello, world!")', time: new Date(Date.now()-1800e3).toISOString() }
-  ],
-  projects: [
-    { id: demoProjectId, name: 'Demo Project', status: 'active' }
-    { id: randomUUID(), name: 'Demo Project', status: 'active' }
-  roadchainBlocks: [
-    {
-      height: 3,
-      hash: '0xabc123',
-      time: new Date().toISOString(),
-      txs: [
-        { hash: '0xtx1', from: 'alice', to: 'bob', amount: 5.2 },
-        { hash: '0xtx2', from: 'carol', to: 'dave', amount: 1.1 }
-      ]
-    },
-    {
-      height: 2,
-      hash: '0xdef456',
-      time: new Date(Date.now() - 60000).toISOString(),
-      txs: [
-        { hash: '0xtx3', from: 'eve', to: 'frank', amount: 0.7 }
-      ]
-    },
-    {
-      height: 1,
-      hash: '0xghi789',
-      time: new Date(Date.now() - 120000).toISOString(),
-      txs: []
-    }
-    {
-      id: 'c1',
-      hash: 'd1f6e52',
-      author: 'Mistral agent',
-      message: 'Revert last commit',
-      time: new Date(Date.now() - 3600e3).toISOString(),
-    },
-    {
-      id: 'c2',
-      hash: 'a9c1b02',
-      author: 'User',
-      message: 'Add print("Hello, world!")',
-      time: new Date(Date.now() - 1800e3).toISOString(),
-    },
-  ],
-  projects: [{ id: demoProjectId, name: 'Demo Project', status: 'active' }],
-  timeline: [
-    {
-      id: randomUUID(),
-      type: 'agent',
-      agent: 'Phi',
-      text: 'created a branch `main`',
-      time: new Date().toISOString(),
-    },
-    {
-      id: randomUUID(),
-      type: 'agent',
-      agent: 'GPT',
-      text: 'ran a code generation (env: prod, branch: main)',
-      time: new Date().toISOString(),
-    },
-  ],
-  lucidiaHistory: [],
-  claudeHistory: [],
-  codexRuns: [],
-  auditLogs: [],
-};
 
 // ---- Tasks ----
 function addTask(projectId, title, status = 'todo') {
@@ -320,6 +181,7 @@ function deleteContradiction(id) {
   return getDb().prepare('DELETE FROM contradictions WHERE id = ?').run(id);
 }
 
+// ---- Exceptions ----
 function mapException(row) {
   if (!row) return null;
   return {
@@ -369,12 +231,6 @@ function createException(entry) {
   const id = info.lastInsertRowid;
   recordExceptionEvent(id, requestedBy, 'request', reason);
   return getException(id);
-}
-
-function addTimeline(evt) {
-  const item = { id: randomUUID(), time: new Date().toISOString(), ...evt };
-  store.timeline.unshift(item);
-  return item;
 }
 
 function getException(id) {
@@ -522,29 +378,8 @@ function expireApprovedExceptions(now = new Date()) {
   return ids.length;
 }
 
-function getTasks(projectId) {
-  return getDb()
-    .prepare('SELECT * FROM tasks WHERE project_id = ? ORDER BY created_at DESC')
-    .all(projectId);
-}
-
-function getAllTasks() {
-  return getDb().prepare('SELECT * FROM tasks ORDER BY created_at DESC').all();
-}
-
-function updateTask(id, fields) {
-  const { title, status } = fields || {};
-  getDb()
-    .prepare(
-      `UPDATE tasks SET title = COALESCE(?, title), status = COALESCE(?, status), updated_at = datetime('now') WHERE id = ?`
-    )
-    .run(title || null, status || null, id);
-  return getTask(id);
-}
-
-function deleteTask(id) {
-  getDb().prepare('DELETE FROM tasks WHERE id = ?').run(id);
-}
+// ---- Exception Tickets ----
+const PENDING_TICKET_KEY = '__pending_ticket__';
 
 function setExceptionTicket(exceptionId, system, key, url) {
   const db = getDb();
@@ -556,8 +391,6 @@ function setExceptionTicket(exceptionId, system, key, url) {
   ).run(system || null, key || null, url || null, now, exceptionId);
   return getException(exceptionId);
 }
-
-const PENDING_TICKET_KEY = '__pending_ticket__';
 
 function claimExceptionTicket(exceptionId, system = null) {
   const db = getDb();
@@ -708,7 +541,4 @@ module.exports = {
   claimExceptionTicket,
   releasePendingTicket,
   PENDING_TICKET_KEY,
-// TODO: database helper stubs
-module.exports = {
-  // getUser: async (id) => { /* TODO */ },
 };

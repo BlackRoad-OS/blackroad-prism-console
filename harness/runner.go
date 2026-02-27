@@ -1,8 +1,11 @@
 package harness
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"os"
 	"time"
 )
 
@@ -109,7 +112,36 @@ func EmitComplianceNotification(dec RuleDecision) error {
 	return PostSlackMessage("#secops", payload)
 }
 
+// PostSlackMessage posts a JSON payload to the Slack incoming webhook
+// configured via the SLACK_WEBHOOK_URL environment variable. When the variable
+// is unset the function is a silent no-op for backward compatibility.
 func PostSlackMessage(channel string, payload map[string]any) error {
-	// TODO: wire into Slack API client or webhook
+	webhookURL := os.Getenv("SLACK_WEBHOOK_URL")
+	if webhookURL == "" {
+		return nil
+	}
+
+	body := map[string]any{
+		"channel": channel,
+	}
+	for k, v := range payload {
+		body[k] = v
+	}
+
+	data, err := json.Marshal(body)
+	if err != nil {
+		return fmt.Errorf("PostSlackMessage: marshal payload: %w", err)
+	}
+
+	resp, err := http.Post(webhookURL, "application/json", bytes.NewReader(data))
+	if err != nil {
+		return fmt.Errorf("PostSlackMessage: request failed: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return fmt.Errorf("PostSlackMessage: unexpected status %d", resp.StatusCode)
+	}
+
 	return nil
 }
