@@ -1,4 +1,3 @@
-"""System service entrypoint for the BlackRoad agent."""
 """Async daemon that periodically records telemetry from the Pi and Jetson hosts."""
 
 from __future__ import annotations

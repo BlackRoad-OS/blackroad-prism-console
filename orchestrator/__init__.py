@@ -9,7 +9,6 @@ from typing import Any
 from sdk import plugin_api
 from .base import BaseBot, BotMetadata
 from .consent import ConsentGrant, ConsentRegistry, ConsentRequest, ConsentType
-from .consent import ConsentGrant, ConsentRegistry, ConsentRequest
 from .lineage import LineageTracker
 from .memory import MemoryLog
 from .policy import PolicyEngine
@@ -21,7 +20,6 @@ from .protocols import (
     TaskPriority,
 )
 from .router import BotRegistry, RouteContext, Router, TaskRepository
-from .sandbox import run_in_sandbox
 from .sec import SecRule2042Gate
 from .tasks import load_tasks, save_tasks
 
@@ -81,4 +79,3 @@ def route(bot_name: str, task: plugin_api.Task) -> Any:
     if exec_mode == "sandbox":
         return run_in_sandbox(lambda: bot.handle(task))
     return bot.handle(task)
-"""Orchestrator package for bot routing."""

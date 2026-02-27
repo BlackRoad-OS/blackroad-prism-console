@@ -105,13 +105,13 @@ class Task:
 class BotResponse:
     """Structured response returned by bots."""
 
-    task_id: str
     summary: str
-    steps: Sequence[str]
-    data: Mapping[str, Any]
-    risks: Sequence[str]
-    artifacts: Sequence[str]
-    next_actions: Sequence[str]
+    task_id: str = ""
+    steps: Sequence[str] = field(default_factory=list)
+    data: Any = field(default_factory=dict)
+    risks: Sequence[str] = field(default_factory=list)
+    artifacts: Any = field(default_factory=dict)
+    next_actions: Sequence[str] = field(default_factory=list)
     ok: bool = True
     metrics: Mapping[str, Any] = field(default_factory=dict)
 
@@ -122,9 +122,9 @@ class BotResponse:
             "task_id": self.task_id,
             "summary": self.summary,
             "steps": list(self.steps),
-            "data": dict(self.data),
+            "data": self.data if isinstance(self.data, dict) else dict(self.data),
             "risks": list(self.risks),
-            "artifacts": list(self.artifacts),
+            "artifacts": self.artifacts,
             "next_actions": list(self.next_actions),
             "ok": self.ok,
             "metrics": dict(self.metrics),
@@ -185,47 +185,23 @@ __all__ = [
     "BotExecutionError",
     "BaseBot",
 ]
-from datetime import datetime
-from typing import List, Dict, Optional
-from pydantic import BaseModel
 
 
-class Task(BaseModel):
-    id: str
-    goal: str
-    context: Optional[Dict] = None
-    created_at: datetime
-
-
-class BotResponse(BaseModel):
-    task_id: str
-    summary: str
-    steps: List[str]
-    data: Dict
-    risks: List[str]
-    artifacts: List[str]
-    next_actions: List[str]
-    ok: bool
-from __future__ import annotations
-
-from dataclasses import dataclass, field
-from typing import Any, Dict
-
-
-@dataclass
-class Task:
-    """A unit of work to be executed by a bot."""
-
-    id: str
-    description: str
-    domain: str
-    metadata: Dict[str, Any] = field(default_factory=dict)
-
-
-@dataclass
+@dataclass(slots=True)
 class Response:
-    """A response returned by a bot after processing a task."""
+    """Simple response object used by the Orchestrator router."""
 
     task_id: str
     status: str
-    data: Any
+    data: Any = ""
+
+
+__all__ = [
+    "TaskPriority",
+    "Task",
+    "BotResponse",
+    "MemoryRecord",
+    "BotExecutionError",
+    "BaseBot",
+    "Response",
+]

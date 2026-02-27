@@ -38,22 +38,13 @@ policy_applied = 'policy_applied'
 crypto_rotate = 'crypto_rotate'
 docs_built = 'docs_built'
 janitor_purge = 'janitor_purge'
->>>>>>>+HEAD
-__ import annotations
-
-import json
-from collections import Counter
-from datetime import datetime
-from pathlib import Path
-
-from tools.storage import append_text
-
-_METRICS_PATH = Path("orchestrator/metrics.jsonl")
-COUNTERS: Counter[str] = Counter()
 
 
 def record(event: str, **data: str) -> None:
-    COUNTERS[event] += 1
-    payload = {"timestamp": datetime.utcnow().isoformat(), "event": event, **data}
-    line = json.dumps(payload)
-    append_text(_METRICS_PATH, line + "\n")
+    import json
+    from datetime import datetime as _dt
+    METRICS_PATH.parent.mkdir(parents=True, exist_ok=True)
+    payload = {"timestamp": _dt.utcnow().isoformat(), "event": event}
+    payload.update(data)
+    with METRICS_PATH.open("a", encoding="utf-8") as fh:
+        fh.write(json.dumps(payload) + "\n")

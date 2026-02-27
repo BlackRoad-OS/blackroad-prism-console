@@ -43,6 +43,9 @@ def load_artifact() -> Dict[str, Any]:
     path = ARTIFACTS / "catalog.json"
     if path.exists():
         return json.loads(path.read_text())
+    config_dir = ROOT / "configs" / "sales"
+    if config_dir.exists() and (config_dir / "pricebook.yaml").exists():
+        return load(config_dir)
     return {"products": [], "pricebook": []}
 
 

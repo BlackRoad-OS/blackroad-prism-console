@@ -1,26 +1,3 @@
-import json
-from pathlib import Path
-
-from tools import pully
-
-
-def load_example_config():
-    p = Path(__file__).parents[1] / "tools" / "pully_config.example.json"
-    return json.loads(p.read_text(encoding="utf-8"))
-
-
-def test_classify_label_by_keyword():
-    config = load_example_config()
-    pr = pully.PullRequest(
-        title="Fix crash on startup",
-        body="this fixes a panic",
-        author="alice",
-        files=["src/app/main.py"],
-        labels=[],
-    )
-    out = pully.classify_pr(pr, config)
-    assert "bug" in out["labels"]
-
 
 import json
 from pathlib import Path
@@ -66,4 +43,3 @@ def test_reviewer_by_path():
     )
     out = pully.classify_pr(pr, config)
     assert "@frontend-team" in out["reviewers"]
-    def test_classify_label_by_keyword():

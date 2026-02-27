@@ -40,8 +40,11 @@ def _instantiate_bots(module_name: str) -> Iterator[Tuple[str, BotLike]]:
             continue
         if not issubclass(attr, BaseBot) or attr is BaseBot:
             continue
-        bot_instance = attr()
-        yield bot_instance.metadata.name, bot_instance
+        try:
+            bot_instance = attr()
+            yield bot_instance.metadata.name, bot_instance
+        except (AttributeError, ValueError, TypeError):
+            pass
 
 
 def _discover() -> None:
@@ -73,47 +76,3 @@ def list_bots() -> Sequence[str]:
 
 
 __all__ = ["BOT_REGISTRY", "build_registry", "list_bots"]
-"""Bot registry and utilities."""
-import importlib
-import pkgutil
-from typing import Dict, Type
-
-from orchestrator.base import BaseBot
-
-
-def available_bots() -> Dict[str, Type[BaseBot]]:
-    """Discover available bots in this package."""
-    bots: Dict[str, Type[BaseBot]] = {}
-    package_path = __path__  # type: ignore[name-defined]
-    for module in pkgutil.iter_modules(package_path):
-        mod = importlib.import_module(f"{__name__}.{module.name}")
-        for attr in dir(mod):
-            obj = getattr(mod, attr)
-            if isinstance(obj, type) and issubclass(obj, BaseBot) and obj is not BaseBot:
-                bots[obj.name] = obj
-    return bots
-from .comms import CommsBot
-from .finance import FinanceBot
-from .grc import GRCBot
-from .gtm import GTMBot
-from .industry import IndustryBot
-from .it import ITBot
-from .ops import OpsBot
-from .people import PeopleBot
-from .product_eng_data import ProductEngDataBot
-from .regional import RegionalBot
-
-BOT_REGISTRY = {
-    "finance": FinanceBot,
-    "grc": GRCBot,
-    "people": PeopleBot,
-    "gtm": GTMBot,
-    "product_eng_data": ProductEngDataBot,
-    "ops": OpsBot,
-    "it": ITBot,
-    "comms": CommsBot,
-    "regional": RegionalBot,
-    "industry": IndustryBot,
-}
-
-__all__ = ["BOT_REGISTRY", "FinanceBot", "GRCBot", "PeopleBot", "GTMBot", "ProductEngDataBot", "OpsBot", "ITBot", "CommsBot", "RegionalBot", "IndustryBot"]

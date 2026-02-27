@@ -5,17 +5,14 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "blackroad-quantum-labs"
 version = "0.1.0"
-description = "Quantum computing teaching lab and agent orchestration toolkit"
-readme = "README-quantum-lab.md"
-description = "Quantum pedagogy and orchestration toolkits for the BlackRoad platform"
+description = "Quantum computing teaching lab and agent orchestration toolkit for the BlackRoad platform"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.10"
 authors = [{ name = "BlackRoad Labs", email = "labs@example.com" }]
 dependencies = [
     "numpy>=1.26,<3",
     "matplotlib>=3.8,<4",
     "sympy>=1.12",
-    "torch>=2.2,<3",
     "pyyaml>=6.0,<7",
     "typer>=0.15.1,<0.22",
     "pydantic>=2.6.4,<3",
@@ -23,40 +20,10 @@ dependencies = [
     "nbformat>=5.10",
     "nbconvert>=7.16",
     "regopy>=1.0.0,<2",
-    "hypothesis>=6.103.4,<7",
-    "matplotlib>=3.8,<4",
-    "nbconvert>=7.0",
-    "nbformat>=5.10",
-    "numpy>=1.26,<3",
-    "pydantic>=2.6.4,<3",
-    "pyyaml>=6.0",
-    "regopy>=1.0.0,<2",
-    "sympy>=1.12",
-    "typer>=0.15.1,<0.22",
-    "sympy>=1.12",
-    "nbformat>=5.10",
-    "nbconvert>=7.16",
-name = "quantum-lab"
-version = "0.1.0"
-description = "Quantum computing teaching lab and Quantum Language Model laboratory"
-readme = "README.md"
-name = "quantum-lab"
-version = "0.1.0"
-description = "Quantum computing teaching lab"
-readme = "README-quantum-lab.md"
-requires-python = ">=3.11"
-authors = [{ name = "Quantum Lab", email = "labs@example.com" }]
-dependencies = [
-    "numpy>=1.26,<3",
-    "matplotlib>=3.8,<4",
-    "sympy",
-    "nbformat",
-    "nbconvert",
-    "pyyaml>=6.0.2,<7",
-    "typer>=0.15.1,<0.22",
-    "pydantic>=2.6.4,<3",
-    "hypothesis>=6.103.4,<7",
-    "regopy>=1.0.0,<2",
+    "fastapi",
+    "jinja2",
+    "paho-mqtt",
+    "uvicorn",
 ]
 
 [project.optional-dependencies]
@@ -65,72 +32,27 @@ dev = [
     "pytest-cov>=4.1",
     "mypy>=1.8",
     "ruff>=0.2",
-    "mypy",
-    "pytest",
-    "pytest-cov",
-    "pyyaml>=6.0,<7",
-description = "BlackRoad Prism console CLI"
-readme = "README.md"
-requires-python = ">=3.10"
-authors = [{ name = "Blackroad", email = "eng@blackroadinc.us" }]
-dependencies = [
-    "fastapi",
-    "jinja2",
-    "paho-mqtt",
-    "pydantic",
-    "typer>=0.9.0",
-    "uvicorn",
-]
-
-[project.optional-dependencies]
-qiskit = ["qiskit", "qiskit-aer", "qiskit-ibm-runtime"]
-viz = ["matplotlib"]
-
-dev = [
-    "pytest",
-    "pytest-cov",
-    "mypy",
-    "ruff",
 ]
 qiskit = ["qiskit", "qiskit-aer", "qiskit-ibm-runtime"]
 viz = ["matplotlib>=3.8,<4"]
-viz = ["matplotlib"]
 
 [project.urls]
-Homepage = "https://example.com/quantum-lab"
+Homepage = "https://github.com/BlackRoad-OS/blackroad-prism-console"
+
 [project.scripts]
 blackroad = "cli.blackroad:cli"
 blackroad-agent = "agent.daemon:main"
 brc = "cli.console:main"
 blackroad-console = "cli.console:main"
-blackroad = "cli.blackroad:cli"
-blackroad-agent = "agent.daemon:main"
-blackroad-api = "agent.api:main"
-blackroad-dashboard = "agent.dashboard:main"
 
 [tool.pytest.ini_options]
-addopts = "-q --cov=qlm_lab.tools.quantum_np --cov=quantum_lab.core.circuit --cov-report=term-missing --cov-fail-under=90"
-testpaths = [
-    "tests/test_agents_loop.py",
-    "tests/test_proto_and_policies.py",
-    "tests/test_quantum_np.py",
-    "tests/test_circuit.py",
-    "tests/test_measurement.py",
-    "tests/test_states.py",
-    "tests/test_gates.py",
-    "tests/test_noise.py",
-    "tests/test_qft_grover.py",
-    "tests/test_amundson_integrator_module.py",
-    "tests",
-]
-addopts = "-q"
-addopts = "-q --cov=quantum_lab --cov-report=term-missing --cov-fail-under=90"
+pythonpath = ["."]
 testpaths = ["tests"]
+addopts = "-q"
 
 [tool.mypy]
 python_version = "3.11"
 ignore_missing_imports = true
-plugins = []
 
 [tool.ruff]
 target-version = "py311"
@@ -138,62 +60,7 @@ line-length = 100
 
 [tool.ruff.lint]
 extend-select = ["I"]
-target-version = "py311"
-
-[build-system]
-requires = ["setuptools>=61", "wheel"]
-build-backend = "setuptools.build_meta"
-
-[tool.setuptools]
-packages = ["cli"]
-include-package-data = true
-
-[tool.setuptools.package-data]
-agent = ["templates/*.html"]
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["qlm_lab*", "quantum_lab*"]
-exclude = ["modules*"]
-line-length = 100
-target-version = "py311"
-[tool.pytest.ini_options]
-pythonpath = ["."]
-testpaths = ["tests"]
-addopts = "-q"
-
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["quantum_lab*", "qlm_lab*"]
-[tool.mypy]
-python_version = "3.11"
-ignore_missing_imports = true
-
-[tool.ruff]
-target-version = "py311"
-line-length = 100
-<<<<<<< main
-<<<<<<< main
->>>>>>> origin/codex/upgrade-lucidia-coding-ability
-
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["quantum_lab*"]
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["quantum_lab*", "qlm_lab*"]
-testpaths = ["tests"]
-extend-select = ["I"]
-
-[tool.setuptools.package-data]
-agent = ["templates/*.html"]
-extend-select = ["I"]
-[tool.mypy]
-python_version = "3.11"
-packages = ["orchestrator", "bots", "config", "cli", "tools"]
-
-[tool.pytest.ini_options]
-pythonpath = ["."]
-extend-select = ["I"]  # import sort
-=======
->>>>>>> origin/codex/upgrade-lucidia-coding-ability
+include = ["quantum_lab*", "qlm_lab*", "cli*", "orchestrator*", "bots*"]
