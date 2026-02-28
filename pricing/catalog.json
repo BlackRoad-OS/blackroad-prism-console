@@ -92,7 +92,7 @@
     },
     "DRIVE": {
       "monthly_price_usd": 4.99,
-      "annual_price_usd": 49.9,
+      "annual_price_usd": 49.90,
       "base_quota": {
         "storage_gb": 50
       },

@@ -72,7 +72,7 @@ CREATE VIEW IF NOT EXISTS active_subscriptions_v AS
   FROM subscriptions s JOIN plans p ON s.plan_id = p.plan_id
   WHERE s.status='active' AND s.current_period_end > strftime('%s','now');
 
--- Seed default plans
+-- Seed default plans (keep in sync with server_full.js DEFAULT_PLANS and pricing/catalog.yaml)
 INSERT OR REPLACE INTO plans (plan_id,name,price_cents,currency,interval,features_json,rc_monthly_allowance,limits_json,active) VALUES
 ('free','Free',0,'USD','month','["1 project","1 agent","100 prompts/month","community support","500 MB storage"]',0,'{"tokens_per_day":1000,"projects":1,"agents":1,"storage_mb":500}',1),
 ('creator','Creator',900,'USD','month','["10 projects","5 agents","5,000 prompts/mo","priority queue","RoadCoin minting (basic)","10 GB storage"]',100,'{"tokens_per_day":10000,"projects":10,"agents":5,"storage_mb":10240}',1),
