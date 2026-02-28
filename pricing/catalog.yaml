@@ -1,43 +1,92 @@
 plans:
-  STARTER:
-    monthly_price_usd: 19
+  FREE:
+    monthly_price_usd: 0
+    annual_price_usd: 0
+    base_quota:
+      requests_per_min: 10
+      requests_per_month: 3000
+      storage_gb: 0.5
+    overage:
+      enabled: false
+    features:
+      - 1_project
+      - 1_agent
+      - community_support
+    trial_days: 0
+
+  CREATOR:
+    monthly_price_usd: 9
+    annual_price_usd: 90
     base_quota:
       requests_per_min: 120
       requests_per_month: 100000
+      storage_gb: 10
     overage:
       enabled: true
       unit: "1k_requests"
       price_usd: 1.50
     features:
-      - reco_basic
-      - webhooks_basic
+      - 10_projects
+      - 5_agents
+      - rc_minting_basic
+      - priority_queue
+      - limited_orchestrator
     trial_days: 14
 
   PRO:
-    monthly_price_usd: 99
+    monthly_price_usd: 29
+    annual_price_usd: 290
     base_quota:
       requests_per_min: 600
       requests_per_month: 1000000
+      storage_gb: 100
     overage:
       enabled: true
       unit: "1k_requests"
       price_usd: 1.00
     features:
-      - reco_advanced
-      - webhooks_retry
-      - experiments
+      - unlimited_projects
+      - 20_agents
+      - rc_minting_standard
+      - orchestrator_full
+      - dashboard_analytics
+      - api_access
     trial_days: 14
     coupons:
       - code: LAUNCH25
         percent_off: 25
         duration_months: 3
 
-  INFINITY:
+  ENTERPRISE:
     monthly_price_usd: 499
+    annual_price_usd: 4990
     base_quota:
       requests_per_min: 3000
       requests_per_month: 10000000
+      storage_gb: -1  # unlimited
     overage:
       enabled: false
     features:
-      - all
+      - sso_saml
+      - custom_limits
+      - private_models
+      - sla
+      - dedicated_support
+      - unlimited_storage
+
+  DRIVE:
+    monthly_price_usd: 4.99
+    annual_price_usd: 49.90
+    base_quota:
+      storage_gb: 50
+    overage:
+      enabled: true
+      unit: "10_gb"
+      price_usd: 1.00
+    features:
+      - roadview_asset_hosting
+      - version_history
+      - shareable_links
+      - file_preview
+    add_on: true
+

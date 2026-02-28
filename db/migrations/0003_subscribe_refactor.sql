@@ -74,6 +74,8 @@ CREATE VIEW IF NOT EXISTS active_subscriptions_v AS
 
 -- Seed default plans
 INSERT OR REPLACE INTO plans (plan_id,name,price_cents,currency,interval,features_json,rc_monthly_allowance,limits_json,active) VALUES
-('creator','Creator',900,'USD','month','["Core chat","1 project","Basic RC mint"]',100,'{"tokens_per_day":10000,"projects":1,"agents":1}',1),
-('builder','Builder',2900,'USD','month','["Multi-agent","5 projects","Priority queue"]',1000,'{"tokens_per_day":100000,"projects":5,"agents":5}',1),
-('oracle','Oracle',9900,'USD','month','["Advanced models","20 projects","GPU priority","Early features"]',10000,'{"tokens_per_day":1000000,"projects":20,"agents":20}',1);
+('free','Free',0,'USD','month','["1 project","1 agent","100 prompts/month","community support","500 MB storage"]',0,'{"tokens_per_day":1000,"projects":1,"agents":1,"storage_mb":500}',1),
+('creator','Creator',900,'USD','month','["10 projects","5 agents","5,000 prompts/mo","priority queue","RoadCoin minting (basic)","10 GB storage"]',100,'{"tokens_per_day":10000,"projects":10,"agents":5,"storage_mb":10240}',1),
+('pro','Pro',2900,'USD','month','["unlimited projects","20 agents","25,000 prompts/mo","Orchestrator (full)","Dashboard analytics","API access","100 GB storage"]',1000,'{"tokens_per_day":100000,"projects":-1,"agents":20,"storage_mb":102400}',1),
+('enterprise','Enterprise',49900,'USD','month','["SSO/SAML","custom limits","private models","SLA","dedicated support","unlimited storage"]',10000,'{"tokens_per_day":1000000,"projects":-1,"agents":-1,"storage_mb":-1}',1),
+('drive','Drive',499,'USD','month','["50 GB additional storage","RoadView asset hosting","version history (30 days)","shareable links","file preview"]',0,'{"storage_mb":51200}',1);

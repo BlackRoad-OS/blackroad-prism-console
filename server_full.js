@@ -23,8 +23,7 @@ const {
   ROADCHAIN_MODE,
   ROADCHAIN_NETWORK,
   EVM_CHAIN_ID,
-  ROADCHAIN_MAINNET_OK
-} = require('./src/config');
+  ROADCHAIN_MAINNET_OK,
   ROADVIEW_STORAGE
 } = require('./src/config');
 const subscribe = require('./src/routes/subscribe');
@@ -151,7 +150,7 @@ const DEFAULT_PLANS = [
     currency: 'usd',
     monthly_price_cents: 0,
     annual_price_cents: 0,
-    features: ['1 project', '1 agent', '100 prompts/month', 'community support']
+    features: ['1 project', '1 agent', '100 prompts/month', 'community support', '500 MB storage']
   },
   {
     plan_id: 'creator',
@@ -166,7 +165,8 @@ const DEFAULT_PLANS = [
       'priority queue',
       'RoadCoin minting (basic)',
       'RC wallet link',
-      'limited Orchestrator'
+      'limited Orchestrator',
+      '10 GB storage'
     ]
   },
   {
@@ -183,7 +183,8 @@ const DEFAULT_PLANS = [
       'RoadCoin minting (standard)',
       'Orchestrator (full)',
       'Dashboard analytics',
-      'API access'
+      'API access',
+      '100 GB storage'
     ]
   },
   {
@@ -197,7 +198,22 @@ const DEFAULT_PLANS = [
       'custom limits',
       'private models',
       'SLA',
-      'dedicated support'
+      'dedicated support',
+      'unlimited storage'
+    ]
+  },
+  {
+    plan_id: 'drive',
+    name: 'Drive',
+    currency: 'usd',
+    monthly_price_cents: 499,
+    annual_price_cents: 4990,
+    features: [
+      '50 GB additional storage',
+      'RoadView asset hosting',
+      'version history (30 days)',
+      'shareable links',
+      'file preview'
     ]
   }
 ];
