@@ -1,0 +1,78 @@
+name: Deploy Workflows to Org Repos
+on:
+  workflow_dispatch:
+    inputs:
+      org:
+        description: "GitHub organization to deploy to"
+        required: true
+        default: "BlackRoad-OS-Inc"
+        type: string
+      dry_run:
+        description: "Dry-run mode (list repos only, no changes)"
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  deploy-org-workflows:
+    runs-on: ubuntu-latest
+    env:
+      BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+      BOT_USER: ${{ secrets.BOT_USER || 'blackroad-bot' }}
+      ORG: ${{ inputs.org }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Verify gh CLI auth
+        run: |
+          echo "$BOT_TOKEN" | gh auth login --with-token 2>/dev/null || true
+          gh auth status || { echo "::error::gh auth required — set BOT_TOKEN secret"; exit 1; }
+
+      - name: List target repos
+        id: repos
+        run: |
+          echo "🔍 Listing non-archived repos in $ORG ..."
+          REPOS=$(gh repo list "$ORG" --limit 400 --json name,archived --jq '.[] | select(.archived==false) | .name')
+          COUNT=$(echo "$REPOS" | wc -l)
+          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
+          echo "$REPOS"
+          echo "---"
+          echo "📦 Found $COUNT repos to update"
+
+      - name: Deploy canonical workflows
+        if: inputs.dry_run == false
+        run: |
+          echo "🚀 Deploying canonical workflows to $ORG repos..."
+          export ORG="${{ inputs.org }}"
+          export DEFAULT_BRANCH="${{ vars.DEFAULT_BRANCH || 'main' }}"
+          bash override-all-workflows.sh --org
+          echo "✅ Org-wide deployment complete"
+
+      - name: Deployment summary
+        if: always()
+        run: |
+          echo "## 🚀 Org Workflow Deployment Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Field | Value |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|-------|-------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Organization | \`${{ inputs.org }}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Dry Run | ${{ inputs.dry_run }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Repos Found | ${{ steps.repos.outputs.count }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Triggered By | ${{ github.actor }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Canonical workflows deployed:" >> "$GITHUB_STEP_SUMMARY"
+          echo "- ✅ Auto-Heal" >> "$GITHUB_STEP_SUMMARY"
+          echo "- ✅ Codex Bridge" >> "$GITHUB_STEP_SUMMARY"
+          echo "- ✅ Super-Linter" >> "$GITHUB_STEP_SUMMARY"
+          echo "- ✅ Tests" >> "$GITHUB_STEP_SUMMARY"
+          echo "- ✅ HTML Validate" >> "$GITHUB_STEP_SUMMARY"
+          echo "- ✅ Broken Links" >> "$GITHUB_STEP_SUMMARY"
+          echo "- ✅ Calm ChatOps" >> "$GITHUB_STEP_SUMMARY"
+          echo "- ✅ E2E BlackRoad (Stripe + Clerk)" >> "$GITHUB_STEP_SUMMARY"

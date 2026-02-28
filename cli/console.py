@@ -90,7 +90,7 @@ def _parse_priority(priority: str) -> TaskPriority:
     try:
         return TaskPriority(priority.lower())
     except ValueError as exc:
-        raise typer.BadParameter("Priority must be low, medium, or high") from exc
+        raise typer.BadParameter("Priority must be low, medium, high, or urgent") from exc
 
 
 def _generate_task_id() -> str:

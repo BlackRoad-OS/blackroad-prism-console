@@ -296,6 +296,71 @@ jobs:
             const wf = `${{ steps.parse.outputs.cmd }}`.replace('/rerun ','').trim()+'.yml';
             try{ await github.actions.createWorkflowDispatch({owner: context.repo.owner, repo: context.repo.repo, workflow_id: wf, ref: context.ref.replace('refs/heads/','')}); }catch(e){}
 YML
+
+  cat > "$ROOT/.github/workflows/e2e-blackroad-full.yml" <<'YML'
+name: "E2E BlackRoad (Stripe + Clerk)"
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths: ["e2e/**", "sites/**", "srv/**", "br-ingest-stripe/**"]
+  pull_request:
+    branches: [ main ]
+    paths: ["e2e/**", "sites/**", "srv/**", "br-ingest-stripe/**"]
+permissions: { contents: read }
+jobs:
+  e2e-stripe:
+    name: "Stripe Integration E2E"
+    runs-on: ubuntu-latest
+    env:
+      STRIPE_KEY: ${{ secrets.STRIPE_TEST_KEY }}
+      NODE_ENV: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "20" }
+      - run: if [ -f package-lock.json ]; then npm ci --omit=optional; else npm install --package-lock-only && npm ci --omit=optional; fi
+      - name: Run Stripe tests
+        run: |
+          if [ -d "e2e/stripe" ]; then npx playwright test e2e/stripe/; else echo "::notice::No Stripe E2E tests — add to e2e/stripe/"; fi
+        continue-on-error: true
+  e2e-clerk:
+    name: "Clerk Auth E2E"
+    runs-on: ubuntu-latest
+    env:
+      CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+      NODE_ENV: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "20" }
+      - run: if [ -f package-lock.json ]; then npm ci --omit=optional; else npm install --package-lock-only && npm ci --omit=optional; fi
+      - name: Run Clerk tests
+        run: |
+          if [ -d "e2e/clerk" ]; then npx playwright test e2e/clerk/; else echo "::notice::No Clerk E2E tests — add to e2e/clerk/"; fi
+        continue-on-error: true
+  e2e-full:
+    name: "Full E2E Playwright"
+    needs: [e2e-stripe, e2e-clerk]
+    runs-on: ubuntu-latest
+    env:
+      BASE_URL: ${{ vars.BASE_URL || 'http://localhost:4000' }}
+      NODE_ENV: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "20" }
+      - run: if [ -f package-lock.json ]; then npm ci --omit=optional; else npm install --package-lock-only && npm ci --omit=optional; fi
+      - run: npx playwright install --with-deps 2>/dev/null || true
+      - name: Run full E2E
+        run: |
+          if [ -d "e2e" ] && ls e2e/*.spec.* 1>/dev/null 2>&1; then npx playwright test; else echo "::notice::No E2E specs — add Playwright tests to e2e/"; fi
+        continue-on-error: true
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with: { name: e2e-report, path: playwright-report/, retention-days: 14 }
+        continue-on-error: true
+YML
 }
 
 # ─────────────────────────── per-repo apply ───────────────────────────

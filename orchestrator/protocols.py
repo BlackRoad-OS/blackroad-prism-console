@@ -23,6 +23,7 @@ class TaskPriority(str, Enum):
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
+    URGENT = "urgent"
 
 
 @dataclass(slots=True)
