@@ -26,7 +26,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       STRIPE_KEY: ${{ secrets.STRIPE_TEST_KEY }}
-      STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
       NODE_ENV: test
     steps:
       - uses: actions/checkout@v4
