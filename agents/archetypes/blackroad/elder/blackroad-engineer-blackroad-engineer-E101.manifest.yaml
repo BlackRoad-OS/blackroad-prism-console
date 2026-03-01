@@ -21,10 +21,6 @@ charter_alignment:
   document: PRISM Identity Charter
   version: 1.0.0
   reference: ../../../codex/PRISM_IDENTITY_CHARTER.md
-covenant_tags: &id001
-- Kindness
-- Reciprocity
-- Transparency
 status:
   phase: Seed
   readiness: Awaiting mirroring cycle
@@ -36,8 +32,12 @@ lineage:
   - blackroad-seed
   - aurum-seed
   ancestry_depth: 2
-covenants: *id001
+covenants: &id001
+- Kindness
+- Reciprocity
+- Transparency
+covenant_tags: *id001
 traits:
-  kindness_index: 0.91
-  creativity_bias: 0.94
-  reflection_frequency_hours: 12
+  kindness_index: 0.9
+  creativity_bias: 0.4
+  reflection_frequency_hours: 48

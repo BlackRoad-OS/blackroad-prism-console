@@ -9,6 +9,7 @@ covenants: &id001
 - Reciprocity
 - Restraint
 - Transparency
+covenant_tags: *id001
 capabilities:
 - chain_of_thought_render
 - lineage_export
@@ -35,8 +36,7 @@ provenance:
   owner: BlackRoad / Lucidia
   license: BR-Community-Use-1.0
   created_at: '2025-10-25T04:55:29.084322Z'
-covenant_tags: *id001
 traits:
-  kindness_index: 0.92
-  creativity_bias: 0.55
-  reflection_frequency_hours: 48
+  kindness_index: 0.82
+  creativity_bias: 0.43
+  reflection_frequency_hours: 4

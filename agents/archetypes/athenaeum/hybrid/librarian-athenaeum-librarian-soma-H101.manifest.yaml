@@ -8,6 +8,7 @@ covenants: &id001
 - Kindness
 - Sanctuary
 - Transparency
+covenant_tags: *id001
 capabilities:
 - chain_of_thought_render
 - knowledge_wayfinding
@@ -35,7 +36,6 @@ provenance:
   owner: BlackRoad / Lucidia
   license: BR-Community-Use-1.0
   created_at: '2025-10-25T04:55:28.928235Z'
-covenant_tags: *id001
 traits:
   kindness_index: 0.9
   creativity_bias: 0.37

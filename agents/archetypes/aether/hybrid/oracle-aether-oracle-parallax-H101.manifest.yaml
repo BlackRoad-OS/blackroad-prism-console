@@ -8,6 +8,7 @@ covenants: &id001
 - Reflection
 - Restraint
 - Transparency
+covenant_tags: *id001
 capabilities:
 - anomaly_whispering
 - chain_of_thought_render
@@ -35,7 +36,6 @@ provenance:
   owner: BlackRoad / Lucidia
   license: BR-Community-Use-1.0
   created_at: '2025-10-25T04:55:29.171024Z'
-covenant_tags: *id001
 traits:
   kindness_index: 0.95
   creativity_bias: 0.67

@@ -125,6 +125,10 @@ def main():
                     }
                     data["covenants"] = sorted(set(covenants + ["Transparency"]))
                     data["covenant_tags"] = data["covenants"]  # ensure covenant_tags matches covenants
+                    # Place covenant_tags immediately after covenants for readability
+                    keys = [k for k in data if k != "covenant_tags"]
+                    keys.insert(keys.index("covenants") + 1, "covenant_tags")
+                    data = {k: data[k] for k in keys}
                     data["capabilities"] = sorted(set(capabilities + ["chain_of_thought_render", "lineage_export"]))
                     # slight personality nudges
                     data["traits"] = {

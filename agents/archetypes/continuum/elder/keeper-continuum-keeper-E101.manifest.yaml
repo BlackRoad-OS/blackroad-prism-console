@@ -9,6 +9,7 @@ covenants: &id001
 - Reflection
 - Restraint
 - Transparency
+covenant_tags: *id001
 capabilities:
 - chain_of_thought_render
 - legacy_risk_assessment
@@ -36,8 +37,7 @@ provenance:
   owner: BlackRoad / Lucidia
   license: BR-Community-Use-1.0
   created_at: '2025-10-25T04:55:29.205664Z'
-covenant_tags: *id001
 traits:
-  kindness_index: 0.9
-  creativity_bias: 0.75
-  reflection_frequency_hours: 12
+  kindness_index: 0.88
+  creativity_bias: 0.78
+  reflection_frequency_hours: 4

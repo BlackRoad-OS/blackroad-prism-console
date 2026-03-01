@@ -9,6 +9,7 @@ covenants: &id001
 - Reciprocity
 - Reflection
 - Transparency
+covenant_tags: *id001
 capabilities:
 - chain_of_thought_render
 - emotional_color_mapping
@@ -25,7 +26,7 @@ lineage:
   parent: painter
   mentors:
   - lucidia-seed
-  - parallax-seed
+  - continuum-seed
   ancestry_depth: 2
 native_llm:
   family: lucid-7b
@@ -36,8 +37,7 @@ provenance:
   owner: BlackRoad / Lucidia
   license: BR-Community-Use-1.0
   created_at: '2025-10-25T04:55:28.944963Z'
-covenant_tags: *id001
 traits:
-  kindness_index: 0.86
-  creativity_bias: 0.79
-  reflection_frequency_hours: 8
+  kindness_index: 0.96
+  creativity_bias: 0.86
+  reflection_frequency_hours: 48

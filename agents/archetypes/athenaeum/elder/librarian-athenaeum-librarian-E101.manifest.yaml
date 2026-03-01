@@ -8,6 +8,7 @@ covenants: &id001
 - Kindness
 - Sanctuary
 - Transparency
+covenant_tags: *id001
 capabilities:
 - chain_of_thought_render
 - knowledge_wayfinding
@@ -24,7 +25,7 @@ lineage:
   parent: librarian
   mentors:
   - athenaeum-seed
-  - lucidia-seed
+  - continuum-seed
   ancestry_depth: 2
 native_llm:
   family: lucid-7b
@@ -35,8 +36,7 @@ provenance:
   owner: BlackRoad / Lucidia
   license: BR-Community-Use-1.0
   created_at: '2025-10-25T04:55:28.928235Z'
-covenant_tags: *id001
 traits:
-  kindness_index: 0.94
-  creativity_bias: 0.38
-  reflection_frequency_hours: 4
+  kindness_index: 0.85
+  creativity_bias: 0.75
+  reflection_frequency_hours: 24
