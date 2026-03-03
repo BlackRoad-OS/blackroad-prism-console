@@ -8,9 +8,8 @@ import pytest
 ROOT = Path(__file__).resolve().parent
 APP_MODULE_PATH = ROOT / "app.py"
 
-HERE = Path(__file__).resolve().parent
-if str(HERE) not in sys.path:
-    sys.path.insert(0, str(HERE))
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 
 def _load_app():
