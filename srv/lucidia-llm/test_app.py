@@ -1,14 +1,16 @@
-from fastapi.testclient import TestClient
-from app import app
-# <!-- FILE: srv/lucidia-llm/test_app.py -->
 from importlib import util
 import sys
 from pathlib import Path
 
 from fastapi.testclient import TestClient
+import pytest
 
 ROOT = Path(__file__).resolve().parent
 APP_MODULE_PATH = ROOT / "app.py"
+
+HERE = Path(__file__).resolve().parent
+if str(HERE) not in sys.path:
+    sys.path.insert(0, str(HERE))
 
 
 def _load_app():
@@ -18,19 +20,34 @@ def _load_app():
 
     module = util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    return module.app
+    return module
 
 
-app = _load_app()
+_module = _load_app()
+app = _module.app
 
-HERE = Path(__file__).resolve().parent
-if str(HERE) not in sys.path:
-    sys.path.insert(0, str(HERE))
-
-from app import app
 
 def test_health():
     client = TestClient(app)
     resp = client.get('/health')
     assert resp.status_code == 200
-    assert resp.json()['status'] == 'ok'
+    data = resp.json()
+    assert data['status'] == 'ok'
+    assert 'ollama' in data
+
+
+def test_chat_stub():
+    """When Ollama is unreachable, falls back to echo stub."""
+    client = TestClient(app)
+    resp = client.post('/chat', json={'prompt': 'hello'})
+    assert resp.status_code == 200
+    assert 'stub response' in resp.json()['text']
+
+
+def test_chat_ollama(monkeypatch: pytest.MonkeyPatch):
+    """When Ollama is reachable, returns Ollama response."""
+    monkeypatch.setattr(_module, "_ollama_generate", lambda *a, **kw: "Ollama says hi")
+    client = TestClient(app)
+    resp = client.post('/chat', json={'prompt': 'hello'})
+    assert resp.status_code == 200
+    assert resp.json()['text'] == "Ollama says hi"

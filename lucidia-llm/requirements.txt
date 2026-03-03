@@ -1,16 +1,5 @@
-# FILE: /srv/lucidia-llm/requirements.txt
 fastapi==0.115.0
 uvicorn==0.37.0
 pydantic==2.12.2
-uvicorn==0.30.6
-<<<<<<< main
-pydantic==2.12.2
+httpx==0.28.1
 transformers==4.53.0
-pydantic==2.11.7
-uvicorn==0.35.0
-pydantic==2.8.2
-transformers==4.43.0
-=======
-pydantic==2.8.2
-transformers==4.53.0
->>>>>>> origin/copilot/sub-pr-1524-again

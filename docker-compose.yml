@@ -39,6 +39,14 @@ services:
       - redis-data:/data
     restart: unless-stopped
 
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    restart: unless-stopped
+
   prometheus:
     image: prom/prometheus:v2.54.1
     command:
@@ -95,6 +103,7 @@ services:
 volumes:
   grafana-data:
   redis-data:
+  ollama-data:
 services:
   app:
     build: .
