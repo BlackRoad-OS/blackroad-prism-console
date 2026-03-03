@@ -1,0 +1,112 @@
+2026-03-03T05:49:46.405831 Starting deployment
+2026-03-03T05:49:46.405936 Sync var/www/blackroad/ -> /var/www/blackroad/
+2026-03-03T05:49:46.406102 Sync srv/blackroad-api/ -> /srv/blackroad-api/
+2026-03-03T05:49:46.406148 Sync srv/lucidia-llm/ -> /srv/lucidia-llm/
+2026-03-03T05:49:46.406183 Sync srv/lucidia-math/ -> /srv/lucidia-math/
+2026-03-03T05:49:46.406216 Restarting services
+2026-03-03T05:49:46.406253 Deployment complete
+2026-03-03T05:49:46.407011 Starting deployment
+2026-03-03T05:49:46.407062 Sync var/www/blackroad/ -> /var/www/blackroad/
+2026-03-03T05:49:46.407315 Sync srv/blackroad-api/ -> /srv/blackroad-api/
+2026-03-03T05:49:46.407366 Sync srv/lucidia-llm/ -> /srv/lucidia-llm/
+2026-03-03T05:49:46.407401 Sync srv/lucidia-math/ -> /srv/lucidia-math/
+2026-03-03T05:49:46.407433 Restarting services
+2026-03-03T05:49:46.407469 Deployment complete
+2026-03-03T05:49:52.428152 Starting deployment
+2026-03-03T05:49:52.428218 Sync var/www/blackroad/ -> /var/www/blackroad/
+2026-03-03T05:49:52.428376 Sync srv/blackroad-api/ -> /srv/blackroad-api/
+2026-03-03T05:49:52.428424 Sync srv/lucidia-llm/ -> /srv/lucidia-llm/
+2026-03-03T05:49:52.428459 Sync srv/lucidia-math/ -> /srv/lucidia-math/
+2026-03-03T05:49:52.428493 Restarting services
+2026-03-03T05:49:52.428531 Deployment complete
+2026-03-03T05:49:52.429245 Starting deployment
+2026-03-03T05:49:52.429296 Sync var/www/blackroad/ -> /var/www/blackroad/
+2026-03-03T05:49:52.429545 Sync srv/blackroad-api/ -> /srv/blackroad-api/
+2026-03-03T05:49:52.429607 Sync srv/lucidia-llm/ -> /srv/lucidia-llm/
+2026-03-03T05:49:52.429641 Sync srv/lucidia-math/ -> /srv/lucidia-math/
+2026-03-03T05:49:52.429672 Restarting services
+2026-03-03T05:49:52.429709 Deployment complete
+2026-03-03T05:57:37.255409 Starting deployment
+2026-03-03T05:57:37.255477 Sync var/www/blackroad/ -> /var/www/blackroad/
+2026-03-03T05:57:37.255654 Sync srv/blackroad-api/ -> /srv/blackroad-api/
+2026-03-03T05:57:37.255707 Sync srv/lucidia-llm/ -> /srv/lucidia-llm/
+2026-03-03T05:57:37.255744 Sync srv/lucidia-math/ -> /srv/lucidia-math/
+2026-03-03T05:57:37.255777 Restarting services
+2026-03-03T05:57:37.255815 Deployment complete
+2026-03-03T05:57:37.256552 Starting deployment
+2026-03-03T05:57:37.256618 Sync var/www/blackroad/ -> /var/www/blackroad/
+2026-03-03T05:57:37.256865 Sync srv/blackroad-api/ -> /srv/blackroad-api/
+2026-03-03T05:57:37.256911 Sync srv/lucidia-llm/ -> /srv/lucidia-llm/
+2026-03-03T05:57:37.256945 Sync srv/lucidia-math/ -> /srv/lucidia-math/
+2026-03-03T05:57:37.256976 Restarting services
+2026-03-03T05:57:37.257014 Deployment complete
+2026-03-03T05:57:43.174098 Starting deployment
+2026-03-03T05:57:43.174162 Sync var/www/blackroad/ -> /var/www/blackroad/
+2026-03-03T05:57:43.174317 Sync srv/blackroad-api/ -> /srv/blackroad-api/
+2026-03-03T05:57:43.174362 Sync srv/lucidia-llm/ -> /srv/lucidia-llm/
+2026-03-03T05:57:43.174397 Sync srv/lucidia-math/ -> /srv/lucidia-math/
+2026-03-03T05:57:43.174429 Restarting services
+2026-03-03T05:57:43.174466 Deployment complete
+2026-03-03T05:57:43.175227 Starting deployment
+2026-03-03T05:57:43.175277 Sync var/www/blackroad/ -> /var/www/blackroad/
+2026-03-03T05:57:43.175523 Sync srv/blackroad-api/ -> /srv/blackroad-api/
+2026-03-03T05:57:43.175587 Sync srv/lucidia-llm/ -> /srv/lucidia-llm/
+2026-03-03T05:57:43.175624 Sync srv/lucidia-math/ -> /srv/lucidia-math/
+2026-03-03T05:57:43.175655 Restarting services
+2026-03-03T05:57:43.175691 Deployment complete
+2026-03-03T05:57:49.581451 Starting deployment
+2026-03-03T05:57:49.581519 Sync var/www/blackroad/ -> /var/www/blackroad/
+2026-03-03T05:57:49.581695 Sync srv/blackroad-api/ -> /srv/blackroad-api/
+2026-03-03T05:57:49.581744 Sync srv/lucidia-llm/ -> /srv/lucidia-llm/
+2026-03-03T05:57:49.581780 Sync srv/lucidia-math/ -> /srv/lucidia-math/
+2026-03-03T05:57:49.581813 Restarting services
+2026-03-03T05:57:49.581851 Deployment complete
+2026-03-03T05:57:49.582665 Starting deployment
+2026-03-03T05:57:49.582718 Sync var/www/blackroad/ -> /var/www/blackroad/
+2026-03-03T05:57:49.582975 Sync srv/blackroad-api/ -> /srv/blackroad-api/
+2026-03-03T05:57:49.583028 Sync srv/lucidia-llm/ -> /srv/lucidia-llm/
+2026-03-03T05:57:49.583071 Sync srv/lucidia-math/ -> /srv/lucidia-math/
+2026-03-03T05:57:49.583103 Restarting services
+2026-03-03T05:57:49.583140 Deployment complete
+2026-03-03T05:57:55.852555 Starting deployment
+2026-03-03T05:57:55.852639 Sync var/www/blackroad/ -> /var/www/blackroad/
+2026-03-03T05:57:55.852801 Sync srv/blackroad-api/ -> /srv/blackroad-api/
+2026-03-03T05:57:55.852848 Sync srv/lucidia-llm/ -> /srv/lucidia-llm/
+2026-03-03T05:57:55.852883 Sync srv/lucidia-math/ -> /srv/lucidia-math/
+2026-03-03T05:57:55.852916 Restarting services
+2026-03-03T05:57:55.852954 Deployment complete
+2026-03-03T05:57:55.853747 Starting deployment
+2026-03-03T05:57:55.853800 Sync var/www/blackroad/ -> /var/www/blackroad/
+2026-03-03T05:57:55.854058 Sync srv/blackroad-api/ -> /srv/blackroad-api/
+2026-03-03T05:57:55.854109 Sync srv/lucidia-llm/ -> /srv/lucidia-llm/
+2026-03-03T05:57:55.854144 Sync srv/lucidia-math/ -> /srv/lucidia-math/
+2026-03-03T05:57:55.854175 Restarting services
+2026-03-03T05:57:55.854212 Deployment complete
+2026-03-03T05:58:01.973604 Starting deployment
+2026-03-03T05:58:01.973672 Sync var/www/blackroad/ -> /var/www/blackroad/
+2026-03-03T05:58:01.973830 Sync srv/blackroad-api/ -> /srv/blackroad-api/
+2026-03-03T05:58:01.973879 Sync srv/lucidia-llm/ -> /srv/lucidia-llm/
+2026-03-03T05:58:01.973914 Sync srv/lucidia-math/ -> /srv/lucidia-math/
+2026-03-03T05:58:01.973946 Restarting services
+2026-03-03T05:58:01.973983 Deployment complete
+2026-03-03T05:58:01.974856 Starting deployment
+2026-03-03T05:58:01.974912 Sync var/www/blackroad/ -> /var/www/blackroad/
+2026-03-03T05:58:01.975161 Sync srv/blackroad-api/ -> /srv/blackroad-api/
+2026-03-03T05:58:01.975211 Sync srv/lucidia-llm/ -> /srv/lucidia-llm/
+2026-03-03T05:58:01.975246 Sync srv/lucidia-math/ -> /srv/lucidia-math/
+2026-03-03T05:58:01.975278 Restarting services
+2026-03-03T05:58:01.975316 Deployment complete
+2026-03-03T06:00:43.660627 Starting deployment
+2026-03-03T06:00:43.660699 Sync var/www/blackroad/ -> /var/www/blackroad/
+2026-03-03T06:00:43.660861 Sync srv/blackroad-api/ -> /srv/blackroad-api/
+2026-03-03T06:00:43.660909 Sync srv/lucidia-llm/ -> /srv/lucidia-llm/
+2026-03-03T06:00:43.660945 Sync srv/lucidia-math/ -> /srv/lucidia-math/
+2026-03-03T06:00:43.660978 Restarting services
+2026-03-03T06:00:43.661018 Deployment complete
+2026-03-03T06:00:43.661806 Starting deployment
+2026-03-03T06:00:43.661859 Sync var/www/blackroad/ -> /var/www/blackroad/
+2026-03-03T06:00:43.662120 Sync srv/blackroad-api/ -> /srv/blackroad-api/
+2026-03-03T06:00:43.662174 Sync srv/lucidia-llm/ -> /srv/lucidia-llm/
+2026-03-03T06:00:43.662211 Sync srv/lucidia-math/ -> /srv/lucidia-math/
+2026-03-03T06:00:43.662243 Restarting services
+2026-03-03T06:00:43.662281 Deployment complete

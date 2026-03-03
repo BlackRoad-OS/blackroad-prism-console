@@ -56,9 +56,14 @@ def load_rule_file(path: str | Path) -> tuple[Rule, List[RuleTestCase]]:
 
     tests: List[RuleTestCase] = []
     for entry in payload.get("tests", []):
+        raw_want = entry.get("want")
+        if isinstance(raw_want, dict):
+            want = raw_want.get("decision", "deny") == "deny"
+        else:
+            want = bool(raw_want)
         tc = RuleTestCase(
             name=entry["name"],
-            want=bool(entry.get("want")),
+            want=want,
             input=dict(entry.get("input", {})),
             window=entry.get("window"),
             baseline=dict(entry.get("baseline", {})),

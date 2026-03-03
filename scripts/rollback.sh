@@ -18,7 +18,7 @@ else
 fi
 
 if [ "$TS" = "latest" ]; then
-  TS=$(find "$BACKUP_BASE" -mindepth 1 -maxdepth 1 -type d ! -name weekly | sort | tail -n 1)
+  TS=$(find "$BACKUP_BASE" -mindepth 1 -maxdepth 1 -type d ! -name weekly | sort | tail -n 1 | xargs basename)
 fi
 
 SNAP="$BACKUP_BASE/$TS"

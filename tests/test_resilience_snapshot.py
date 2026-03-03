@@ -77,6 +77,7 @@ def test_failed_deploy_triggers_rollback(tmp_path, monkeypatch):
         "LLM_DIR": str(llm_dir),
         "MATH_DIR": str(math_dir),
         "BACKUP_BASE": str(backup_base),
+        "SNAPSHOT_LOG": str(log_dir / "snap.log"),
         "ROLLBACK_LOG": str(log_dir / "rollback.log"),
     }
 

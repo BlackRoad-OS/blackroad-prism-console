@@ -8,8 +8,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: '3.11' }
-      - run: python -m pip install -U pip pytest jsonschema
-      - run: pytest -q
+      - run: python -m pip install -U pip pytest jsonschema pydantic paho-mqtt typer requests fastapi uvicorn httpx
+      - run: pytest
       - name: Determinism smoke
         run: |
           python -m pip install .

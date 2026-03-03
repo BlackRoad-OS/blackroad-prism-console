@@ -38,9 +38,21 @@ def log_error(message: str) -> None:
         fh.write(message + "\n")
 
 
-def run(cmd: str, cwd: Path | None = None) -> tuple[int, str]:
-    """Run a shell command, logging output and returning (code, output)."""
+def run(cmd: str, cwd: Path | None = None, dry_run: bool = False) -> tuple[int, str]:
+    """Run a shell command, logging output and returning (code, output).
+
+    Parameters
+    ----------
+    cmd:
+        Command to execute.
+    cwd:
+        Working directory for the command.
+    dry_run:
+        If ``True`` the command is printed but not executed; returns (0, "").
+    """
     log(f"$ {cmd}")
+    if dry_run:
+        return 0, ""
     result = subprocess.run(
         shlex.split(cmd),
         cwd=cwd,
@@ -56,24 +68,6 @@ def run(cmd: str, cwd: Path | None = None) -> tuple[int, str]:
         if output:
             log_error(output)
     return result.returncode, output
-
-def run(cmd: str, cwd: Path | None = None, dry_run: bool = False) -> None:
-    """Run a shell command and stream output.
-
-    Parameters
-    ----------
-    cmd:
-        Command to execute.
-    cwd:
-        Working directory for the command.
-    dry_run:
-        If ``True`` the command is printed but not executed.
-    """
-
-    print(f"$ {cmd}")
-    if dry_run:
-        return
-    subprocess.run(shlex.split(cmd), check=True, cwd=cwd)
 
 
 # ---------------------------------------------------------------------------
@@ -212,11 +206,8 @@ def deploy_to_droplet(dry_run: bool = False) -> None:
 
 def handle_command(cmd: str, dry_run: bool = False) -> None:
     actions = {
-        "push": push_to_github,
-        "pull": pull_from_github,
-        "rebase": rebase_branch,
-        "sync": sync_connectors,
         "push": lambda: push_latest(dry_run=dry_run),
+        "pull": pull_from_github,
         "refresh": lambda: refresh_working_copy(dry_run=dry_run),
         "rebase": lambda: rebase_branch(dry_run=dry_run),
         "sync": lambda: sync_connectors(dry_run=dry_run),
@@ -230,8 +221,7 @@ def handle_command(cmd: str, dry_run: bool = False) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Codex build pipeline")
-    parser.add_argument("command", help="push|pull|rebase|sync")
-    parser.add_argument("command", help="push|refresh|rebase|sync")
+    parser.add_argument("command", help="push|pull|refresh|rebase|sync")
     parser.add_argument(
         "branch",
         nargs="?",

@@ -12,7 +12,8 @@ brc = "cli.console:main"
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
-addopts = "-q"
+addopts = "-q --continue-on-collection-errors"
+testpaths = ["tests"]
 
 [tool.black]
 line-length = 100
