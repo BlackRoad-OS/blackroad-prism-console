@@ -81,3 +81,6 @@ id_rsa
 *.pem
 *.key
 ssh-*
+deploy.log
+build.log
+build_errors.log
