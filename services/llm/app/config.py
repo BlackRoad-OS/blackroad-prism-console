@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     workers: int = 1
 
     # Default provider
-    default_provider: Literal["openai", "anthropic", "vllm", "ollama", "echo"] = "echo"
+    default_provider: Literal["openai", "anthropic", "vllm", "ollama", "echo"] = "ollama"
 
     # OpenAI configuration
     openai_api_key: str | None = None
@@ -43,7 +43,7 @@ class Settings(BaseSettings):
     vllm_tensor_parallel_size: int = 1
 
     # Ollama configuration
-    ollama_base_url: str = "http://ollama-bridge.prism.svc.cluster.local:4010"
+    ollama_base_url: str = "http://localhost:11434"
     ollama_default_model: str = "llama3.1"
     ollama_timeout: int = 120
 
