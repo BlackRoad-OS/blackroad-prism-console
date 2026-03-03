@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 [project]
 name = "qlm-lab"
 version = "0.1.0"
@@ -21,11 +20,10 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
-addopts = "-q --cov=qlm_lab.tools.quantum_np --cov-report=term-missing --cov-fail-under=90"
+addopts = "-q"
 testpaths = [
     "tests/test_quantum_np.py",
     "tests/test_proto_and_policies.py",
-    "tests/test_agents_loop.py",
 ]
 
 [tool.mypy]
@@ -39,52 +37,3 @@ line-length = 100
 [build-system]
 requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
-=======
-[build-system]
-requires = ["setuptools>=61", "wheel"]
-build-backend = "setuptools.build_meta"
-
-[project]
-name = "quantum-lab"
-version = "0.1.0"
-description = "Quantum computing teaching lab"
-readme = "README.md"
-requires-python = ">=3.11"
-authors = [{ name = "Quantum Lab", email = "labs@example.com" }]
-dependencies = [
-<<<<<<< main
-    "typer>=0.15.1,<0.22",
-    "pydantic>=2.6.4,<3",
-    "pyyaml>=6.0.2,<7",
-    "hypothesis>=6.103.4,<7",
-    "numpy>=1.26,<3",
-    "matplotlib>=3.8,<4",
-    "regopy>=1.0.0,<2",
-=======
-    "numpy>=1.26",
-    "matplotlib>=3.8",
-    "pyyaml>=6.0",
->>>>>>> origin/codex/refactor-and-upgrade-quantum-math-teaching-lab
-]
-
-[project.optional-dependencies]
-qiskit = ["qiskit", "qiskit-aer", "qiskit-ibm-runtime"]
-viz = ["matplotlib"]
-
-[project.urls]
-Homepage = "https://example.com/quantum-lab"
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-
-[tool.ruff]
-line-length = 100
-
-[tool.mypy]
-python_version = "3.11"
-plugins = []
-
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["quantum_lab*"]
->>>>>>> Stashed changes

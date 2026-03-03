@@ -6,16 +6,24 @@ SAFE_MODE ?= 1
 
 export SAFE_MODE
 
-.PHONY: install test demo encompass-demo clean demo-cross-ratio demo-spectral-gap demo-angle-defect demo-invariants
+.PHONY: install setup test lint demo notebooks encompass-demo clean demo-cross-ratio demo-spectral-gap demo-angle-defect demo-invariants
 
 install:
 	$(PYTHON) -m venv $(VENV)
 	. $(VENV)/bin/activate && pip install -U pip wheel
-	. $(VENV)/bin/activate && pip install -U pytest numpy scipy hypothesis
+	. $(VENV)/bin/activate && pip install -U pytest pytest-cov numpy scipy hypothesis sympy matplotlib nbformat nbconvert ruff jupyter
+
+setup: install
+
+lint: install
+	. $(VENV)/bin/activate && PYTHONPATH=$(PWD) ruff check qlm_lab/ tests/
 
 # Run all tests with repo root on PYTHONPATH
 test: install
 	. $(VENV)/bin/activate && SAFE_MODE=$(SAFE_MODE) PYTHONPATH=$(PWD) pytest -q
+
+notebooks: install
+	. $(VENV)/bin/activate && PYTHONPATH=$(PWD) jupyter nbconvert --to notebook --execute --inplace notebooks/*.ipynb || true
 
 # Optional: run the headline demo
 demo: install
