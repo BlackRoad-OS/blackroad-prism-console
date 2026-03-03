@@ -20,8 +20,8 @@ class Settings(BaseSettings):
     log_level: str = "info"
     workers: int = 1
 
-    # Default provider
-    default_provider: Literal["openai", "anthropic", "vllm", "ollama", "echo"] = "echo"
+    # Default provider — Ollama runs locally, no external API keys required
+    default_provider: Literal["openai", "anthropic", "vllm", "ollama", "echo"] = "ollama"
 
     # OpenAI configuration
     openai_api_key: str | None = None
@@ -42,9 +42,9 @@ class Settings(BaseSettings):
     vllm_max_model_len: int = 4096
     vllm_tensor_parallel_size: int = 1
 
-    # Ollama configuration
-    ollama_base_url: str = "http://ollama-bridge.prism.svc.cluster.local:4010"
-    ollama_default_model: str = "llama3.1"
+    # Ollama configuration — points to local Ollama instance by default
+    ollama_base_url: str = "http://127.0.0.1:11434"
+    ollama_default_model: str = "llama3.2"
     ollama_timeout: int = 120
 
     # Caching
