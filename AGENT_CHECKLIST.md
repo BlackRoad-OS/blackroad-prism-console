@@ -24,7 +24,7 @@ This creates `.env` files, installs dependencies, and verifies runtime requireme
 node tools/dep-scan.js --dir srv/blackroad-api --save
 
 # Stage only the package files produced by the tool
-git add package.json package-lock.json pnpm-lock.yaml
+git add srv/blackroad-api/package.json srv/blackroad-api/package-lock.json srv/blackroad-api/pnpm-lock.yaml
 ```
 
 ### 3. Run Tests and Lint
