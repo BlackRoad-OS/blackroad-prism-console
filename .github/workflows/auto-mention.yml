@@ -375,13 +375,6 @@ jobs:
             await github.rest.repos.createCommitStatus({
               owner,
               repo,
-<<              sha,
-              state: 'success',
-              context: 'routing',
-              description: description.slice(0, 140),
-              target_url: `https://github.com/${owner}/${repo}/actions/runs/${context.runId}`
->>>>>>>+main
-=====
                 pull_number: number,
               team_reviewers: teams
             })
@@ -574,5 +567,4 @@ PY
             })
         env:
           MENTIONS: ${{ steps.calc.outputs.MENTIONS }}
->>>>>>>+origin/codex/pi
           });

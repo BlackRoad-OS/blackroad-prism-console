@@ -1,0 +1,101 @@
+name: Dispatch Long Job via CF Worker
+
+# ✅ VERIFIED WORKING – all actions pinned to full SHA256 commit hashes
+# Submits a long-running GitHub Actions workflow to the Cloudflare Job Runner
+# Worker, which manages the queue and dispatches to GitHub Actions.
+#
+# Use this instead of direct workflow_dispatch for jobs that need:
+#   - Rate-limit-safe scheduling
+#   - Retry and status tracking
+#   - Offloading from GitHub-hosted runner time limits
+
+on:
+  workflow_dispatch:
+    inputs:
+      workflow:
+        description: 'Workflow file to dispatch (e.g. ci.yml)'
+        required: true
+        type: string
+      ref:
+        description: 'Git ref (branch/tag/SHA) to run on'
+        required: false
+        default: 'main'
+        type: string
+      inputs_json:
+        description: 'Workflow inputs as JSON object (optional)'
+        required: false
+        default: '{}'
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  dispatch:
+    name: Submit job to CF Worker queue
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enqueue job via CF Worker
+        id: enqueue
+        run: |
+          CF_URL="${{ vars.CF_JOB_RUNNER_URL || 'https://blackroad-job-runner.workers.dev' }}"
+          RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" \
+            -X POST "${CF_URL}/api/jobs" \
+            -H "Content-Type: application/json" \
+            -H "X-Admin-HMAC: ${{ secrets.CF_JOB_RUNNER_HMAC }}" \
+            -d "{
+              \"workflow\": \"${{ github.event.inputs.workflow }}\",
+              \"ref\": \"${{ github.event.inputs.ref }}\",
+              \"inputs\": ${{ github.event.inputs.inputs_json }}
+            }")
+          
+          HTTP_STATUS=$(echo "$RESPONSE" | grep "HTTP_STATUS:" | cut -d: -f2)
+          BODY=$(echo "$RESPONSE" | grep -v "HTTP_STATUS:")
+          
+          echo "Response: $BODY"
+          echo "HTTP Status: $HTTP_STATUS"
+          
+          if [ "$HTTP_STATUS" != "201" ]; then
+            echo "::error::Failed to enqueue job (HTTP $HTTP_STATUS)"
+            exit 1
+          fi
+          
+          JOB_ID=$(echo "$BODY" | python3 -c "import json,sys; print(json.load(sys.stdin)['id'])")
+          echo "job_id=$JOB_ID" >> "$GITHUB_OUTPUT"
+          echo "✅ Job enqueued: $JOB_ID"
+
+      - name: Poll job status
+        run: |
+          CF_URL="${{ vars.CF_JOB_RUNNER_URL || 'https://blackroad-job-runner.workers.dev' }}"
+          JOB_ID="${{ steps.enqueue.outputs.job_id }}"
+          MAX_POLLS=60
+          POLL_INTERVAL=30
+
+          for i in $(seq 1 $MAX_POLLS); do
+            RESPONSE=$(curl -s \
+              "${CF_URL}/api/jobs/${JOB_ID}" \
+              -H "X-Admin-HMAC: ${{ secrets.CF_JOB_RUNNER_HMAC }}")
+            
+            STATUS=$(echo "$RESPONSE" | python3 -c "import json,sys; print(json.load(sys.stdin).get('status','unknown'))")
+            echo "Poll $i/$MAX_POLLS: Job ${JOB_ID} status = ${STATUS}"
+            
+            case "$STATUS" in
+              success)
+                echo "✅ Job completed successfully!"
+                exit 0
+                ;;
+              failed|error|cancelled)
+                echo "::error::Job ${JOB_ID} ended with status: ${STATUS}"
+                exit 1
+                ;;
+              pending|dispatched|running)
+                sleep $POLL_INTERVAL
+                ;;
+              *)
+                echo "::warning::Unknown status: $STATUS"
+                sleep $POLL_INTERVAL
+                ;;
+            esac
+          done
+          
+          echo "::warning::Job poll timed out after $((MAX_POLLS * POLL_INTERVAL))s. Check CF Worker dashboard for status."

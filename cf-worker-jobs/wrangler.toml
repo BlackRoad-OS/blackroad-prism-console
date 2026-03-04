@@ -1,0 +1,25 @@
+name = "blackroad-job-runner"
+main = "src/index.js"
+compatibility_date = "2024-11-21"
+
+[vars]
+GITHUB_API_URL = "https://api.github.com"
+GITHUB_REPO    = "BlackRoad-OS/blackroad-prism-console"
+
+# Durable Objects for job state tracking
+[[durable_objects.bindings]]
+name       = "JOB_STATE"
+class_name = "JobState"
+
+[[migrations]]
+tag             = "v1"
+new_classes     = ["JobState"]
+
+# KV namespace for job queue
+[[kv_namespaces]]
+binding    = "JOB_QUEUE"
+id         = "${CF_JOB_QUEUE_ID}"
+preview_id = "${CF_JOB_QUEUE_ID}"
+
+[triggers]
+crons = ["*/1 * * * *"]

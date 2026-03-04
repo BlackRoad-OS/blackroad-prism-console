@@ -6,29 +6,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
-<<      - name: Trigger canary deploy
-        run: |
-          cat <<EOF > payload.json
-          {
-            "modelId": "demo",
-            "version": "1.0.0",
-            "percent": ${{ vars.AIOPS_CANARY_PERCENT || 10 }},
-            "env": "prod"
-          }
-          EOF
-          curl -s -X POST \
-            -H 'Content-Type: application/json' \
-            --data-binary @payload.json \
-            http://localhost:4000/api/aiops/deploy/canary || true
-          rm -f payload.json
-      - name: Promote canary to production
-        run: |
-          curl -s -X POST \
-            -H 'Content-Type: application/json' \
-            -d '{"modelId":"demo","version":"1.0.0","env":"prod"}' \
-            http://localhost:4000/api/aiops/deploy/promote || true
->>>>>>>+main
-=====
       - run: curl -s -X POST -H 'Content-Type: application/json' -d '{"modelId":"demo","version":"1.0.0","percent":'"${{ vars.AIOPS_CANARY_PERCENT || 10 }}"',"env":"prod"}' http://localhost:4000/api/aiops/deploy/canary || true
       - run: curl -s -X POST -H 'Content-Type: application/json' -d '{"modelId":"demo","version":"1.0.0","env":"prod"}' http://localhost:4000/api/aiops/deploy/promote || true
->>>>>>> origin/codex/pin-actions-to-full-length-commit-sha-j1p4es

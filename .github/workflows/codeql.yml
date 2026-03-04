@@ -2,49 +2,20 @@ name: CodeQL
 
 on:
   push:
-    branches: [ main ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main ]
+    branches: [main]
   schedule:
     - cron: '0 2 * * 1'
 
 permissions:
   contents: read
   security-events: write
+  actions: read
 
 concurrency:
   group: codeql-${{ github.ref }}
   cancel-in-progress: true
-
-jobs:
-  analyze:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        language: [ 'javascript', 'python' ]
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@429e1977040da7a23b6822b13c129cd1ba93dbb2 # v3
-        with:
-          languages: ${{ matrix.language }}
-      - name: Autobuild (best effort)
-        uses: github/codeql-action/autobuild@429e1977040da7a23b6822b13c129cd1ba93dbb2 # v3
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@429e1977040da7a23b6822b13c129cd1ba93dbb2 # v3
-on:
-  push:
-    branches: [main, develop]
-  pull_request:
-  schedule:
-    - cron: '22 4 * * 2'
-    branches: [main]
-  pull_request:
-    branches: [main]
-  schedule:
-    - cron: '0 3 * * 1'
 
 jobs:
   analyze:
@@ -54,25 +25,17 @@ jobs:
       fail-fast: false
       matrix:
         language: [javascript-typescript, python]
-    permissions:
-      actions: read
-      contents: read
-    strategy:
-      matrix:
-        language: [javascript, python]
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - uses: github/codeql-action/init@429e1977040da7a23b6822b13c129cd1ba93dbb2 # v3
-        with:
-          languages: ${{ matrix.language }}
-      - uses: github/codeql-action/analyze@429e1977040da7a23b6822b13c129cd1ba93dbb2 # v3security-events: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
       - name: Initialize CodeQL
         uses: github/codeql-action/init@429e1977040da7a23b6822b13c129cd1ba93dbb2 # v3
         with:
           languages: ${{ matrix.language }}
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@429e1977040da7a23b6822b13c129cd1ba93dbb2 # v3
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@429e1977040da7a23b6822b13c129cd1ba93dbb2 # v3

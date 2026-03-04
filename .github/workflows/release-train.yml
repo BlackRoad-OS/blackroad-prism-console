@@ -19,7 +19,6 @@ jobs:
           [ -n "$SLACK_WEBHOOK" ] && curl -s -X POST -H 'Content-Type: application/json' -d "{\"text\":\"$MSG\"}" "$SLACK_WEBHOOK" || true
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-      - uses: actions/upload-artifact@26f96dfa697d77e81fd5907df203aa23a56210a8 # v4
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: release-notes

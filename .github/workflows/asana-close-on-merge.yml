@@ -1,4 +1,4 @@
-name: Asana: Close Task on Merge
+name: "Asana: Close Task on Merge"
 on:
   pull_request:
     types: [closed]

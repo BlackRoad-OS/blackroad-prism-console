@@ -19,7 +19,6 @@ jobs:
           curl -fsS "$PROM_URL/api/v1/query?query=rate(http_requests_total[5m])" >/dev/null
         env:
           PROM_URL: ${{ secrets.PROM_URL }}
-        env: { PROM_URL: ${{ secrets.PROM_URL }} }
       - name: Promote or rollback
         run: |
           node -e "process.exit(0)" && echo promoted || (echo rollback; exit 1)

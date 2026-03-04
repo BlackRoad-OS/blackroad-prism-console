@@ -1,4 +1,4 @@
-name: Reusable: Auto route mentions
+name: "Reusable: Auto route mentions"
 
 on:
   workflow_call:
