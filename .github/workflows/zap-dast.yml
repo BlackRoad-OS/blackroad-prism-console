@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: ZAP Baseline Scan
-        uses: zaproxy/action-baseline@v0.13.0
+        uses: zaproxy/action-baseline@05b0c6f3e2b2e55c3bf7de3ba8ec9e7e06d2e6ef # v0.13.0
         with:
           target: ${{ secrets.STAGING_URL }}
           rules_file_name: '.zap/rules.tsv'

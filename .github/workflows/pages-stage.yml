@@ -30,8 +30,8 @@ jobs:
     steps:
       - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
       - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
         with: { python-version: '3.x' }
       - name: Generate daily proof & bake files
         working-directory: blackroad-stage
@@ -64,8 +64,7 @@ jobs:
             echo "::notice title=DNS::Set TXT stage-proof.blackroad.io = $PROOF (TTL 600)"
           fi
       - name: Upload stage build artifact
-        uses: actions/upload-artifact@v4
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: blackroad-stage
           path: blackroad-stage

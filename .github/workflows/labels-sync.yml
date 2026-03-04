@@ -8,7 +8,7 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - uses: EndBug/label-sync@v2
+      - uses: EndBug/label-sync@52c8b6c52fe7b72b927a15acf894e89d6a1a2b34 # v2.3.3
         with:
           config-file: .github/labels.yml
           delete-other-labels: false

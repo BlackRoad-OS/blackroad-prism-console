@@ -17,8 +17,7 @@ jobs:
           SHORT=$(echo "$BODY" | head -n 12)
           echo "text=*${NAME}* released *${TAG}*\n${SHORT}\n\n<${URL}|Full notes>" >> msg.txt
       - name: Post to Slack
-        uses: slackapi/slack-github-action@v1.26.0
-        with:
+        uses: slackapi/slack-github-action@37ebaef184d7626c5f204ab8d3baff4262dd30f0 # v1.27.0
           payload: |
             { "channel": "${{ vars.SLACK_RELEASES_CHANNEL || '#announcements' }}",
               "text": "$(cat msg.txt)" }

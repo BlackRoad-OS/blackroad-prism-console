@@ -20,13 +20,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           fetch-depth: 0
 
       - name: Detect changed files
         id: changes
-        uses: tj-actions/changed-files@v45
+        uses: tj-actions/changed-files@dcc8b4c7e7e0d2d8547d57ab2cd67fe5cf9d3826 # v45
         with:
           separator: '\n'
 

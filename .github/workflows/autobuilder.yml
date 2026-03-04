@@ -18,7 +18,7 @@ jobs:
         run: |
           node tools/autobuilder/make_fixes.js --index data/timemachine/index.json
       - name: Create PR
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@5e914681df9dc83aa4e4905692ca88beb2f9e91f # v6.0.5
         with:
           commit-message: "autobuilder: perf+docs micro-fixes"
           title: "Autobuilder: perf+docs micro-fixes"

@@ -51,7 +51,7 @@ jobs:
         uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
 
       - name: Node 20
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
         with: { node-version: 20, cache: 'npm' }
 
       - name: Build SPA
@@ -119,8 +119,7 @@ jobs:
 
       - name: Slack notify
         if: always() && env.SLACK_WEBHOOK_URL != ''
-        uses: slackapi/slack-github-action@v1.26.0
-        with:
+        uses: slackapi/slack-github-action@37ebaef184d7626c5f204ab8d3baff4262dd30f0 # v1.27.0
           payload: |
             {
               "text": "Deploy ${{ github.sha }}: ${{ job.status }} — <${{ env.SITE_URL }}|blackroad.io>",
@@ -311,8 +310,7 @@ jobs:
 
       - name: Slack notify
         if: always() && env.SLACK_WEBHOOK_URL != ''
-        uses: slackapi/slack-github-action@v1.26.0
-        with:
+        uses: slackapi/slack-github-action@37ebaef184d7626c5f204ab8d3baff4262dd30f0 # v1.27.0
           payload: |
             {
               "text": "Deploy ${{ github.sha }}: ${{ job.status }} — <${{ env.SITE_URL }}|blackroad.io>",

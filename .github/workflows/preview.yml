@@ -200,7 +200,7 @@ jobs:
 
       - name: Comment PR with URL
         if: github.event.action != 'closed'
-        uses: marocchino/sticky-pull-request-comment@v2
+        uses: marocchino/sticky-pull-request-comment@52423e01640425a022ef5fd42c364c2bdc713c31 # v2.9.1
         with:
           message: |
             ✅ Preview is live: **${{ env.PREVIEW_URL }}**

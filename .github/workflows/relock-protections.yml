@@ -9,7 +9,7 @@ jobs:
       contents: write
     steps:
       - name: Install gh
-        uses: cli/cli-action@v2
+        uses: cli/cli-action@25e57d3d99fc8265cc8c2df4a4f05b0cfadab0f5 # v2.1.0
       - name: Restore protections (strict)
         run: |
           gh api \

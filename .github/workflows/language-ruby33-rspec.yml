@@ -22,7 +22,7 @@ jobs:
         uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
 
       - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
+        uses: ruby/setup-ruby@a4effe49ee87f9b88e8ddb77cebd4533f2cfabde # v1.244.0
         with:
           ruby-version: '3.3'
           bundler-cache: true
@@ -101,7 +101,7 @@ jobs:
         uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
 
       - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
+        uses: ruby/setup-ruby@a4effe49ee87f9b88e8ddb77cebd4533f2cfabde # v1.244.0
         with:
           ruby-version: '3.3'
           bundler-cache: true

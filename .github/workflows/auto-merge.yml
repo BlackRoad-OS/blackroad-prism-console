@@ -52,7 +52,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Disable auto-merge
-        uses: peter-evans/disable-pull-request-automerge@5c7f8c8c7eb223a1b8e5f7071b1f3e8c8f8c8c8c # v3
+        uses: peter-evans/disable-pull-request-automerge@3a97b21b83c7e02d38e3038e59e46e69af9ee87c # v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           pull-request-number: ${{ github.event.pull_request.number }}

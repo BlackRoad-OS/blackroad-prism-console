@@ -6,6 +6,6 @@ on:
 
 jobs:
   deploy:
-    uses: blackboxprogramming/blackroad-deploy/.github/workflows/cloudflare-deploy.yml@main
-    with:
+    uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # replaced invalid ref
+        with:
       project: blackroad-io

@@ -8,7 +8,7 @@ jobs:
   add-to-project:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/add-to-project@v1
+      - uses: actions/add-to-project@5257f2ab3bdf5efbedb28fdf5d1d5843bc7e5fc8 # v1
         with:
           project-url: https://github.com/users/blackboxprogramming/projects/8
           github-token: ${{ secrets.GITHUB_TOKEN }}

@@ -17,8 +17,7 @@ jobs:
           if [ -z "${ADMIN_TOKEN:-}" ]; then echo "go=no" >> "$GITHUB_OUTPUT"; else echo "go=yes" >> "$GITHUB_OUTPUT"; fi
         env:
           ADMIN_TOKEN: ${{ secrets.ADMIN_TOKEN }}
-      - uses: cli/cli-action@v2
-        if: steps.pre.outputs.go == 'yes'
+      - uses: cli/cli-action@25e57d3d99fc8265cc8c2df4a4f05b0cfadab0f5 # v2.1.0if: steps.pre.outputs.go == 'yes'
       - name: Upsert ruleset
         if: steps.pre.outputs.go == 'yes'
         env:

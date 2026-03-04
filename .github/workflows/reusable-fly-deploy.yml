@@ -70,8 +70,7 @@ jobs:
         if: ${{ inputs.image == '' }}
 
       - name: Set up flyctl
-        uses: superfly/flyctl-actions/setup-flyctl@v1
-
+        uses: superfly/flyctl-actions/setup-flyctl@ad7d2e3f498b9b7e89f70e50c044f543b86f3e20 # v1.5
       - name: Stage secrets
         if: ${{ inputs.secrets != '' }}
         env:

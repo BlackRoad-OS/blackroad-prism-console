@@ -19,7 +19,7 @@ jobs:
     outputs:
       domains: ${{ steps.changes.outputs.domains }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           fetch-depth: 2
 
@@ -36,10 +36,9 @@ jobs:
     needs: detect-changes
     if: contains(needs.detect-changes.outputs.domains, 'math-blackroad-io')
     steps:
-      - uses: actions/checkout@v4
-
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
         with:
           node-version: '20'
           cache: 'npm'
@@ -65,8 +64,7 @@ jobs:
     needs: detect-changes
     if: contains(needs.detect-changes.outputs.domains, 'blackroadai')
     steps:
-      - uses: actions/checkout@v4
-
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Deploy to Cloudflare Pages
         working-directory: domains/blackroadai
         run: npx wrangler pages deploy . --project-name=blackroad-blackroadai
@@ -79,8 +77,7 @@ jobs:
     needs: detect-changes
     if: contains(needs.detect-changes.outputs.domains, 'lucidia-earth')
     steps:
-      - uses: actions/checkout@v4
-
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Deploy to Cloudflare Pages
         working-directory: domains/lucidia-earth
         run: npx wrangler pages deploy . --project-name=blackroad-lucidia-earth
@@ -93,8 +90,7 @@ jobs:
     needs: detect-changes
     if: contains(needs.detect-changes.outputs.domains, 'blackroad-me')
     steps:
-      - uses: actions/checkout@v4
-
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Deploy to Cloudflare Pages
         working-directory: domains/blackroad-me
         run: npx wrangler pages deploy . --project-name=blackroad-blackroad-me
@@ -116,8 +112,7 @@ jobs:
           - aliceqi
           - blackroad-inc
     steps:
-      - uses: actions/checkout@v4
-
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Deploy ${{ matrix.domain }}
         working-directory: domains/${{ matrix.domain }}
         run: |

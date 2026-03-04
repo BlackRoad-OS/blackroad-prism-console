@@ -51,7 +51,7 @@ jobs:
       # (don't push on PR, load instead)
       - name: Build and push Docker image
         id: build-and-push
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@4f58ea79222b3b9dc2c8bbdd6debcef730109a75 # v5.4.0
         with:
           sbom: ${{ github.event_name != 'pull_request' }}
           provenance: ${{ github.event_name != 'pull_request' }}
@@ -74,7 +74,7 @@ jobs:
       - name: Docker Scout
         id: docker-scout
         if: ${{ github.event_name == 'pull_request' }}
-        uses: docker/scout-action@v1
+        uses: docker/scout-action@efa0f03f6cf9bc3b63f4e60a1bbb14c0d5ab54bc # v1.15.1
         with:
           command: compare
           image: ${{ steps.meta.outputs.tags }}

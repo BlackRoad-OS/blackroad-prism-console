@@ -13,8 +13,7 @@ jobs:
     name: ☁️ Cloudflare Pages
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Deploy changed domains
         run: |
           # Will be triggered by main deploy-cloudflare-all.yml workflow
@@ -31,10 +30,9 @@ jobs:
           - blackroadai
           - lucidia-earth
     steps:
-      - uses: actions/checkout@v4
-
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
         with:
           node-version: ${{ env.NODE_VERSION }}
 
@@ -59,8 +57,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
     steps:
-      - uses: actions/checkout@v4
-
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Install Railway CLI
         run: npm install -g @railway/cli
 
@@ -75,8 +72,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
     steps:
-      - uses: actions/checkout@v4
-
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
@@ -107,8 +103,7 @@ jobs:
     needs: [deploy-cloudflare, deploy-vercel, deploy-railway, deploy-digitalocean]
     if: always()
     steps:
-      - uses: actions/checkout@v4
-
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Log deployment to Notion
         run: |
           # TODO: Use Notion API to create deployment log page
@@ -123,8 +118,7 @@ jobs:
     needs: [deploy-cloudflare, deploy-vercel, deploy-railway, deploy-digitalocean]
     if: always()
     steps:
-      - uses: actions/checkout@v4
-
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Update Asana tasks
         run: |
           # TODO: Use Asana API to mark deployment task complete

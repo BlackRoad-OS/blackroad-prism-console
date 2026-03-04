@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: Check if PR is merged
         id: check_merged
-        uses: actions/github-script@v7
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         with:
           script: |
             const pr = await github.rest.pulls.get({
@@ -27,7 +27,7 @@ jobs:
             return pr.data.merged;
       - name: Backport merged pull request
         if: steps.check_merged.outputs.result == 'true'
-        uses: tibdex/backport@v2
+        uses: tibdex/backport@3c6f3a43a0be5d81c9a1a80b3f0bc6a68d8ffb59 # v2.0.4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           label_pattern: '^backport-(?<base>.+)$'
