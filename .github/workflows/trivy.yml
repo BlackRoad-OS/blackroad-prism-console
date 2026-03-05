@@ -8,12 +8,11 @@ jobs:
   scan:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - name: Build local image
         run: docker build -t local/blackroad-api:pr apps/api
       - name: Scan with Trivy
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@18f4a4f3f25f3c24c37f38e7b7f4cc54d38f2dba # 0.28.0
         with:
           image-ref: local/blackroad-api:pr
           format: table

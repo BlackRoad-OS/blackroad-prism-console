@@ -56,7 +56,7 @@ jobs:
           repository: ${{ github.event.issue.pull_request.head.repo.full_name }}
           ref: ${{ github.event.issue.pull_request.head.ref }}
       - name: Run security sanity (gitleaks)
-        uses: gitleaks/gitleaks-action@v2
+        uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2
         with:
           args: detect --no-banner --redact
 

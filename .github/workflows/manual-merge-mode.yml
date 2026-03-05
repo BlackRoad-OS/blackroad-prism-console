@@ -20,10 +20,10 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
-      - name: Install gh
-        uses: cli/cli-action@v2
+      - name: gh pre-installed check
+        run: gh --version
 
       - name: Read inputs
         id: cfg

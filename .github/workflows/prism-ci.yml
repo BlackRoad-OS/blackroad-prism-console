@@ -51,35 +51,35 @@ jobs:
       - run: pytest --junitxml=junit-prism-python.xml tests/prism
       - name: Publish test results
         if: always()
-        uses: EnricoMi/publish-unit-test-result-action@v2
+        uses: EnricoMi/publish-unit-test-result-action@1899cd5b136f983f4f0c18f9cca7ebdf9f30b73e # v2
         with:
           files: |
             **/junit-*.xml
       - run: pytest tests/prism
-      - uses: codecov/codecov-action@v4
+      - uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574 # v4
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 20
       - run: npm --prefix prism/server ci
       - run: npm --prefix prism/server run lint
       - run: npm --prefix prism/server test -- --coverage
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: '3.x'
       - run: pip install -r requirements-dev.txt
       - run: pytest tests/prism
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@0cfda1d0f3bde3e39f4e0304f1c62b586fef12c6 # v3
         with:
           files: prism/server/coverage/coverage-final.json
       - run: docker build -t ghcr.io/blackroad/prism:${{ github.sha }} prism
       - if: github.ref == 'refs/heads/main'
         uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3
-        uses: docker/login-action@v3
+        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}

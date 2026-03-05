@@ -53,7 +53,7 @@ jobs:
     needs: gates-tests
     steps:
       - name: Trigger production gate-and-promote
-        uses: peter-evans/workflow-dispatch@v2
+        uses: peter-evans/workflow-dispatch@3e34a2656f7a60b9a7e28bb79ca5e0fde14e91c2 # v2
         with:
           workflow: gate-and-promote.yml
           ref: main

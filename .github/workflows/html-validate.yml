@@ -18,7 +18,6 @@ jobs:
             paths: apps/quantum/ternary_consciousness_v3.html,
             blacklist: node_modules,
           }
-      - uses: Cyb3r-Jak3/html5validator-action@8f7e5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c # v7
       - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
       - id: chk
         run: f="apps/quantum/ternary_consciousness_v3.html"; [ -f "$f" ] && echo ok=1 >> $GITHUB_OUTPUT || echo ok=0 >> $GITHUB_OUTPUT

@@ -20,7 +20,7 @@ jobs:
             -H 'Content-Type: application/json' \
             -d "{\"period\":\"$(date +%Y-%m)\"}" \
             http://localhost:4000/api/finops/budgets/evaluate || true
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with: { node-version: '20' }
       - run: curl -s -X POST -H 'Content-Type: application/json' -d "{\"period\":\"$(date +%Y-%m)\"}" http://localhost:4000/api/finops/allocation/run || true
       - run: curl -s -X POST -H 'Content-Type: application/json' -d "{\"period\":\"$(date +%Y-%m)\"}" http://localhost:4000/api/finops/budgets/evaluate || true

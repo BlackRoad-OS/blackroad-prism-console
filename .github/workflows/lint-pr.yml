@@ -22,6 +22,6 @@ jobs:
 >>>>>>> origin/codex/pin-actions-to-full-length-commit-sha
         with:
           fetch-depth: 0
-      - uses: wagoid/commitlint-github-action@v5
+      - uses: wagoid/commitlint-github-action@e52b2b58b16eebceed991c671a22adce04e0e6ae # v5
         with:
           configFile: commitlint.config.js

@@ -51,7 +51,7 @@ jobs:
         uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
 
       - name: Node 20
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with: { node-version: 20, cache: 'npm' }
 
       - name: Build SPA
@@ -119,7 +119,7 @@ jobs:
 
       - name: Slack notify
         if: always() && env.SLACK_WEBHOOK_URL != ''
-        uses: slackapi/slack-github-action@v1.26.0
+        uses: slackapi/slack-github-action@4bbd17ef7b23e93a4dd0beda85e8d9e64ac5ea5b # v1.26.0
         with:
           payload: |
             {
@@ -311,7 +311,7 @@ jobs:
 
       - name: Slack notify
         if: always() && env.SLACK_WEBHOOK_URL != ''
-        uses: slackapi/slack-github-action@v1.26.0
+        uses: slackapi/slack-github-action@4bbd17ef7b23e93a4dd0beda85e8d9e64ac5ea5b # v1.26.0
         with:
           payload: |
             {

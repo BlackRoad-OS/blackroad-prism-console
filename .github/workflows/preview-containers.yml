@@ -62,7 +62,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Generate SBOM with Syft
-        uses: anchore/syft-action@v1
+        uses: anchore/syft-action@c58b4484cec0e21e0cf86aee6a87428dc2e27b0a # v1
         with:
           image: ${{ needs.metadata.outputs['image-ref'] }}@${{ needs.build-image.outputs.digest }}
           output-file: sbom-pr-${{ github.event.number }}.spdx.json
@@ -89,14 +89,14 @@ jobs:
 
       - name: Scan image with Grype
         id: grype
-        uses: anchore/grype-action@v1
+        uses: anchore/grype-action@d2f94fdc29f26e6e7a4f8f7ef4e2d08a747d4665 # v1
         with:
           image: ${{ needs.metadata.outputs['image-ref'] }}@${{ needs.build-image.outputs.digest }}
           fail-build: false
           output: sarif
 
       - name: Upload SARIF to Code Scanning
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@528ca598d956c91826bd742262cdfc5d02b77710 # v3
         with:
           sarif_file: ${{ steps.grype.outputs.sarif }}
 

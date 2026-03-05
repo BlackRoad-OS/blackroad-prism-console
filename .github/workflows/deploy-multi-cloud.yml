@@ -13,7 +13,7 @@ jobs:
     name: ☁️ Cloudflare Pages
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Deploy changed domains
         run: |
@@ -31,10 +31,10 @@ jobs:
           - blackroadai
           - lucidia-earth
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: ${{ env.NODE_VERSION }}
 
@@ -59,7 +59,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Install Railway CLI
         run: npm install -g @railway/cli
@@ -75,7 +75,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Setup SSH
         run: |
@@ -107,7 +107,7 @@ jobs:
     needs: [deploy-cloudflare, deploy-vercel, deploy-railway, deploy-digitalocean]
     if: always()
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Log deployment to Notion
         run: |
@@ -123,7 +123,7 @@ jobs:
     needs: [deploy-cloudflare, deploy-vercel, deploy-railway, deploy-digitalocean]
     if: always()
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Update Asana tasks
         run: |

@@ -24,16 +24,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           fetch-depth: 0
       - name: Checkout status site (incidents)
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           repository: blackboxprogramming/br-status-site
           path: br-status-site
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '20'
       - name: Install composer dependencies
@@ -66,7 +66,7 @@ BODY
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Post to Slack
-        uses: slackapi/slack-github-action@v1.26.0
+        uses: slackapi/slack-github-action@4bbd17ef7b23e93a4dd0beda85e8d9e64ac5ea5b # v1.26.0
         with:
           payload: |
             {

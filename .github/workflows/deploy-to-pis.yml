@@ -16,7 +16,7 @@ jobs:
     name: 🔮 Deploy to Lucidia (192.168.4.38)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Setup SSH
         run: |
@@ -47,7 +47,7 @@ jobs:
     name: 🛤️ Deploy to BlackRoad Pi (192.168.4.64)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Setup SSH
         run: |
@@ -70,7 +70,7 @@ jobs:
     name: 🎭 Deploy to Mystery Pi (192.168.4.49)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Setup SSH
         run: |
@@ -97,10 +97,10 @@ jobs:
     needs: [deploy-to-lucidia, deploy-to-blackroad-pi, deploy-to-mystery-pi]
     if: always()
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: '3.11'
 

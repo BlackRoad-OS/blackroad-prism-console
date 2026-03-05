@@ -40,7 +40,7 @@ jobs:
 
       - name: Publish test results
         if: always()
-        uses: EnricoMi/publish-unit-test-result-action@v2
+        uses: EnricoMi/publish-unit-test-result-action@1899cd5b136f983f4f0c18f9cca7ebdf9f30b73e # v2
         with:
           files: |
             **/junit-*.xml

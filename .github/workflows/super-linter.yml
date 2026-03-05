@@ -9,9 +9,6 @@ jobs:
       - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
         with: { fetch-depth: 0 }
       - uses: github/super-linter/slim@4e51915f4a812abf59fed160bb14595c0a38a9e7 # v6
-      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
-        with: { fetch-depth: 0 }
-      - uses: github/super-linter/slim@4e51915f4a812abf59fed160bb14595c0a38a9e7 # v6
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BRANCH: main

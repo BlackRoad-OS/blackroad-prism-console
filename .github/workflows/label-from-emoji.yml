@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: Resolve label from title emoji
         id: emoji_label
-        uses: actions/github-script@v7
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
         with:
           script: |
             const mapping = {
@@ -51,7 +51,7 @@ jobs:
       - name: Apply label
         if: steps.emoji_label.outputs.result != ''
         # The workflow only considers the first emoji at the start of the PR title as the label signal.
-        uses: actions-ecosystem/action-add-labels@v1
+        uses: actions-ecosystem/action-add-labels@18f1af5e3544586e0fd6479cff1153599295ac57 # v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           labels: ${{ steps.emoji_label.outputs.result }}

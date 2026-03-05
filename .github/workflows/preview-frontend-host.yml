@@ -140,6 +140,6 @@ jobs:
 
       - name: Comment PR
         if: github.event.action != 'closed'
-        uses: marocchino/sticky-pull-request-comment@v2
+        uses: marocchino/sticky-pull-request-comment@e6186c5e8be3e12c29ce0b11b6e9b27e1a31a3e2 # v2
         with:
           message: "🧪 Frontend preview: **${{ env.PREVIEW_URL }}** (auto-updates, tears down on close)"

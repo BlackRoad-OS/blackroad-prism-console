@@ -107,7 +107,7 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
-        uses: slackapi/slack-github-action@v1.24.0
+        uses: slackapi/slack-github-action@6e2f04a6f4edb4c484a49f8f7a2ab35fccc89e5e # v1.24.0
         with:
           payload: |
             {

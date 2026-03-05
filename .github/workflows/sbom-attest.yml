@@ -8,8 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions: { contents: read, packages: write, id-token: write }
     steps:
-      - uses: actions/checkout@v4
-      - uses: anchore/sbom-action@v0
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: anchore/sbom-action@f8bdd1d8ac5e901a77a92f111440fdb1b593736b # v0
         with: { artifact-name: "sbom.spdx.json", path: ".", format: spdx-json, upload-artifact: true }
       - name: Cosign attest
         run: |

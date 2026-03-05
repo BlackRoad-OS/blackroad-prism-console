@@ -15,7 +15,7 @@ jobs:
     if: github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - name: Delete PR preview tag
-        uses: actions/delete-package-versions@v5
+        uses: actions/delete-package-versions@e5c614d5727e67d0b06be4acbba4038e08b59832 # v5
         with:
           owner: ${{ github.repository_owner }}
           package-name: ${{ github.event.repository.name }}

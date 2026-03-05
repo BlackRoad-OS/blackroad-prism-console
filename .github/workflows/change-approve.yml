@@ -10,7 +10,6 @@ jobs:
     environment: production
     steps:
       - run: echo "APPROVED ${{ inputs.intent }}"; echo "${{ inputs.token }}" > /tmp/approval.token
-      - uses: actions/upload-artifact@26f96dfa697d77e81fd5907df203aa23a56210a8 # v4
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with: { name: approval-token, path: /tmp/approval.token }
       - name: Prepare approval artifacts
@@ -26,7 +25,6 @@ jobs:
           printf '%s' "${{ inputs.token }}" > /tmp/approval.token
           signature=$(printf '%s' "${{ inputs.token }}" | openssl dgst -sha256 -hmac "$CHANGE_APPROVAL_SECRET" | awk '{print $2}')
           printf '%s' "$signature" > /tmp/approval.signature
-      - uses: actions/upload-artifact@26f96dfa697d77e81fd5907df203aa23a56210a8 # v4
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: approval-token

@@ -6,6 +6,6 @@ on:
 
 jobs:
   deploy:
-    uses: blackboxprogramming/blackroad-deploy/.github/workflows/cloudflare-deploy.yml@main
+    uses: blackboxprogramming/blackroad-deploy/.github/workflows/cloudflare-deploy.yml@29c1ebfed4c75648ee223a214c84e91f1f24977a # main
     with:
       project: blackroad-io

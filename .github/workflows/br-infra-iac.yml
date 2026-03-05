@@ -17,7 +17,7 @@ jobs:
         working-directory: br-infra-iac
     steps:
       - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
-      - uses: hashicorp/setup-terraform@v3
+      - uses: hashicorp/setup-terraform@651471c36a6092792c552e8b1bef71e592b462d8 # v3
         with:
           terraform_version: 1.6.6
       - name: Terraform init
@@ -27,7 +27,7 @@ jobs:
       - name: Terraform plan (json)
         run: terraform show -json plan.bin > plan.json
       - name: Conftest
-        uses: instrumenta/conftest-action@v0.3.0
+        uses: instrumenta/conftest-action@e886bea8615e34a4b387b48aaa93107f0cf6fffe # v0.3.0
         with:
           files: plan.json
           policy: policy

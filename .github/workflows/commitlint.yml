@@ -4,6 +4,6 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: wagoid/commitlint-github-action@v5
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: wagoid/commitlint-github-action@e52b2b58b16eebceed991c671a22adce04e0e6ae # v5
         with: { configFile: commitlint.config.js }

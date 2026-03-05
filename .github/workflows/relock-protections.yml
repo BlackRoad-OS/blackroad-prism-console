@@ -8,8 +8,8 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Install gh
-        uses: cli/cli-action@v2
+      - name: gh pre-installed check
+        run: gh --version
       - name: Restore protections (strict)
         run: |
           gh api \

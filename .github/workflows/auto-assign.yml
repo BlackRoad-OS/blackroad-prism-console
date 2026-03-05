@@ -23,11 +23,11 @@ jobs:
     if: github.event.pull_request.draft == false
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Get changed files
         id: changed
-        uses: tj-actions/changed-files@v41
+        uses: tj-actions/changed-files@db153baf731c9de07c0f703cfe4e75e3e013b549 # v41
         with:
           files_yaml: |
             quantum:
@@ -52,7 +52,7 @@ jobs:
               - '.github/**'
 
       - name: Add labels based on changed files
-        uses: actions/github-script@v7
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
         with:
           script: |
             const labels = [];
@@ -87,7 +87,7 @@ jobs:
             }
 
       - name: Auto-assign author
-        uses: actions/github-script@v7
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
         with:
           script: |
             const pr = context.payload.pull_request;

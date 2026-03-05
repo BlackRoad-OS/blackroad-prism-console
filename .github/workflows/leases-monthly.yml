@@ -10,10 +10,10 @@ jobs:
 <<      - uses: actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8 # v4
 >>>>>>>+main
 =====
-        - uses: actions/setup-node@v4
+        - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
 >>>>>>>+origin/codex/pi
       with: { node-version: '20' }
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with: { node-version: '20' }
       - run: node scripts/leases/build_schedule.ts
       - run: node scripts/leases/journalize.ts

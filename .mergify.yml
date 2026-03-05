@@ -11,6 +11,31 @@ pull_request_rules:
       merge:
         method: squash
       delete_head_branch: {}
+  - name: Auto-merge Copilot agent PRs when all checks pass
+    conditions:
+      - author~=^copilot-swe-agent\[bot\]$|^github-actions\[bot\]$|^copilot\[bot\]$
+      - check-success>=1
+      - "#check-failure=0"
+      - base=main
+      - "#approved-reviews-by>=1"
+      - -draft
+      - -label~=^(do-not-merge|on-hold|WIP)$
+    actions:
+      merge:
+        method: squash
+      delete_head_branch: {}
+  - name: Enable auto-merge for automerge-labeled PRs
+    conditions:
+      - label=automerge
+      - check-success>=1
+      - "#check-failure=0"
+      - base=main
+      - "#approved-reviews-by>=1"
+      - -draft
+    actions:
+      merge:
+        method: squash
+      delete_head_branch: {}
   - name: Label and request review
     conditions:
       - "#files-changed>0"
