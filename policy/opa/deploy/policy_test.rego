@@ -40,7 +40,7 @@ test_deny_untrusted_ci {
 test_deny_quality_checks {
   bad := base with base.checks.tests as "fail"
   not authz.allow with input as bad
-  startswith(authz.deny_reason with input as bad, "quality checks failed")
+  authz.deny_reason with input as bad == "quality checks failed (tests=fail, cov=86.0%/80.0%, lint=pass, sast=pass)"
 }
 
 test_deny_path_whitelist {
