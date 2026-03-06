@@ -131,7 +131,13 @@ async function startJob(kind){
 }
 
 function attachJob(id){
+  // Close any existing EventSource for this job to avoid duplicate handlers
+  if (!window._activeJobSources) window._activeJobSources = new Map();
+  if (window._activeJobSources.has(id)) {
+    window._activeJobSources.get(id).close();
+  }
   const es = new EventSource('/api/jobs/'+encodeURIComponent(id)+'/events');
+  window._activeJobSources.set(id, es);
   $('log').textContent='';
   $('jstate').textContent='state: running';
   es.addEventListener('log', ev=> { $('log').textContent += ev.data; $('log').scrollTop = $('log').scrollHeight; });
@@ -139,17 +145,25 @@ function attachJob(id){
     try{ const p = JSON.parse(ev.data).progress||0; $('jstate').textContent = 'state: running '+Math.round(p*100)+'%'; }catch{}
   });
   es.addEventListener('state', ev=> {
-    try{ const s = JSON.parse(ev.data).status || 'running'; $('jstate').textContent = 'state: '+s; if(s!=='running') es.close(); }catch{}
+    try{
+      const s = JSON.parse(ev.data).status || 'running';
+      $('jstate').textContent = 'state: '+s;
+      if(s!=='running') {
+        es.close();
+        if (window._activeJobSources) window._activeJobSources.delete(id);
+      }
+    }catch{}
   });
   es.addEventListener('stage', ev=> {
     try{ const j = JSON.parse(ev.data); $('log').textContent += `\n[stage ${j.index}/${j.total}] ${j.name} ${j.status}\n`; $('log').scrollTop = $('log').scrollHeight; }catch{}
   });
-  window._currentJobId = id;
 }
 
 async function cancelJob(){
-  const id = window._currentJobId; if(!id) return;
-  await fetch('/api/jobs/'+encodeURIComponent(id)+'/cancel', {method:'POST'});
+  if (!window._activeJobSources || window._activeJobSources.size === 0) return;
+  for (const [id] of window._activeJobSources) {
+    await fetch('/api/jobs/'+encodeURIComponent(id)+'/cancel', {method:'POST'});
+  }
 }
 
 async function mkfile(){
@@ -168,4 +182,14 @@ let editor;
 (function boot(){
   editor = monaco.editor.create($('editor'), { value:'', language:'javascript', theme:'vs-dark', minimap:{enabled:false}, automaticLayout:true });
   listProjects();
+  // Expose functions needed by HTML onclick handlers (ES module scope is not global)
+  window.startJob = startJob;
+  window.cancelJob = cancelJob;
+  window.saveFile = saveFile;
+  window.commit = commit;
+  window.mkfile = mkfile;
+  window.mkdir = mkdir;
+  window.setKey = setKey;
+  window.loadProj = loadProj;
+  window.createProj = createProj;
 })();
