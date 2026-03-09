@@ -166,12 +166,11 @@ module.exports = function attachJobs({ app }){
     }
     const steps = pipe.steps || [];
     const weights = steps.map(s=> Number(s.weight) || 0);
-    let sum = weights.reduce((a,b)=>a+b, 0);
+    const sum = weights.reduce((a,b)=>a+b, 0);
     if (sum <= 0){
       // even weights if none provided
       const w = 100.0 / Math.max(1, steps.length);
       for (let i=0;i<steps.length;i++) steps[i].weight = w;
-      sum = 100;
     }
     let base = 0; // cumulative %
     for (let i=0;i<steps.length;i++){
@@ -182,7 +181,9 @@ module.exports = function attachJobs({ app }){
       await updateJob(job_id, {progress: clamp01(base/100)});
       await led({type:'led.progress', pct: Math.round(base), ttl_s:180});
 
-      const child = spawnTracked(job_id, '/bin/bash', ['-lc', step.cmd], { cwd: root, env: { ...process.env, ...(pipe.env||{}), ...env }, shell:false });
+      // NOTE: step.cmd comes from project-controlled pipeline.yaml files only;
+      // pipeline.yaml must not be writable by untrusted users.
+      const child = spawnTracked(job_id, '/bin/bash', ['-c', step.cmd], { cwd: root, env: { ...process.env, ...(pipe.env||{}), ...env }, shell:false });
 
       let within = 0;
       const handleChunk = async (chunk)=>{
@@ -238,18 +239,18 @@ module.exports = function attachJobs({ app }){
     if (!cmd && kind!=='custom' && kind!=='pipeline'){
       if (kind==='deploy'){
         if (fs.existsSync(path.join(cwd, 'scripts/deploy.sh'))){
-          cmd = '/bin/bash'; args = ['-lc','chmod +x scripts/deploy.sh && scripts/deploy.sh'];
+          cmd = '/bin/bash'; args = ['-c','bash scripts/deploy.sh'];
         } else {
-          cmd = '/bin/bash'; args = ['-lc', `mkdir -p ${DEPLOY_ROOT}/${project} && rsync -a --delete public/ ${DEPLOY_ROOT}/${project}/`];
+          cmd = '/bin/bash'; args = ['-c', `mkdir -p ${DEPLOY_ROOT}/${project} && rsync -a --delete public/ ${DEPLOY_ROOT}/${project}/`];
         }
       } else if (kind==='test'){
-        cmd = '/bin/bash'; args = ['-lc', 'npm test || echo "no tests"'];
+        cmd = '/bin/bash'; args = ['-c', 'npm test || echo "no tests"'];
       } else if (kind==='build'){
-        cmd = '/bin/bash'; args = ['-lc', 'npm run build || echo "no build"'];
+        cmd = '/bin/bash'; args = ['-c', 'npm run build || echo "no build"'];
       }
     }
     if (kind==='custom' && !cmd && body.script){
-      cmd = '/bin/bash'; args = ['-lc', body.script];
+      cmd = '/bin/bash'; args = ['-c', body.script];
     }
 
     if (kind!=='pipeline' && !cmd){
@@ -318,8 +319,15 @@ module.exports = function attachJobs({ app }){
     await appendEvent(id, 'log', '\n[cancel requested]\n');
     if (proc && proc.pgid){
       try{
+        // Register cleanup before sending SIGTERM to avoid race if process exits quickly
+        const killTimer = setTimeout(()=>{
+          try{
+            // Only send SIGKILL if the process is still registered
+            if (PROCS.has(id)) process.kill(-proc.pgid, 'SIGKILL');
+          }catch{}
+        }, 5000);
+        proc.child.once('close', ()=>clearTimeout(killTimer));
         process.kill(-proc.pgid, 'SIGTERM');
-        setTimeout(()=>{ try{ process.kill(-proc.pgid, 'SIGKILL'); }catch{} }, 5000);
       }catch{}
     }
     res.json({ok:true});
