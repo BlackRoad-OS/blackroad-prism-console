@@ -1,7 +1,21 @@
-process.env.BR_TEST_DISABLE_DB = '1';
-
+/* eslint-env node, jest */
 const express = require('express');
 const request = require('supertest');
+const { describe, it, expect } = require('@jest/globals');
+
+process.env.BR_TEST_DISABLE_DB = '1';
+
+// Mock native dependencies that may not be installed
+jest.mock('bcrypt', () => ({
+  hash: jest.fn(async (pwd, _rounds) => 'hashed:' + pwd),
+  compare: jest.fn(async (pwd, hash) => hash === 'hashed:' + pwd),
+}), { virtual: true });
+
+jest.mock('../src/auth', () => ({
+  requireAuth: (_req, _res, next) => next(),
+  generateToken: () => 'mock-token',
+}));
+
 const lucidia = require('../src/routes/lucidia');
 
 describe('Lucidia routes', () => {
@@ -12,18 +26,5 @@ describe('Lucidia routes', () => {
     const res = await request(app).get('/lucidia/health');
     expect(res.status).toBe(200);
     expect(res.body).toEqual({ ok: true, service: 'lucidia' });
-describe('lucidia routes', () => {
-  it('GET /lucidia/health returns ok', async () => {
-    const app = express();
-    app.use('/lucidia', lucidia);
-    const server = app.listen(0);
-    const port = server.address().port;
-    try {
-      const res = await fetch(`http://127.0.0.1:${port}/lucidia/health`);
-      const json = await res.json();
-      expect(json).toEqual({ ok: true, service: 'lucidia' });
-    } finally {
-      server.close();
-    }
   });
 });

@@ -1,3 +1,5 @@
+'use strict';
+
 const fs = require('fs');
 const path = require('path');
 const yaml = require('yaml');
@@ -6,50 +8,27 @@ const CONFIG_PATH =
   process.env.PROVIDERS_CONFIG ||
   path.join(__dirname, '../../config/providers.yaml');
 
-let cache;
 const FALLBACK_PROVIDERS = {
   openai: { display_name: 'OpenAI', env_key: 'OPENAI_API_KEY' },
   anthropic: { display_name: 'Anthropic', env_key: 'ANTHROPIC_API_KEY' },
 };
 
+let cache;
+
 function loadConfig() {
-  if (cache) {
-    return cache;
-  if (!cache) {
-    try {
-      const file = fs.readFileSync(CONFIG_PATH, 'utf8');
-      const data = yaml.parse(file);
-      cache =
-        data?.providers && Object.keys(data.providers).length
-          ? data.providers
-          : { ...FALLBACK_PROVIDERS };
-    } catch (err) {
-      console.warn(
-        '[providers] using fallback configuration:',
-        err?.message || err
-      );
-      cache = { ...FALLBACK_PROVIDERS };
-    }
-  }
+  if (cache) return cache;
 
-  let file;
   try {
-    file = fs.readFileSync(CONFIG_PATH, 'utf8');
+    const file = fs.readFileSync(CONFIG_PATH, 'utf8');
+    const data = yaml.parse(file) || {};
+    cache = (data.providers && Object.keys(data.providers).length)
+      ? data.providers
+      : { ...FALLBACK_PROVIDERS };
   } catch (err) {
-    if (err.code === 'ENOENT') {
-      cache = {
-        openai: { display_name: 'OpenAI', env_key: 'OPENAI_API_KEY' },
-      };
-      return cache;
-    }
-    throw err;
+    console.warn('[providers] using fallback configuration:', err?.message || err);
+    cache = { ...FALLBACK_PROVIDERS };
   }
 
-  let data = {};
-  if (file && file.trim()) {
-    data = yaml.parse(file) || {};
-  }
-  cache = data.providers || {};
   return cache;
 }
 
@@ -66,10 +45,7 @@ function providerHealth(name) {
   const cfg = loadConfig();
   const info = cfg[name];
   if (!info) return null;
-  return {
-    id: name,
-    ok: Boolean(process.env[info.env_key]),
-  };
+  return { id: name, ok: Boolean(process.env[info.env_key]) };
 }
 
 module.exports = { listProviders, providerHealth };

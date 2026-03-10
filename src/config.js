@@ -38,7 +38,7 @@ const cfg = {
   ROADCHAIN_MAINNET_OK: /^true$/i.test(process.env.ROADCHAIN_MAINNET_OK || 'false'),
   ROADCHAIN_WEBHOOK_SECRET: process.env.ROADCHAIN_WEBHOOK_SECRET || 'change-me',
   ROADCHAIN_PUBLISH_LIMITS:
-    process.env.ROADCHAIN_PUBLISH_LIMITS || '{"creator":3,"builder":30,"oracle":300}'
+    process.env.ROADCHAIN_PUBLISH_LIMITS || '{"creator":3,"builder":30,"oracle":300}',
   ROADVIEW_STORAGE: path.resolve(
     process.env.ROADVIEW_STORAGE || defaultRoadviewStorage
   )

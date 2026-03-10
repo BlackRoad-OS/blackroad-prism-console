@@ -17,7 +17,7 @@
     "build": "next build",
     "seed": "node scripts/seed_admin.js",
     "health": "node scripts/health.js",
-    "test": "jest",
+    "test": "node --experimental-vm-modules node_modules/.bin/jest",
     "test:api": "node tests/smoke.test.mjs",
     "test:db": "node tests/test_db.js",
     "test:auth": "node tests/test_auth.js",
