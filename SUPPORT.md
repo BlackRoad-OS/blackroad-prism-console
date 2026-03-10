@@ -1,11 +1,25 @@
 # Support
 
-If you have questions or need help with the project, please use the following resources:
+> ⚠️ **This repository is deprecated.**
+> All active development has moved to the **BlackRoad-OS** organization.
+> Please use the canonical repositories listed below for new questions, bug reports, and feature requests.
 
-- **`#help` channel & resource hub:** Start with the [Git Automation Help Center](resources/git-automation-help.md) for onboarding steps, the emoji-driven template library, escalation paths, and learning materials tailored to humans, agents, and bots collaborating on automation workflows.
-- **Questions and discussions:** [GitHub Discussions](https://github.com/blackroad-dev/prism-console/discussions)
-- **Bug reports and feature requests:** [GitHub Issues](https://github.com/blackroad-dev/prism-console/issues)
-- Automated bots and AI agents may also open issues and submit pull requests to resolve them.
-- **Email support:** reach out to [support@blackroad.dev](mailto:support@blackroad.dev)
+## Canonical repositories (BlackRoad-OS)
+
+| Purpose | Repo |
+|---------|------|
+| Core OS | [blackroad-os-core](https://github.com/BlackRoad-OS/blackroad-os-core) |
+| Web / UI | [blackroad-os-web](https://github.com/BlackRoad-OS/blackroad-os-web) |
+| Operator | [blackroad-os-operator](https://github.com/BlackRoad-OS/blackroad-os-operator) |
+| Agents | [blackroad-os-agents](https://github.com/BlackRoad-OS/blackroad-os-agents) |
+| API Gateway | [blackroad-os-api-gateway](https://github.com/BlackRoad-OS/blackroad-os-api-gateway) |
+| Documentation | [blackroad-os-docs](https://github.com/BlackRoad-OS/blackroad-os-docs) |
+| Prism Console | [blackroad-os-prism-console](https://github.com/BlackRoad-OS/blackroad-os-prism-console) |
+
+## Getting help
+
+- **Questions and discussions:** open an issue or discussion in the relevant canonical repo above.
+- **`#help` channel & resource hub:** the [Git Automation Help Center](resources/git-automation-help.md) contains onboarding steps, the emoji-driven template library, escalation paths, and learning materials for humans, agents, and bots.
+- **Email support:** [support@blackroad.dev](mailto:support@blackroad.dev)
 
 Please avoid filing security-related reports in public channels. Instead, follow the instructions in [SECURITY.md](SECURITY.md).
