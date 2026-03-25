@@ -1,164 +1,48 @@
-# 🤖 GitHub Automation & Workflows
+<!-- BlackRoad SEO Enhanced -->
 
-This directory contains all GitHub Actions workflows, tools, and documentation for the automated PR system.
+# ulackroad prism console
 
-## 📁 Directory Structure
+> Part of **[BlackRoad OS](https://blackroad.io)** — Sovereign Computing for Everyone
 
-```
-.github/
-├── workflows/          # GitHub Actions workflows
-│   ├── pr-orchestrator.yml          # Master PR coordinator
-│   ├── commit-verification.yml      # Cryptographic verification
-│   ├── enforce-commit-signing.yml   # Signature enforcement
-│   ├── pr-auto-remediate.yml        # Auto-fix issues
-│   ├── pr-branch-sync.yml           # Branch synchronization
-│   ├── auto-merge.yml               # Auto-merge approved PRs
-│   └── ... (other workflows)
-│
-├── tools/              # Automation scripts and tools
-│   ├── verify-commit-attestation.sh # Commit verification tool
-│   ├── autoheal.sh                  # Auto-heal script
-│   └── ... (other tools)
-│
-└── docs/               # Documentation
-    ├── PR_AUTOMATION_SYSTEM.md      # Complete system docs
-    └── QUICK_START.md               # Quick start guide
-```
+[![BlackRoad OS](https://img.shields.io/badge/BlackRoad-OS-ff1d6c?style=for-the-badge)](https://blackroad.io)
+[![BlackRoad OS](https://img.shields.io/badge/Org-BlackRoad-OS-2979ff?style=for-the-badge)](https://github.com/BlackRoad-OS)
+[![License](https://img.shields.io/badge/License-Proprietary-f5a623?style=for-the-badge)](LICENSE)
 
-## 🚀 Quick Links
+**ulackroad prism console** is part of the **BlackRoad OS** ecosystem — a sovereign, distributed operating system built on edge computing, local AI, and mesh networking by **BlackRoad OS, Inc.**
 
-- **[Complete Documentation](docs/PR_AUTOMATION_SYSTEM.md)** - Full system overview
-- **[Quick Start Guide](docs/QUICK_START.md)** - Get started in 5 minutes
-- **[Workflows](workflows/)** - All workflow files
+## About BlackRoad OS
 
-## ⚡ Quick Start
+BlackRoad OS is a sovereign computing platform that runs AI locally on your own hardware. No cloud dependencies. No API keys. No surveillance. Built by [BlackRoad OS, Inc.](https://github.com/BlackRoad-OS-Inc), a Delaware C-Corp founded in 2025.
 
-### For Developers
+### Key Features
+- **Local AI** — Run LLMs on Raspberry Pi, Hailo-8, and commodity hardware
+- **Mesh Networking** — WireGuard VPN, NATS pub/sub, peer-to-peer communication
+- **Edge Computing** — 52 TOPS of AI acceleration across a Pi fleet
+- **Self-Hosted Everything** — Git, DNS, storage, CI/CD, chat — all sovereign
+- **Zero Cloud Dependencies** — Your data stays on your hardware
 
-1. **Setup commit signing**:
-   ```bash
-   git config --global gpg.format ssh
-   git config --global user.signingkey ~/.ssh/id_ed25519.pub
-   git config --global commit.gpgsign true
-   ```
+### The BlackRoad Ecosystem
+| Organization | Focus |
+|---|---|
+| [BlackRoad OS](https://github.com/BlackRoad-OS) | Core platform and applications |
+| [BlackRoad OS, Inc.](https://github.com/BlackRoad-OS-Inc) | Corporate and enterprise |
+| [BlackRoad AI](https://github.com/BlackRoad-AI) | Artificial intelligence and ML |
+| [BlackRoad Hardware](https://github.com/BlackRoad-Hardware) | Edge hardware and IoT |
+| [BlackRoad Security](https://github.com/BlackRoad-Security) | Cybersecurity and auditing |
+| [BlackRoad Quantum](https://github.com/BlackRoad-Quantum) | Quantum computing research |
+| [BlackRoad Agents](https://github.com/BlackRoad-Agents) | Autonomous AI agents |
+| [BlackRoad Network](https://github.com/BlackRoad-Network) | Mesh and distributed networking |
+| [BlackRoad Education](https://github.com/BlackRoad-Education) | Learning and tutoring platforms |
+| [BlackRoad Labs](https://github.com/BlackRoad-Labs) | Research and experiments |
+| [BlackRoad Cloud](https://github.com/BlackRoad-Cloud) | Self-hosted cloud infrastructure |
+| [BlackRoad Forge](https://github.com/BlackRoad-Forge) | Developer tools and utilities |
 
-2. **Create a PR** - Everything else is automatic!
-
-### For Admins
-
-1. **Setup branch protection**:
-   ```bash
-   npx tsx scripts/setup-branch-protection.ts
-   ```
-
-2. **Consolidate existing PRs**:
-   ```bash
-   npx tsx scripts/consolidate-prs.ts
-   ```
-
-## 🔐 Security Features
-
-- ✅ **Dual Attestation**: Every commit verified by 2 independent tokens
-- ✅ **SHA-256/SHA-512**: Cryptographic hashing of all commits
-- ✅ **Signature Enforcement**: All commits must be GPG/SSH signed
-- ✅ **Branch Protection**: Main branch protected with required checks
-- ✅ **Audit Trail**: 365-day retention of attestation artifacts
-
-## 📊 Workflows Overview
-
-| Workflow | Purpose | Trigger |
-|----------|---------|---------|
-| **PR Orchestrator** | Coordinates all PR automation | PR events |
-| **Commit Verification** | Dual-token cryptographic verification | PR/Push |
-| **Signature Enforcement** | Blocks unsigned commits | PR/Push |
-| **Auto-Remediation** | Fixes common issues automatically | On failure |
-| **Branch Sync** | Keeps PRs updated with base | Daily + manual |
-| **Auto-Merge** | Merges approved PRs | Label trigger |
-
-## 🛠️ Available Tools
-
-### Commit Attestation Tool
-```bash
-.github/tools/verify-commit-attestation.sh <commit> <mode>
-```
-Modes: `verify`, `attest`, `both`
-
-### Branch Protection Setup
-```bash
-npx tsx scripts/setup-branch-protection.ts
-```
-
-### PR Consolidation
-```bash
-npx tsx scripts/consolidate-prs.ts
-```
-
-## 📚 Documentation
-
-- **[Full System Documentation](docs/PR_AUTOMATION_SYSTEM.md)** - Complete guide
-- **[Quick Start](docs/QUICK_START.md)** - Get up and running fast
-
-## 🏷️ Labels
-
-The system uses these labels automatically:
-
-- `automerge` - PR ready for automatic merge
-- `automated-pr-flow` - Tracked by orchestrator
-- `conflicts-detected` - Has merge conflicts
-- `unsigned-commits` - Contains unsigned commits
-- `ready-for-review` - All checks passing
-
-## 🔄 Workflow Diagram
-
-```
-┌─────────────────┐
-│   PR Created    │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────────────┐
-│   PR Orchestrator       │
-│  (Master Coordinator)   │
-└──┬──────┬──────┬───────┘
-   │      │      │
-   │      │      └──────────────┐
-   │      │                     │
-   ▼      ▼                     ▼
-┌──────┐ ┌──────────┐    ┌──────────┐
-│Verify│ │  Branch  │    │Validate  │
-│Crypto│ │   Sync   │    │  Code    │
-└──┬───┘ └────┬─────┘    └────┬─────┘
-   │          │               │
-   │          │               ▼
-   │          │         ┌──────────┐
-   │          │         │  Failed? │
-   │          │         └────┬─────┘
-   │          │              │
-   │          │              ▼
-   │          │         ┌──────────┐
-   │          │         │   Auto   │
-   │          │         │ Remediate│
-   │          │         └────┬─────┘
-   │          │              │
-   └──────────┴──────────────┘
-                │
-                ▼
-         ┌──────────────┐
-         │ All Passing? │
-         └──────┬───────┘
-                │
-                ▼
-         ┌──────────────┐
-         │  Auto-Merge  │
-         └──────────────┘
-```
-
-## 🆘 Need Help?
-
-- Create an issue with the `automation` label
-- Tag `@blackroad-bot` in PR comments
-- Check the [troubleshooting section](docs/PR_AUTOMATION_SYSTEM.md#-troubleshooting)
+### Links
+- **Website**: [blackroad.io](https://blackroad.io)
+- **Documentation**: [docs.blackroad.io](https://docs.blackroad.io)
+- **Chat**: [chat.blackroad.io](https://chat.blackroad.io)
+- **Search**: [search.blackroad.io](https://search.blackroad.io)
 
 ---
 
-**Powered by GitHub Actions** 🚀
+
